@@ -120,6 +120,16 @@
       "sounds": [
         "sounds/music_plus/music_box/g6s"
       ]
+    },
+    "music_plus.music_box.windup": {
+      "sounds": [
+        "sounds/music_plus/music_box/noises/wind_up"
+      ]
+    },
+    "music_plus.music_box.gears": {
+      "sounds": [
+        "sounds/music_plus/music_box/noises/gears"
+      ]
     }
   }
 }
