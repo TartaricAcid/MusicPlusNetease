@@ -1,0 +1,14 @@
+{
+  "format_version": "1.10",
+  "minecraft:item": {
+    "description": {
+      "category": "music_plus_main",
+      "identifier": "music_plus:paper_tape"
+    },
+    "components": {
+      "netease:customtips": {
+        "value": "§o§8写入 ABC 格式歌曲，然后塞入音乐盒播放"
+      }
+    }
+  }
+}

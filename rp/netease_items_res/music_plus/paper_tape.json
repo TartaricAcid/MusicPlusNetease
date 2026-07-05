@@ -1,0 +1,11 @@
+{
+  "format_version": "1.10",
+  "minecraft:item": {
+    "components": {
+      "minecraft:icon": "music_plus:paper_tape"
+    },
+    "description": {
+      "identifier": "music_plus:paper_tape"
+    }
+  }
+}

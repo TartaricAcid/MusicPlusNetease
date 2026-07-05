@@ -1,0 +1,29 @@
+{
+  "modules": [
+    {
+      "type": "data",
+      "uuid": "503d1219-67f8-4389-b703-01aa34cce776",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ],
+  "header": {
+    "uuid": "af64e4ad-f052-4b61-8219-6e64603365a1",
+    "version": [
+      1,
+      0,
+      0
+    ],
+    "name": "Music Plus Behaviors",
+    "description": "Music Plus's Behaviors",
+    "min_engine_version": [
+      1,
+      19,
+      0
+    ]
+  },
+  "format_version": 2
+}

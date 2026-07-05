@@ -1,0 +1,29 @@
+{
+  "modules": [
+    {
+      "type": "resources",
+      "uuid": "b672bab6-1055-4407-be7e-9ef95353fbbd",
+      "version": [
+        1,
+        0,
+        0
+      ]
+    }
+  ],
+  "header": {
+    "uuid": "be7ee23b-d2ab-4309-8a75-4f6146a9420c",
+    "version": [
+      1,
+      0,
+      0
+    ],
+    "name": "Music Plus Resources",
+    "description": "Music Plus's Resources",
+    "min_engine_version": [
+      1,
+      19,
+      0
+    ]
+  },
+  "format_version": 2
+}

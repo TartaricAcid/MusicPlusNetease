@@ -1,0 +1,125 @@
+{
+  "format_version": "1.14.0",
+  "sound_definitions": {
+    "music_plus.music_box.a4": {
+      "sounds": [
+        "sounds/music_plus/music_box/a4"
+      ]
+    },
+    "music_plus.music_box.a4s": {
+      "sounds": [
+        "sounds/music_plus/music_box/a4s"
+      ]
+    },
+    "music_plus.music_box.b4": {
+      "sounds": [
+        "sounds/music_plus/music_box/b4"
+      ]
+    },
+    "music_plus.music_box.c5": {
+      "sounds": [
+        "sounds/music_plus/music_box/c5"
+      ]
+    },
+    "music_plus.music_box.c5s": {
+      "sounds": [
+        "sounds/music_plus/music_box/c5s"
+      ]
+    },
+    "music_plus.music_box.d5": {
+      "sounds": [
+        "sounds/music_plus/music_box/d5"
+      ]
+    },
+    "music_plus.music_box.d5s": {
+      "sounds": [
+        "sounds/music_plus/music_box/d5s"
+      ]
+    },
+    "music_plus.music_box.e5": {
+      "sounds": [
+        "sounds/music_plus/music_box/e5"
+      ]
+    },
+    "music_plus.music_box.f5": {
+      "sounds": [
+        "sounds/music_plus/music_box/f5"
+      ]
+    },
+    "music_plus.music_box.f5s": {
+      "sounds": [
+        "sounds/music_plus/music_box/f5s"
+      ]
+    },
+    "music_plus.music_box.g5": {
+      "sounds": [
+        "sounds/music_plus/music_box/g5"
+      ]
+    },
+    "music_plus.music_box.g5s": {
+      "sounds": [
+        "sounds/music_plus/music_box/g5s"
+      ]
+    },
+    "music_plus.music_box.a5": {
+      "sounds": [
+        "sounds/music_plus/music_box/a5"
+      ]
+    },
+    "music_plus.music_box.a5s": {
+      "sounds": [
+        "sounds/music_plus/music_box/a5s"
+      ]
+    },
+    "music_plus.music_box.b5": {
+      "sounds": [
+        "sounds/music_plus/music_box/b5"
+      ]
+    },
+    "music_plus.music_box.c6": {
+      "sounds": [
+        "sounds/music_plus/music_box/c6"
+      ]
+    },
+    "music_plus.music_box.c6s": {
+      "sounds": [
+        "sounds/music_plus/music_box/c6s"
+      ]
+    },
+    "music_plus.music_box.d6": {
+      "sounds": [
+        "sounds/music_plus/music_box/d6"
+      ]
+    },
+    "music_plus.music_box.d6s": {
+      "sounds": [
+        "sounds/music_plus/music_box/d6s"
+      ]
+    },
+    "music_plus.music_box.e6": {
+      "sounds": [
+        "sounds/music_plus/music_box/e6"
+      ]
+    },
+    "music_plus.music_box.f6": {
+      "sounds": [
+        "sounds/music_plus/music_box/f6"
+      ]
+    },
+    "music_plus.music_box.f6s": {
+      "sounds": [
+        "sounds/music_plus/music_box/f6s"
+      ]
+    },
+    "music_plus.music_box.g6": {
+      "sounds": [
+        "sounds/music_plus/music_box/g6"
+      ]
+    },
+    "music_plus.music_box.g6s": {
+      "sounds": [
+        "sounds/music_plus/music_box/g6s"
+      ]
+    }
+  }
+}

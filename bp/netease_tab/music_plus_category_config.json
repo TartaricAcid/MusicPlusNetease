@@ -1,0 +1,10 @@
+{
+  "category": [
+    {
+      "name": "music_plus_main",
+      "labelText": "item_category.music_plus:main.name",
+      "icon": "textures/music_plus/item/paper_tape",
+      "sort_by_identifier": false
+    }
+  ]
+}

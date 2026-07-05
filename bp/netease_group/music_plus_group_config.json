@@ -1,0 +1,12 @@
+{
+  "groups": [
+    {
+      "group_name": "item_category.music_plus:main.name",
+      "icon": "textures/music_plus/item/paper_tape",
+      "list": [
+        "music_plus:music_plus_music_box",
+        "music_plus:paper_tape"
+      ]
+    }
+  ]
+}
