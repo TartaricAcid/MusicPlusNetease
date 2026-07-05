@@ -43,3 +43,6 @@ world_resource_packs.json
 .mcdev.json
 /.ref/
 /Java 版参考代码/
+
+# 开发环境生成文件
+world_icon.jpeg
