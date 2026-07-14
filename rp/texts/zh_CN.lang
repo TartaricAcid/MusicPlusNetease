@@ -1,3 +1,11 @@
 item_category.music_plus:main.name=音乐之家
 tile.music_plus:music_plus_music_box.name=音乐盒
+tile.music_plus:music_plus_steinway.name=钢琴
+tile.music_plus:music_plus_harpsichord.name=羽管键琴
+tile.music_plus:music_plus_ce_guitar.name=清音电吉他
+tile.music_plus:music_plus_nylon_guitar.name=尼龙吉他
+tile.music_plus:music_plus_guzheng.name=古筝
+tile.music_plus:music_plus_violin_solo.name=小提琴
+tile.music_plus:music_plus_real_kit.name=原声鼓
+tile.music_plus:music_plus_linn_kit.name=复古电子鼓
 item.music_plus:paper_tape.name=纸带

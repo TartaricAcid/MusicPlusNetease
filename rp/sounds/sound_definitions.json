@@ -1,6 +1,121 @@
 {
   "format_version": "1.14.0",
   "sound_definitions": {
+    "music_plus.ce_guitar.a3": {
+      "sounds": [
+        "sounds/music_plus/ce_guitar/a3"
+      ]
+    },
+    "music_plus.ce_guitar.a4": {
+      "sounds": [
+        "sounds/music_plus/ce_guitar/a4"
+      ]
+    },
+    "music_plus.ce_guitar.a5": {
+      "sounds": [
+        "sounds/music_plus/ce_guitar/a5"
+      ]
+    },
+    "music_plus.ce_guitar.a6": {
+      "sounds": [
+        "sounds/music_plus/ce_guitar/a6"
+      ]
+    },
+    "music_plus.guzheng.a3": {
+      "sounds": [
+        "sounds/music_plus/guzheng/a3"
+      ]
+    },
+    "music_plus.guzheng.a4": {
+      "sounds": [
+        "sounds/music_plus/guzheng/a4"
+      ]
+    },
+    "music_plus.guzheng.a5": {
+      "sounds": [
+        "sounds/music_plus/guzheng/a5"
+      ]
+    },
+    "music_plus.guzheng.a6": {
+      "sounds": [
+        "sounds/music_plus/guzheng/a6"
+      ]
+    },
+    "music_plus.harpsichord.a2": {
+      "sounds": [
+        "sounds/music_plus/harpsichord/a2"
+      ]
+    },
+    "music_plus.harpsichord.a3": {
+      "sounds": [
+        "sounds/music_plus/harpsichord/a3"
+      ]
+    },
+    "music_plus.harpsichord.a4": {
+      "sounds": [
+        "sounds/music_plus/harpsichord/a4"
+      ]
+    },
+    "music_plus.harpsichord.a5": {
+      "sounds": [
+        "sounds/music_plus/harpsichord/a5"
+      ]
+    },
+    "music_plus.harpsichord.a6": {
+      "sounds": [
+        "sounds/music_plus/harpsichord/a6"
+      ]
+    },
+    "music_plus.harpsichord.a7": {
+      "sounds": [
+        "sounds/music_plus/harpsichord/a7"
+      ]
+    },
+    "music_plus.linn_kit.linn_ch": {
+      "sounds": [
+        "sounds/music_plus/linn_kit/linn_ch"
+      ]
+    },
+    "music_plus.linn_kit.linn_crash": {
+      "sounds": [
+        "sounds/music_plus/linn_kit/linn_crash"
+      ]
+    },
+    "music_plus.linn_kit.linn_ht": {
+      "sounds": [
+        "sounds/music_plus/linn_kit/linn_ht"
+      ]
+    },
+    "music_plus.linn_kit.linn_kick": {
+      "sounds": [
+        "sounds/music_plus/linn_kit/linn_kick"
+      ]
+    },
+    "music_plus.linn_kit.linn_lt": {
+      "sounds": [
+        "sounds/music_plus/linn_kit/linn_lt"
+      ]
+    },
+    "music_plus.linn_kit.linn_mt": {
+      "sounds": [
+        "sounds/music_plus/linn_kit/linn_mt"
+      ]
+    },
+    "music_plus.linn_kit.linn_pedal": {
+      "sounds": [
+        "sounds/music_plus/linn_kit/linn_pedal"
+      ]
+    },
+    "music_plus.linn_kit.linn_ride": {
+      "sounds": [
+        "sounds/music_plus/linn_kit/linn_ride"
+      ]
+    },
+    "music_plus.linn_kit.linn_snare": {
+      "sounds": [
+        "sounds/music_plus/linn_kit/linn_snare"
+      ]
+    },
     "music_plus.music_box.a4": {
       "sounds": [
         "sounds/music_plus/music_box/a4"
@@ -9,56 +124,6 @@
     "music_plus.music_box.a4s": {
       "sounds": [
         "sounds/music_plus/music_box/a4s"
-      ]
-    },
-    "music_plus.music_box.b4": {
-      "sounds": [
-        "sounds/music_plus/music_box/b4"
-      ]
-    },
-    "music_plus.music_box.c5": {
-      "sounds": [
-        "sounds/music_plus/music_box/c5"
-      ]
-    },
-    "music_plus.music_box.c5s": {
-      "sounds": [
-        "sounds/music_plus/music_box/c5s"
-      ]
-    },
-    "music_plus.music_box.d5": {
-      "sounds": [
-        "sounds/music_plus/music_box/d5"
-      ]
-    },
-    "music_plus.music_box.d5s": {
-      "sounds": [
-        "sounds/music_plus/music_box/d5s"
-      ]
-    },
-    "music_plus.music_box.e5": {
-      "sounds": [
-        "sounds/music_plus/music_box/e5"
-      ]
-    },
-    "music_plus.music_box.f5": {
-      "sounds": [
-        "sounds/music_plus/music_box/f5"
-      ]
-    },
-    "music_plus.music_box.f5s": {
-      "sounds": [
-        "sounds/music_plus/music_box/f5s"
-      ]
-    },
-    "music_plus.music_box.g5": {
-      "sounds": [
-        "sounds/music_plus/music_box/g5"
-      ]
-    },
-    "music_plus.music_box.g5s": {
-      "sounds": [
-        "sounds/music_plus/music_box/g5s"
       ]
     },
     "music_plus.music_box.a5": {
@@ -71,9 +136,39 @@
         "sounds/music_plus/music_box/a5s"
       ]
     },
+    "music_plus.music_box.a6": {
+      "sounds": [
+        "sounds/music_plus/music_box/a6"
+      ]
+    },
+    "music_plus.music_box.a6s": {
+      "sounds": [
+        "sounds/music_plus/music_box/a6s"
+      ]
+    },
+    "music_plus.music_box.b4": {
+      "sounds": [
+        "sounds/music_plus/music_box/b4"
+      ]
+    },
     "music_plus.music_box.b5": {
       "sounds": [
         "sounds/music_plus/music_box/b5"
+      ]
+    },
+    "music_plus.music_box.b6": {
+      "sounds": [
+        "sounds/music_plus/music_box/b6"
+      ]
+    },
+    "music_plus.music_box.c5": {
+      "sounds": [
+        "sounds/music_plus/music_box/c5"
+      ]
+    },
+    "music_plus.music_box.c5s": {
+      "sounds": [
+        "sounds/music_plus/music_box/c5s"
       ]
     },
     "music_plus.music_box.c6": {
@@ -86,6 +181,16 @@
         "sounds/music_plus/music_box/c6s"
       ]
     },
+    "music_plus.music_box.d5": {
+      "sounds": [
+        "sounds/music_plus/music_box/d5"
+      ]
+    },
+    "music_plus.music_box.d5s": {
+      "sounds": [
+        "sounds/music_plus/music_box/d5s"
+      ]
+    },
     "music_plus.music_box.d6": {
       "sounds": [
         "sounds/music_plus/music_box/d6"
@@ -96,9 +201,24 @@
         "sounds/music_plus/music_box/d6s"
       ]
     },
+    "music_plus.music_box.e5": {
+      "sounds": [
+        "sounds/music_plus/music_box/e5"
+      ]
+    },
     "music_plus.music_box.e6": {
       "sounds": [
         "sounds/music_plus/music_box/e6"
+      ]
+    },
+    "music_plus.music_box.f5": {
+      "sounds": [
+        "sounds/music_plus/music_box/f5"
+      ]
+    },
+    "music_plus.music_box.f5s": {
+      "sounds": [
+        "sounds/music_plus/music_box/f5s"
       ]
     },
     "music_plus.music_box.f6": {
@@ -111,6 +231,16 @@
         "sounds/music_plus/music_box/f6s"
       ]
     },
+    "music_plus.music_box.g5": {
+      "sounds": [
+        "sounds/music_plus/music_box/g5"
+      ]
+    },
+    "music_plus.music_box.g5s": {
+      "sounds": [
+        "sounds/music_plus/music_box/g5s"
+      ]
+    },
     "music_plus.music_box.g6": {
       "sounds": [
         "sounds/music_plus/music_box/g6"
@@ -121,14 +251,144 @@
         "sounds/music_plus/music_box/g6s"
       ]
     },
+    "music_plus.music_box.gears": {
+      "sounds": [
+        "sounds/music_plus/music_box/noises/gears"
+      ]
+    },
     "music_plus.music_box.windup": {
       "sounds": [
         "sounds/music_plus/music_box/noises/wind_up"
       ]
     },
-    "music_plus.music_box.gears": {
+    "music_plus.nylon_guitar.a3": {
       "sounds": [
-        "sounds/music_plus/music_box/noises/gears"
+        "sounds/music_plus/nylon_guitar/a3"
+      ]
+    },
+    "music_plus.nylon_guitar.a4": {
+      "sounds": [
+        "sounds/music_plus/nylon_guitar/a4"
+      ]
+    },
+    "music_plus.nylon_guitar.a5": {
+      "sounds": [
+        "sounds/music_plus/nylon_guitar/a5"
+      ]
+    },
+    "music_plus.nylon_guitar.a6": {
+      "sounds": [
+        "sounds/music_plus/nylon_guitar/a6"
+      ]
+    },
+    "music_plus.real_kit.real_ch": {
+      "sounds": [
+        "sounds/music_plus/real_kit/real_ch"
+      ]
+    },
+    "music_plus.real_kit.real_crash": {
+      "sounds": [
+        "sounds/music_plus/real_kit/real_crash"
+      ]
+    },
+    "music_plus.real_kit.real_ht": {
+      "sounds": [
+        "sounds/music_plus/real_kit/real_ht"
+      ]
+    },
+    "music_plus.real_kit.real_kick": {
+      "sounds": [
+        "sounds/music_plus/real_kit/real_kick"
+      ]
+    },
+    "music_plus.real_kit.real_lt": {
+      "sounds": [
+        "sounds/music_plus/real_kit/real_lt"
+      ]
+    },
+    "music_plus.real_kit.real_mt": {
+      "sounds": [
+        "sounds/music_plus/real_kit/real_mt"
+      ]
+    },
+    "music_plus.real_kit.real_oh": {
+      "sounds": [
+        "sounds/music_plus/real_kit/real_oh"
+      ]
+    },
+    "music_plus.real_kit.real_pedal": {
+      "sounds": [
+        "sounds/music_plus/real_kit/real_pedal"
+      ]
+    },
+    "music_plus.real_kit.real_ride": {
+      "sounds": [
+        "sounds/music_plus/real_kit/real_ride"
+      ]
+    },
+    "music_plus.real_kit.real_snare": {
+      "sounds": [
+        "sounds/music_plus/real_kit/real_snare"
+      ]
+    },
+    "music_plus.steinway.a1": {
+      "sounds": [
+        "sounds/music_plus/steinway/a1"
+      ]
+    },
+    "music_plus.steinway.a2": {
+      "sounds": [
+        "sounds/music_plus/steinway/a2"
+      ]
+    },
+    "music_plus.steinway.a3": {
+      "sounds": [
+        "sounds/music_plus/steinway/a3"
+      ]
+    },
+    "music_plus.steinway.a4": {
+      "sounds": [
+        "sounds/music_plus/steinway/a4"
+      ]
+    },
+    "music_plus.steinway.a5": {
+      "sounds": [
+        "sounds/music_plus/steinway/a5"
+      ]
+    },
+    "music_plus.steinway.a6": {
+      "sounds": [
+        "sounds/music_plus/steinway/a6"
+      ]
+    },
+    "music_plus.steinway.a7": {
+      "sounds": [
+        "sounds/music_plus/steinway/a7"
+      ]
+    },
+    "music_plus.steinway.a8": {
+      "sounds": [
+        "sounds/music_plus/steinway/a8"
+      ]
+    },
+    "music_plus.violin_solo.a4": {
+      "sounds": [
+        "sounds/music_plus/violin_solo/a4"
+      ]
+    },
+    "music_plus.violin_solo.a5": {
+      "sounds": [
+        "sounds/music_plus/violin_solo/a5"
+      ]
+    },
+    "music_plus.violin_solo.a6": {
+      "sounds": [
+        "sounds/music_plus/violin_solo/a6"
+      ]
+    },
+    "music_plus.violin_solo.a7": {
+      "sounds": [
+        "sounds/music_plus/violin_solo/a7"
       ]
     }
   }

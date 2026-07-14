@@ -2,5 +2,29 @@
   "format_version": [1, 1, 0],
   "music_plus:music_plus_music_box": {
     "sound": "wood"
+  },
+  "music_plus:music_plus_steinway": {
+    "sound": "wood"
+  },
+  "music_plus:music_plus_harpsichord": {
+    "sound": "wood"
+  },
+  "music_plus:music_plus_ce_guitar": {
+    "sound": "wood"
+  },
+  "music_plus:music_plus_nylon_guitar": {
+    "sound": "wood"
+  },
+  "music_plus:music_plus_guzheng": {
+    "sound": "wood"
+  },
+  "music_plus:music_plus_violin_solo": {
+    "sound": "wood"
+  },
+  "music_plus:music_plus_real_kit": {
+    "sound": "wood"
+  },
+  "music_plus:music_plus_linn_kit": {
+    "sound": "wood"
   }
 }

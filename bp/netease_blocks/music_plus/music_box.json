@@ -22,6 +22,9 @@
         }
       },
       "minecraft:light_dampening": 0,
+      "netease:listen_block_remove": {
+        "value": true
+      },
       "netease:block_entity": {
         "tick": false,
         "client_tick": false,

@@ -1,0 +1,35 @@
+# -*- coding: utf-8 -*-
+
+"""乐器定义类
+
+定义 InstrumentDef 数据结构，描述一种乐器的可播放音域和音符映射。
+"""
+
+
+class InstrumentDef(object):
+    """乐器定义。
+
+    Attributes:
+        name: 乐器标识名（与 sound_prefix 的最后一段对应）
+        sound_prefix: 声音 ID 前缀，如 "music_plus.music_box"
+        lowest_note: 可播放的最低 MIDI 音符号（含）
+        highest_note: 可播放的最高 MIDI 音符号（含）
+        note_map: MIDI 音符号到 (声音文件名, pitch 偏移半音数) 的映射
+    """
+
+    def __init__(self, name, sound_prefix, lowest_note, highest_note, note_map):
+        self.name = name
+        self.sound_prefix = sound_prefix
+        self.lowest_note = lowest_note
+        self.highest_note = highest_note
+        self.note_map = note_map
+
+    def in_range(self, midi_note):
+        """判断 MIDI 音符是否在该乐器的可播放范围内。"""
+        return self.lowest_note <= midi_note <= self.highest_note
+
+    def resolve(self, midi_note):
+        """返回 MIDI 音符对应的 (声音文件名, pitch 偏移半音数)。"""
+        if not self.in_range(midi_note):
+            return None
+        return self.note_map.get(midi_note)
