@@ -7,6 +7,8 @@ MUSIC_PLUS_MOD = EasyMod()
 MUSIC_PLUS_MOD.Server("server.server")
 # 事件注册
 MUSIC_PLUS_MOD.Server("server.event.item_use")
+MUSIC_PLUS_MOD.Server("server.event.block_use")
+MUSIC_PLUS_MOD.Server("server.event.block_remove")
 
 # 客户端注册
 MUSIC_PLUS_MOD.Client("client.client")

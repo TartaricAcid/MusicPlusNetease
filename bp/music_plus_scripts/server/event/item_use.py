@@ -3,7 +3,7 @@
 import time
 
 from music_plus_scripts.QuModLibs.Server import *
-from music_plus_scripts.server.action.music_box import is_paper_tape, is_music_box, handle_music_box_play
+from music_plus_scripts.server.action.block_instrument import is_paper_tape, get_block_instrument, handle_paper_tape_insert
 
 factory = serverApi.GetEngineCompFactory()
 
@@ -19,9 +19,10 @@ def on_item_use_on_block(args):
     block_name = args["blockName"]
     item_name = item["newItemName"]
 
-    # 纸带右击音乐盒 → 播放曲目
-    if is_paper_tape(item_name) and is_music_box(block_name) and can_use(args):
-        handle_music_box_play(args)
+    # 纸带右击方块乐器 → 塞入并播放曲目
+    if is_paper_tape(item_name) and get_block_instrument(block_name) and can_use(args):
+        instrument = get_block_instrument(block_name)
+        handle_paper_tape_insert(args, instrument)
         args["ret"] = True
 
 

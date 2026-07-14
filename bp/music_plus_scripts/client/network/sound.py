@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from music_plus_scripts.QuModLibs.Client import *
-from music_plus_scripts.client.music.midi_player import start_playback
+from music_plus_scripts.client.music.midi_player import start_playback, stop_at_pos
 
 factory = clientApi.GetEngineCompFactory()
 level_id = clientApi.GetLevelId()
@@ -24,6 +24,11 @@ def play_midi_music(args):
     enable_note_off = args.get("enable_note_off", True)
     if notes:
         start_playback(notes, pos, sound_prefix, enable_note_off)
+
+
+@AllowCall
+def stop_music_at_pos(args):
+    stop_at_pos(args.get("pos", (0, 0, 0)))
 
 
 @AllowCall

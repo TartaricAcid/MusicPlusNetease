@@ -18,12 +18,12 @@ import math
 import time
 
 from music_plus_scripts.QuModLibs.Client import *
+from music_plus_scripts.client.music.instruments import get_instrument
 from music_plus_scripts.mido.midi_decoder import NOTE_ON, NOTE_OFF, SUSTAIN
 
 # ─── 音色映射常量 ───────────────────────────────────────────
-# 可用采样音域: A4(69) ~ G#6(92)，共 24 个 .ogg 采样
-LOWEST_MIDI_NOTE = 69
-HIGHEST_MIDI_NOTE = 92
+# 采样音域由 instruments.py 中的乐器定义决定
+# 以下仅作为音名映射查找表
 NOTE_NAMES = (
     "c", "cs", "d", "ds", "e", "f", "fs", "g", "gs", "a", "as", "b"
 )
@@ -32,6 +32,11 @@ NOTE_NAMES = (
 MAX_CONCURRENT = 3  # 最多同时播放的会话数
 NOTE_VOLUME = 1.0  # 默认音量
 PLAYBACK_SPEED = 1.0  # 播放速度倍率 (1.0=原速, 2.0=两倍速, 0.5=半速)
+
+# ─── 距离检测 ───────────────────────────────────────────────
+MAX_START_DISTANCE = 64  # 开始播放时，超过此距离则忽略
+MAX_LISTEN_DISTANCE = 72  # tick 中检查，超过此距离则中断播放
+DISTANCE_CHECK_INTERVAL = 29  # 每隔多少 tick 检查一次距离
 
 # ─── 粒子效果 ───────────────────────────────────────────────
 NOTE_PARTICLE = "music_plus:note_particle"  # 音符粒子
@@ -51,6 +56,7 @@ NOTE_OFF_FADE_OUT = 0.05  # note_off 淡出时间（秒）
 #     "sustained_notes": {},             踏板延音中的音符 {(channel, note): musicId}
 # }
 _active_sessions = []
+_distance_check_tick = 0  # 距离检测计数器
 
 _factory = clientApi.GetEngineCompFactory()
 _game = _factory.CreateGame(levelId)
@@ -69,6 +75,11 @@ def start_playback(notes, pos, sound_prefix, enable_note_off=True):
             对八音盒等自然衰减乐器可设为 False，音符会持续播放直到自然结束。
     """
     if not notes:
+        return
+
+    # 距离检查：超过 64 格不播放
+    player_pos = _factory.CreatePos(playerId).GetPos()
+    if _distance_sq(player_pos, pos) > MAX_START_DISTANCE * MAX_START_DISTANCE:
         return
 
     # 先检查当前客户端音频是否超出了数量上限
@@ -92,13 +103,28 @@ def start_playback(notes, pos, sound_prefix, enable_note_off=True):
 def stop_all():
     """停止所有播放会话，已发出的音符淡出停止。"""
     for session in _active_sessions:
-        for mid in session.get("active_notes", {}).values():
-            _audio.StopCustomMusicById(mid, NOTE_OFF_FADE_OUT)
-        for mid in session.get("sustained_notes", {}).values():
-            _audio.StopCustomMusicById(mid, NOTE_OFF_FADE_OUT)
+        _stop_session_sounds(session)
 
     # 清空会话列表
     _active_sessions[:] = []
+
+
+def stop_at_pos(pos):
+    to_remove = []
+    for session in _active_sessions:
+        if session["pos"] == pos:
+            _stop_session_sounds(session)
+            to_remove.append(session)
+    for s in to_remove:
+        _active_sessions.remove(s)
+
+
+def _stop_session_sounds(session):
+    """停止单个会话中所有活跃音符。"""
+    for mid in session.get("active_notes", {}).values():
+        _audio.StopCustomMusicById(mid, NOTE_OFF_FADE_OUT)
+    for mid in session.get("sustained_notes", {}).values():
+        _audio.StopCustomMusicById(mid, NOTE_OFF_FADE_OUT)
 
 
 def on_music_tick():
@@ -106,6 +132,26 @@ def on_music_tick():
     if not _active_sessions:
         return
 
+    # 计数器自增
+    global _distance_check_tick
+    _distance_check_tick += 1
+
+    # 每 29 tick 检查一次玩家距离，超出 72 格的会话直接中断
+    if _distance_check_tick >= DISTANCE_CHECK_INTERVAL:
+        player_pos = _factory.CreatePos(playerId).GetPos()
+
+        _distance_check_tick = 0
+        out_of_range = []
+
+        for session in _active_sessions:
+            if _distance_sq(player_pos, session["pos"]) > MAX_LISTEN_DISTANCE * MAX_LISTEN_DISTANCE:
+                _stop_session_sounds(session)
+                out_of_range.append(session)
+
+        for s in out_of_range:
+            _active_sessions.remove(s)
+
+    # 正常更新剩下音频
     finished = []
     for session in _active_sessions:
         now = (time.time() - session["start_time"]) * PLAYBACK_SPEED
@@ -180,6 +226,9 @@ def on_music_tick():
 
 def _play_note(midi_note, velocity, pos, sound_prefix):
     sound = _midi_to_sound(midi_note, sound_prefix)
+    if sound is None:
+        # 超出乐器音域，跳过此音符
+        return None
 
     name = sound["name"]
     pitch = sound["pitch"]
@@ -189,7 +238,8 @@ def _play_note(midi_note, velocity, pos, sound_prefix):
     music_id = _audio.PlayCustomMusic(name, pos, volume, pitch, False, None, )
 
     # 粒子效果
-    particle_id = _particle_sys.Create(NOTE_PARTICLE, pos)
+    x, y, z = pos
+    particle_id = _particle_sys.Create(NOTE_PARTICLE, (x + 0.5, y + 1, z + 0.5))
     if _particle_sys.EmitManually(particle_id):
         _game.AddTimer(NOTE_PARTICLE_LIFETIME, _remove_particle, particle_id)
 
@@ -204,14 +254,30 @@ def _remove_particle(particle_id):
 def _midi_to_sound(midi_note, sound_prefix):
     """将 MIDI 音符号映射为声音名称和 pitch 参数。
 
-    将音符钳制到可用采样范围 (A4~G#6)，
-    超出范围的部分通过 pitch 移调补偿。
+    根据乐器定义检查音域范围：
+    - 若已注册乐器且音符超出可播放范围，返回 None（跳过该音符）。
+    - 若乐器未注册（不太可能）直接返回 None
 
-    采样文件实际音高比文件名标注低一个八度，
-    因此将 MIDI 音符号上移 12 半音后再做映射。
+    note_offset 用于补偿采样文件实际音高与标注的偏差，
+    例如八音盒采样比标注低一个八度，note_offset=12。
     """
-    adjusted = midi_note + 12
-    sample = max(LOWEST_MIDI_NOTE, min(HIGHEST_MIDI_NOTE, adjusted))
+    instrument = get_instrument(sound_prefix)
+    if instrument is None:
+        # 乐器未注册，无法播放音符
+        return None
+
+    if not instrument.in_range(midi_note):
+        # 超出该乐器音域，跳过
+        return None
+
+    offset = instrument.note_offset
+    adjusted = midi_note + offset
+
+    # 使用乐器的采样范围
+    sample_low = instrument.lowest_note + offset
+    sample_high = instrument.highest_note + offset
+    sample = max(sample_low, min(sample_high, adjusted))
+
     note_name = NOTE_NAMES[sample % 12]
     sample_octave = sample // 12 - 1
     if note_name.endswith("s"):
@@ -237,11 +303,7 @@ def _enforce_limit(new_pos):
         # 找出最远的音频
         farthest = max(_active_sessions, key=lambda s: _distance_sq(new_pos, s["pos"]))
 
-        # 停止正处于播放状态的音频
-        for mid in farthest.get("active_notes", {}).values():
-            _audio.StopCustomMusicById(mid, NOTE_OFF_FADE_OUT)
-        for mid in farthest.get("sustained_notes", {}).values():
-            _audio.StopCustomMusicById(mid, NOTE_OFF_FADE_OUT)
+        _stop_session_sounds(farthest)
 
         # 从 _active_sessions 中移除最远的会话
         _active_sessions.remove(farthest)
