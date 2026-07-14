@@ -15,9 +15,9 @@ def on_item_use_on_block(args):
     if args.get("ret"):
         return
 
-    item = args.get("itemDict") or {}
-    item_name = item.get("newItemName", "")
-    block_name = args.get("blockName", "")
+    item = args["itemDict"]
+    block_name = args["blockName"]
+    item_name = item["newItemName"]
 
     # 纸带右击音乐盒 → 播放曲目
     if is_paper_tape(item_name) and is_music_box(block_name) and can_use(args):
@@ -25,14 +25,35 @@ def on_item_use_on_block(args):
         args["ret"] = True
 
 
+def is_player_sneaking(player_id):
+    """
+    判断玩家是否按下了潜行键
+    """
+    player = factory.CreatePlayer(player_id)
+    return player.isSneaking()
+
+
 def can_use(args):
-    """通用冷却检查，防止短时间内重复触发。"""
-    player_id = args["entityId"]
-    mod_attr = factory.CreateModAttr(player_id)
-    now = time.time()
-    last = mod_attr.GetAttr(ITEM_COOLDOWN_KEY)
-    if last and now - last < 1.0:
+    """
+    先写一套自己的冷却判断机制
+    """
+    entity_id = args["entityId"]
+    extra_data = factory.CreateModAttr(entity_id)
+    timestamp = time.time()
+
+    # 冷却时间为 0.2 秒
+    if extra_data.GetAttr(ITEM_COOLDOWN_KEY) and timestamp - extra_data.GetAttr(ITEM_COOLDOWN_KEY) < 0.2:
         args["ret"] = True
         return False
-    mod_attr.SetAttr(ITEM_COOLDOWN_KEY, now, False, False)
-    return True
+    else:
+        extra_data.SetAttr(ITEM_COOLDOWN_KEY, timestamp, False, False)
+        return True
+
+
+def record_cooldown(player_id, extra_time=0):
+    """
+    有时候方块交互需要禁止下一帧的物品交互
+    """
+    extra_data = factory.CreateModAttr(player_id)
+    timestamp = time.time() + extra_time
+    extra_data.SetAttr(ITEM_COOLDOWN_KEY, timestamp, False, False)

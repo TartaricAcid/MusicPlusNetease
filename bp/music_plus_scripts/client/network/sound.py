@@ -5,7 +5,7 @@ from music_plus_scripts.client.music.midi_player import start_playback
 
 
 @AllowCall
-def play_music_box(args):
+def play_midi_music(args):
     """接收服务端发来的 MIDI 音符数据，在客户端启动 tick 驱动播放。
 
     Args 字典:

@@ -6,33 +6,37 @@
 每帧约 1/30 秒，通过比较 elapsed time 与事件时间戳来决定播放。
 
 核心数据流：
-  服务端解码 MIDI → 事件列表 [[time, type, channel, data1, data2], ...]
-  → 客户端缓存为 session → tick 事件逐帧驱动播放
+  → 服务端解码 MIDI
+  → 事件列表 [[time, type, channel, data1, data2], ...]
+  → 客户端缓存为 session
+  → tick 事件逐帧驱动播放
+
   type: 1=note_on, 0=note_off, 2=sustain_pedal
 """
 
 import math
-import time as _time
+import time
 
 from music_plus_scripts.QuModLibs.Client import *
+from music_plus_scripts.utils.midi_decoder import NOTE_ON, NOTE_OFF, SUSTAIN
 
 # ─── 音色映射常量 ───────────────────────────────────────────
-# 音乐盒可用采样音域: A4(69) ~ G#6(92)，共 24 个 .ogg 采样
-MUSICBOX_LOWEST_MIDI_NOTE = 69
-MUSICBOX_HIGHEST_MIDI_NOTE = 92
-MUSICBOX_NOTE_NAMES = (
+# 可用采样音域: A4(69) ~ G#6(92)，共 24 个 .ogg 采样
+LOWEST_MIDI_NOTE = 69
+HIGHEST_MIDI_NOTE = 92
+NOTE_NAMES = (
     "c", "cs", "d", "ds", "e", "f", "fs", "g", "gs", "a", "as", "b"
 )
 
 # ─── 播放配置 ───────────────────────────────────────────────
-MAX_CONCURRENT = 3          # 最多同时播放的会话数
-NOTE_VOLUME = 1.0           # 默认音量
-PLAYBACK_SPEED = 1.0        # 播放速度倍率 (1.0=原速, 2.0=两倍速, 0.5=半速)
+MAX_CONCURRENT = 3  # 最多同时播放的会话数
+NOTE_VOLUME = 1.0  # 默认音量
+PLAYBACK_SPEED = 1.0  # 播放速度倍率 (1.0=原速, 2.0=两倍速, 0.5=半速)
 
 # ─── 粒子效果 ───────────────────────────────────────────────
-NOTE_PARTICLE = "music_plus:note_particle"
-NOTE_PARTICLE_LIFETIME = 1.0
-NOTE_OFF_FADE_OUT = 0.05        # note_off 淡出时间（秒）
+NOTE_PARTICLE = "music_plus:note_particle"  # 音符粒子
+NOTE_PARTICLE_LIFETIME = 1.0  # 音符粒子存续时间，最长 1 秒
+NOTE_OFF_FADE_OUT = 0.05  # note_off 淡出时间（秒）
 
 # ─── 全局状态 ───────────────────────────────────────────────
 # 活跃的播放会话列表
@@ -48,13 +52,11 @@ NOTE_OFF_FADE_OUT = 0.05        # note_off 淡出时间（秒）
 # }
 _active_sessions = []
 
-factory = clientApi.GetEngineCompFactory()
-_game = factory.CreateGame(levelId)
-_audio = factory.CreateCustomAudio(levelId)
-_particle_sys = factory.CreateParticleSystem(levelId)
+_factory = clientApi.GetEngineCompFactory()
+_game = _factory.CreateGame(levelId)
+_audio = _factory.CreateCustomAudio(levelId)
+_particle_sys = _factory.CreateParticleSystem(levelId)
 
-
-# ─── 公开 API ───────────────────────────────────────────────
 
 def start_playback(notes, pos, sound_prefix, enable_note_off=True):
     """开始播放一组音符。
@@ -69,12 +71,14 @@ def start_playback(notes, pos, sound_prefix, enable_note_off=True):
     if not notes:
         return
 
+    # 先检查当前客户端音频是否超出了数量上限
     _enforce_limit(pos)
 
+    # 将音频转成 sessions 存入
     session = {
         "notes": notes,
         "ptr": 0,
-        "start_time": _time.time(),
+        "start_time": time.time(),
         "pos": tuple(pos),
         "sound_prefix": sound_prefix,
         "enable_note_off": enable_note_off,
@@ -92,20 +96,19 @@ def stop_all():
             _audio.StopCustomMusicById(mid, NOTE_OFF_FADE_OUT)
         for mid in session.get("sustained_notes", {}).values():
             _audio.StopCustomMusicById(mid, NOTE_OFF_FADE_OUT)
+
+    # 清空会话列表
     _active_sessions[:] = []
 
 
-# ─── tick 驱动核心 ──────────────────────────────────────────
-
-@Listen(Events.OnScriptTickClient)
-def _on_tick(_args={}):
-    """每帧检查并播放到达播放时间的事件。"""
+def on_music_tick():
+    # 没有音频时，直接返回
     if not _active_sessions:
         return
 
     finished = []
     for session in _active_sessions:
-        now = (_time.time() - session["start_time"]) * PLAYBACK_SPEED
+        now = (time.time() - session["start_time"]) * PLAYBACK_SPEED
         notes = session["notes"]
         ptr = session["ptr"]
         pos = session["pos"]
@@ -120,7 +123,8 @@ def _on_tick(_args={}):
             event = notes[ptr]
             etype, channel = event[1], event[2]
 
-            if etype == 1:  # note_on
+            # 音符播放
+            if etype == NOTE_ON:
                 midi_note, vel = event[3], event[4]
                 key = (channel, midi_note)
                 if note_off_enabled:
@@ -132,7 +136,7 @@ def _on_tick(_args={}):
                 if music_id and note_off_enabled:
                     active_notes[key] = music_id
 
-            elif etype == 0 and note_off_enabled:  # note_off
+            elif etype == NOTE_OFF and note_off_enabled:
                 midi_note = event[3]
                 key = (channel, midi_note)
                 music_id = active_notes.pop(key, None)
@@ -143,7 +147,7 @@ def _on_tick(_args={}):
                     else:
                         _audio.StopCustomMusicById(music_id, NOTE_OFF_FADE_OUT)
 
-            elif etype == 2 and note_off_enabled:  # sustain pedal
+            elif etype == SUSTAIN and note_off_enabled:
                 pedal_on = event[3]
                 if pedal_on:
                     pedal_state[channel] = True
@@ -174,23 +178,21 @@ def _on_tick(_args={}):
         _active_sessions.remove(s)
 
 
-# ─── 内部工具函数 ──────────────────────────────────────────
-
 def _play_note(midi_note, velocity, pos, sound_prefix):
-    """播放单个音符并生成粒子效果。返回 musicId 供后续停止使用。"""
     sound = _midi_to_sound(midi_note, sound_prefix)
-    music_id = _audio.PlayCustomMusic(
-        sound["name"],
-        pos,
-        NOTE_VOLUME * velocity,
-        sound["pitch"],
-        False,
-        None,
-    )
+
+    name = sound["name"]
+    pitch = sound["pitch"]
+    volume = NOTE_VOLUME * velocity
+
+    # 播放单个音符
+    music_id = _audio.PlayCustomMusic(name, pos, volume, pitch, False, None, )
+
     # 粒子效果
     particle_id = _particle_sys.Create(NOTE_PARTICLE, pos)
     if _particle_sys.EmitManually(particle_id):
         _game.AddTimer(NOTE_PARTICLE_LIFETIME, _remove_particle, particle_id)
+
     return music_id
 
 
@@ -209,8 +211,8 @@ def _midi_to_sound(midi_note, sound_prefix):
     因此将 MIDI 音符号上移 12 半音后再做映射。
     """
     adjusted = midi_note + 12
-    sample = max(MUSICBOX_LOWEST_MIDI_NOTE, min(MUSICBOX_HIGHEST_MIDI_NOTE, adjusted))
-    note_name = MUSICBOX_NOTE_NAMES[sample % 12]
+    sample = max(LOWEST_MIDI_NOTE, min(HIGHEST_MIDI_NOTE, adjusted))
+    note_name = NOTE_NAMES[sample % 12]
     sample_octave = sample // 12 - 1
     if note_name.endswith("s"):
         sound_name = "{}{}s".format(note_name[0], sample_octave)
@@ -228,13 +230,20 @@ def _enforce_limit(new_pos):
     超出限制时移除距离新播放位置最远的会话，并停止其活跃音符。
     """
     while len(_active_sessions) >= MAX_CONCURRENT:
+        # 如果没有活跃会话，直接退出
         if not _active_sessions:
             break
+
+        # 找出最远的音频
         farthest = max(_active_sessions, key=lambda s: _distance_sq(new_pos, s["pos"]))
+
+        # 停止正处于播放状态的音频
         for mid in farthest.get("active_notes", {}).values():
             _audio.StopCustomMusicById(mid, NOTE_OFF_FADE_OUT)
         for mid in farthest.get("sustained_notes", {}).values():
             _audio.StopCustomMusicById(mid, NOTE_OFF_FADE_OUT)
+
+        # 从 _active_sessions 中移除最远的会话
         _active_sessions.remove(farthest)
 
 
