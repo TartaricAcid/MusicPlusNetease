@@ -9,7 +9,7 @@ MIDI 音符号参考:
 """
 
 from music_plus_scripts.client.music.instrument_def import InstrumentDef
-from music_plus_scripts.client.music.instrument_map_builder import c_octave_a_sample, named_notes, percussion
+from music_plus_scripts.client.music.instrument_map_builder import c_octave_a_sample, named_notes, percussion, octave_up
 
 MUSIC_BOX = InstrumentDef(
     name="music_box",
@@ -28,7 +28,7 @@ STEINWAY = InstrumentDef(
     sound_prefix="music_plus.steinway",
     lowest_note=24,
     highest_note=108,
-    note_map=c_octave_a_sample(range(1, 9), 24, 108),
+    note_map=octave_up(c_octave_a_sample(range(1, 9), 24, 108)),
 )
 
 HARPSICHORD = InstrumentDef(
@@ -36,7 +36,7 @@ HARPSICHORD = InstrumentDef(
     sound_prefix="music_plus.harpsichord",
     lowest_note=36,
     highest_note=89,
-    note_map=c_octave_a_sample(range(2, 8), 36, 89),
+    note_map=octave_up(c_octave_a_sample(range(2, 8), 36, 89)),
 )
 
 CE_GUITAR = InstrumentDef(
@@ -44,7 +44,7 @@ CE_GUITAR = InstrumentDef(
     sound_prefix="music_plus.ce_guitar",
     lowest_note=40,
     highest_note=88,
-    note_map=c_octave_a_sample(range(3, 7), 40, 88),
+    note_map=octave_up(c_octave_a_sample(range(3, 7), 40, 88)),
 )
 
 NYLON_GUITAR = InstrumentDef(
@@ -52,7 +52,7 @@ NYLON_GUITAR = InstrumentDef(
     sound_prefix="music_plus.nylon_guitar",
     lowest_note=40,
     highest_note=88,
-    note_map=c_octave_a_sample(range(3, 7), 40, 88),
+    note_map=octave_up(c_octave_a_sample(range(3, 7), 40, 88)),
 )
 
 GUZHENG = InstrumentDef(
@@ -60,7 +60,7 @@ GUZHENG = InstrumentDef(
     sound_prefix="music_plus.guzheng",
     lowest_note=48,
     highest_note=84,
-    note_map=c_octave_a_sample(range(3, 7), 48, 84),
+    note_map=octave_up(c_octave_a_sample(range(3, 7), 48, 84)),
 )
 
 VIOLIN_SOLO = InstrumentDef(
@@ -68,7 +68,7 @@ VIOLIN_SOLO = InstrumentDef(
     sound_prefix="music_plus.violin_solo",
     lowest_note=55,
     highest_note=100,
-    note_map=c_octave_a_sample(range(4, 8), 55, 100),
+    note_map=octave_up(c_octave_a_sample(range(4, 8), 55, 100)),
 )
 
 REAL_KIT = InstrumentDef(

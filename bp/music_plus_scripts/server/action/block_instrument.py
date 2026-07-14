@@ -78,6 +78,9 @@ BLOCK_INSTRUMENT_REGISTRY = {
     },
 }
 
+factory = serverApi.GetEngineCompFactory()
+game = factory.CreateGame(levelId)
+
 
 def is_paper_tape(item_name):
     return item_name == PAPER_TAPE_ITEM
@@ -108,16 +111,7 @@ def handle_paper_tape_insert(args, instrument_config):
     use_obj.reduce_player_item(1)
     use_obj.swing_hand()
 
-    notes = _get_notes_from_tape(tape_item)
-    if not notes:
-        return
-
-    use_obj.send_msg("play_midi_music", {
-        "notes": notes,
-        "pos": use_obj.get_pos(),
-        "sound_prefix": instrument_config["sound_prefix"],
-        "enable_note_off": instrument_config["enable_note_off"],
-    })
+    game.AddTimer(0.2, _play_midi_sound, instrument_config, tape_item, use_obj)
 
 
 def handle_block_instrument_remove(args):
@@ -176,7 +170,21 @@ def _get_notes_from_tape(item_dict):
     如果纸带没有写入自定义数据，返回默认测试音阶。
     """
     custom_data = item_dict.get("userData") or {}
-    midi_b64 = custom_data.get("midi", "") or DEFAULT_MIDI_BASE64
-    if midi_b64:
-        return decode_midi_base64(midi_b64)
-    return []
+
+    if "midi" in custom_data:
+        midi_b64 = custom_data["midi"]["__value__"]
+    else:
+        midi_b64 = DEFAULT_MIDI_BASE64
+
+    return decode_midi_base64(midi_b64)
+
+
+def _play_midi_sound(instrument_config, tape_item, use_obj):
+    notes = _get_notes_from_tape(tape_item)
+    if notes:
+        use_obj.send_msg("play_midi_music", {
+            "notes": notes,
+            "pos": use_obj.get_pos(),
+            "sound_prefix": instrument_config["sound_prefix"],
+            "enable_note_off": instrument_config["enable_note_off"],
+        })

@@ -6,6 +6,7 @@ from music_plus_scripts.QuModLibs.Server import *
 from music_plus_scripts.server.action.block_instrument import is_paper_tape, get_block_instrument, handle_paper_tape_insert
 
 factory = serverApi.GetEngineCompFactory()
+game = factory.CreateGame(levelId)
 
 ITEM_COOLDOWN_KEY = "music_plus:item_use_cooldown"
 
