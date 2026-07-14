@@ -31,7 +31,7 @@ MAX_PITCH = 256.0
 # ─── 距离检测 ───────────────────────────────────────────────
 MAX_START_DISTANCE = 64  # 开始播放时，超过此距离则忽略
 MAX_LISTEN_DISTANCE = 72  # tick 中检查，超过此距离则中断播放
-DISTANCE_CHECK_INTERVAL = 29  # 每隔多少 tick 检查一次距离
+DISTANCE_CHECK_INTERVAL = 61  # 每隔多少 tick 检查一次距离
 
 # ─── 粒子效果 ───────────────────────────────────────────────
 NOTE_PARTICLE = "music_plus:note_particle"  # 音符粒子
@@ -131,7 +131,7 @@ def on_music_tick():
     global _distance_check_tick
     _distance_check_tick += 1
 
-    # 每 29 tick 检查一次玩家距离，超出 72 格的会话直接中断
+    # 每一定 tick 检查一次玩家距离，超出 72 格的会话直接中断
     if _distance_check_tick >= DISTANCE_CHECK_INTERVAL:
         player_pos = _factory.CreatePos(playerId).GetPos()
 
