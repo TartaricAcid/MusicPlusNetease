@@ -2,8 +2,8 @@
 
 import copy
 
-from ktavern_scripts.QuModLibs.Server import *
-from ktavern_scripts.server.utils.item_utils import item_dict_is_empty, item_has_tag
+from music_plus_scripts.QuModLibs.Server import *
+from music_plus_scripts.server.utils.item_utils import item_dict_is_empty, item_has_tag
 
 
 class ItemObject(object):

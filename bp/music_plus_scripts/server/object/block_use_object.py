@@ -4,14 +4,14 @@
 由于网易的设计过度封装且面向过程，导致方块交互相关的参数获取异常复杂。
 本模块用于简化方块交互相关参数的传递。
 """
-from ktavern_scripts.QuModLibs.Server import *
-from ktavern_scripts.server.object.block_object import BlockObject
-from ktavern_scripts.server.object.item_object import ItemObject
-from ktavern_scripts.server.object.player_object import PlayerObject
-from ktavern_scripts.server.utils.item_utils import give_player_item_dict, copy_with_count, reduce_carried_item_num, \
+from music_plus_scripts.QuModLibs.Server import *
+from music_plus_scripts.server.object.block_object import BlockObject
+from music_plus_scripts.server.object.item_object import ItemObject
+from music_plus_scripts.server.object.player_object import PlayerObject
+from music_plus_scripts.server.utils.item_utils import give_player_item_dict, copy_with_count, reduce_carried_item_num, \
     consume_mainhand_durability
-from ktavern_scripts.server.utils.sound_utils import get_sound_msg
-from ktavern_scripts.utils.blocks import REPLACEABLE, FACE_OFFSETS
+from music_plus_scripts.server.utils.sound_utils import get_sound_msg
+from music_plus_scripts.utils.blocks import REPLACEABLE, FACE_OFFSETS
 
 if 0 > 1:
     from typing import *

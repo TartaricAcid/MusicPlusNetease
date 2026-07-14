@@ -12,5 +12,6 @@ MUSIC_PLUS_MOD.Server("server.event.item_use")
 MUSIC_PLUS_MOD.Client("client.client")
 # 客户端网络
 MUSIC_PLUS_MOD.Client("client.network.sound")
+MUSIC_PLUS_MOD.Client("client.network.player")
 # 事件注册
 MUSIC_PLUS_MOD.Client("client.event.tick")

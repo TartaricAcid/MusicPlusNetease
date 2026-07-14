@@ -3,6 +3,10 @@
 from music_plus_scripts.QuModLibs.Client import *
 from music_plus_scripts.client.music.midi_player import start_playback
 
+factory = clientApi.GetEngineCompFactory()
+level_id = clientApi.GetLevelId()
+audio = factory.CreateCustomAudio(level_id)
+
 
 @AllowCall
 def play_midi_music(args):
@@ -20,3 +24,26 @@ def play_midi_music(args):
     enable_note_off = args.get("enable_note_off", True)
     if notes:
         start_playback(notes, pos, sound_prefix, enable_note_off)
+
+
+@AllowCall
+def play_sound(args):
+    pos = args["pos"]
+    sound = args["sound"]
+    name = sound.get("name", "random.explode")
+    volume = sound.get("volume", 1.0)
+    pitch = sound.get("pitch", 1.0)
+    loop = sound.get("loop", False)
+
+    audio.PlayCustomMusic(name, pos, volume, pitch, loop, None)
+
+
+@AllowCall
+def play_sound_and_swing_hand(args):
+    if "sound" in args:
+        play_sound(args)
+
+    player_id = args["player_id"]
+    if player_id == clientApi.GetLocalPlayerId():
+        player = factory.CreatePlayer(level_id)
+        player.Swing()

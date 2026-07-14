@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from ktavern_scripts.QuModLibs.Server import *
+from music_plus_scripts.QuModLibs.Server import *
 
-from ktavern_scripts.server.utils.item_utils import copy_with_count
+from music_plus_scripts.server.utils.item_utils import copy_with_count
 
 if 0 > 1:
     from typing import *

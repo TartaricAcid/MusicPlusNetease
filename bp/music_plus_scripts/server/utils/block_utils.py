@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from ktavern_scripts.QuModLibs.Server import *
+from music_plus_scripts.QuModLibs.Server import *
 
 factory = serverApi.GetEngineCompFactory()
 mc_enum = serverApi.GetMinecraftEnum()

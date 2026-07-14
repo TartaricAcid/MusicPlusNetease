@@ -5,9 +5,9 @@
 本模块用于简化方块交互相关参数的传递。
 """
 
-from ktavern_scripts.QuModLibs.Server import *
-from ktavern_scripts.server.utils.block_utils import be_data_fix
-from ktavern_scripts.server.utils.item_utils import item_dict_is_empty
+from music_plus_scripts.QuModLibs.Server import *
+from music_plus_scripts.server.utils.block_utils import be_data_fix
+from music_plus_scripts.server.utils.item_utils import item_dict_is_empty
 
 if 0 > 1:
     from typing import *

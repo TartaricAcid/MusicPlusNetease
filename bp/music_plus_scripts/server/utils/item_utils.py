@@ -2,9 +2,7 @@
 import ast
 import copy
 
-from typing import *
-
-from ktavern_scripts.QuModLibs.Server import *
+from music_plus_scripts.QuModLibs.Server import *
 
 factory = serverApi.GetEngineCompFactory()
 mc_enum = serverApi.GetMinecraftEnum()

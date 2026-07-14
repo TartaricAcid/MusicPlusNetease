@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from ktavern_scripts.server.object.block_use_object import BlockUseObject
+from music_plus_scripts.server.object.block_use_object import BlockUseObject
 
 
 class ItemUseBlockObject(BlockUseObject):

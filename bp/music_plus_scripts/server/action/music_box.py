@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from music_plus_scripts.QuModLibs.Server import *
-from music_plus_scripts.utils.midi_decoder import decode_midi_base64
+from music_plus_scripts.mido.midi_decoder import decode_midi_base64
+from music_plus_scripts.server.object.item_use_block_object import ItemUseBlockObject
 
 PAPER_TAPE_ITEM = "music_plus:paper_tape"
 MUSIC_BOX_BLOCK = "music_plus:music_plus_music_box"
@@ -28,7 +28,7 @@ def is_music_box(block_name):
 
 def handle_music_box_play(args):
     """处理纸带右击音乐盒：提取 MIDI 数据，解码后发送到客户端播放。"""
-    player_id = args["entityId"]
+    use_obj = ItemUseBlockObject(args)
     item = args["itemDict"]
 
     notes = _get_notes_from_tape(item)
@@ -36,13 +36,14 @@ def handle_music_box_play(args):
         return
 
     pos = (args["x"] + 0.5, args["y"] + 1.0, args["z"] + 0.5)
-    Call(player_id, "play_midi_music", {
+    use_obj.send_msg("play_midi_music", {
         "notes": notes,
         "pos": pos,
         "sound_prefix": MUSIC_BOX_SOUND_PREFIX,
         # 八音盒采样自然衰减，无需响应 note_off / sustain_pedal 中断
         "enable_note_off": False,
     })
+    use_obj.swing_hand()
 
 
 def _get_notes_from_tape(item_dict):

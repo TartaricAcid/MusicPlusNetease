@@ -18,7 +18,7 @@ import math
 import time
 
 from music_plus_scripts.QuModLibs.Client import *
-from music_plus_scripts.utils.midi_decoder import NOTE_ON, NOTE_OFF, SUSTAIN
+from music_plus_scripts.mido.midi_decoder import NOTE_ON, NOTE_OFF, SUSTAIN
 
 # ─── 音色映射常量 ───────────────────────────────────────────
 # 可用采样音域: A4(69) ~ G#6(92)，共 24 个 .ogg 采样

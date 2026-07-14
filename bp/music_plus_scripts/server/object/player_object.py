@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-from ktavern_scripts.QuModLibs.Server import *
-from ktavern_scripts.server.object.entity_object import EntityObject
-from ktavern_scripts.server.utils.item_utils import give_player_item_dict, copy_with_count, reduce_carried_item_num
-from ktavern_scripts.server.utils.sound_utils import get_sound_msg
+from music_plus_scripts.QuModLibs.Server import *
+from music_plus_scripts.server.object.entity_object import EntityObject
+from music_plus_scripts.server.utils.item_utils import give_player_item_dict, copy_with_count, reduce_carried_item_num
+from music_plus_scripts.server.utils.sound_utils import get_sound_msg
 
 if 0 > 1:
     pass

@@ -7,7 +7,7 @@
     },
     "components": {
       "netease:customtips": {
-        "value": "§o§8写入 ABC 格式歌曲，然后塞入音乐盒播放"
+        "value": "§o§8写入 base64 midi 格式歌曲， 然后塞入音乐盒播放"
       }
     }
   }
