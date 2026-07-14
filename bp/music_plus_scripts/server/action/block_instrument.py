@@ -42,7 +42,39 @@ DEFAULT_MIDI_BASE64 = (
 BLOCK_INSTRUMENT_REGISTRY = {
     "music_plus:music_plus_music_box": {
         "sound_prefix": "music_plus.music_box",
-        "enable_note_off": False,  # 八音盒采样自然衰减，无需截断
+        "enable_note_off": False,
+    },
+    "music_plus:music_plus_steinway": {
+        "sound_prefix": "music_plus.steinway",
+        "enable_note_off": True,
+    },
+    "music_plus:music_plus_harpsichord": {
+        "sound_prefix": "music_plus.harpsichord",
+        "enable_note_off": True,
+    },
+    "music_plus:music_plus_ce_guitar": {
+        "sound_prefix": "music_plus.ce_guitar",
+        "enable_note_off": True,
+    },
+    "music_plus:music_plus_nylon_guitar": {
+        "sound_prefix": "music_plus.nylon_guitar",
+        "enable_note_off": True,
+    },
+    "music_plus:music_plus_guzheng": {
+        "sound_prefix": "music_plus.guzheng",
+        "enable_note_off": True,
+    },
+    "music_plus:music_plus_violin_solo": {
+        "sound_prefix": "music_plus.violin_solo",
+        "enable_note_off": True,
+    },
+    "music_plus:music_plus_real_kit": {
+        "sound_prefix": "music_plus.real_kit",
+        "enable_note_off": False,
+    },
+    "music_plus:music_plus_linn_kit": {
+        "sound_prefix": "music_plus.linn_kit",
+        "enable_note_off": False,
     },
 }
 

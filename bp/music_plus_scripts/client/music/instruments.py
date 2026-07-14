@@ -42,17 +42,17 @@ HARPSICHORD = InstrumentDef(
 CE_GUITAR = InstrumentDef(
     name="ce_guitar",
     sound_prefix="music_plus.ce_guitar",
-    lowest_note=48,
+    lowest_note=40,
     highest_note=88,
-    note_map=c_octave_a_sample(range(3, 7), 48, 88),
+    note_map=c_octave_a_sample(range(3, 7), 40, 88),
 )
 
 NYLON_GUITAR = InstrumentDef(
     name="nylon_guitar",
     sound_prefix="music_plus.nylon_guitar",
-    lowest_note=48,
+    lowest_note=40,
     highest_note=88,
-    note_map=c_octave_a_sample(range(3, 7), 48, 88),
+    note_map=c_octave_a_sample(range(3, 7), 40, 88),
 )
 
 GUZHENG = InstrumentDef(
@@ -66,9 +66,9 @@ GUZHENG = InstrumentDef(
 VIOLIN_SOLO = InstrumentDef(
     name="violin_solo",
     sound_prefix="music_plus.violin_solo",
-    lowest_note=60,
+    lowest_note=55,
     highest_note=100,
-    note_map=c_octave_a_sample(range(4, 8), 60, 100),
+    note_map=c_octave_a_sample(range(4, 8), 55, 100),
 )
 
 REAL_KIT = InstrumentDef(

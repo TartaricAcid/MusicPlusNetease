@@ -4,6 +4,30 @@
   "texture_data": {
     "music_plus:music_box": {
       "textures": "textures/music_plus/block/music_box"
+    },
+    "music_plus:steinway": {
+      "textures": "textures/music_plus/block/music_box"
+    },
+    "music_plus:harpsichord": {
+      "textures": "textures/music_plus/block/music_box"
+    },
+    "music_plus:ce_guitar": {
+      "textures": "textures/music_plus/block/music_box"
+    },
+    "music_plus:nylon_guitar": {
+      "textures": "textures/music_plus/block/music_box"
+    },
+    "music_plus:guzheng": {
+      "textures": "textures/music_plus/block/music_box"
+    },
+    "music_plus:violin_solo": {
+      "textures": "textures/music_plus/block/music_box"
+    },
+    "music_plus:real_kit": {
+      "textures": "textures/music_plus/block/music_box"
+    },
+    "music_plus:linn_kit": {
+      "textures": "textures/music_plus/block/music_box"
     }
   }
 }
