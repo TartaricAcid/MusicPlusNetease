@@ -21,17 +21,12 @@ from music_plus_scripts.QuModLibs.Client import *
 from music_plus_scripts.client.music.instruments import get_instrument
 from music_plus_scripts.mido.midi_decoder import NOTE_ON, NOTE_OFF, SUSTAIN
 
-# ─── 音色映射常量 ───────────────────────────────────────────
-# 采样音域由 instruments.py 中的乐器定义决定
-# 以下仅作为音名映射查找表
-NOTE_NAMES = (
-    "c", "cs", "d", "ds", "e", "f", "fs", "g", "gs", "a", "as", "b"
-)
-
 # ─── 播放配置 ───────────────────────────────────────────────
 MAX_CONCURRENT = 3  # 最多同时播放的会话数
 NOTE_VOLUME = 1.0  # 默认音量
 PLAYBACK_SPEED = 1.0  # 播放速度倍率 (1.0=原速, 2.0=两倍速, 0.5=半速)
+MIN_PITCH = 0.0
+MAX_PITCH = 256.0
 
 # ─── 距离检测 ───────────────────────────────────────────────
 MAX_START_DISTANCE = 64  # 开始播放时，超过此距离则忽略
@@ -257,36 +252,23 @@ def _midi_to_sound(midi_note, sound_prefix):
     根据乐器定义检查音域范围：
     - 若已注册乐器且音符超出可播放范围，返回 None（跳过该音符）。
     - 若乐器未注册（不太可能）直接返回 None
-
-    note_offset 用于补偿采样文件实际音高与标注的偏差，
-    例如八音盒采样比标注低一个八度，note_offset=12。
     """
     instrument = get_instrument(sound_prefix)
     if instrument is None:
         # 乐器未注册，无法播放音符
         return None
 
-    if not instrument.in_range(midi_note):
-        # 超出该乐器音域，跳过
+    resolved = instrument.resolve(midi_note)
+    if resolved is None:
+        # 超出该乐器音域或未映射，跳过
         return None
 
-    offset = instrument.note_offset
-    adjusted = midi_note + offset
-
-    # 使用乐器的采样范围
-    sample_low = instrument.lowest_note + offset
-    sample_high = instrument.highest_note + offset
-    sample = max(sample_low, min(sample_high, adjusted))
-
-    note_name = NOTE_NAMES[sample % 12]
-    sample_octave = sample // 12 - 1
-    if note_name.endswith("s"):
-        sound_name = "{}{}s".format(note_name[0], sample_octave)
-    else:
-        sound_name = "{}{}".format(note_name, sample_octave)
+    sound_name, semitone = resolved
+    pitch = math.pow(2.0, semitone / 12.0)
+    pitch = max(MIN_PITCH, min(MAX_PITCH, pitch))
     return {
         "name": "{}.{}".format(sound_prefix, sound_name),
-        "pitch": math.pow(2.0, (adjusted - sample) / 12.0),
+        "pitch": pitch,
     }
 
 

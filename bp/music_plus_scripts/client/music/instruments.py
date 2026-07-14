@@ -2,40 +2,104 @@
 
 """乐器注册表
 
-所有可用乐器及其音域范围定义在此处。
-播放时超出该乐器音域的音符将被跳过，不做 pitch 补偿。
+所有可用乐器及其 MIDI note 到声音文件的映射定义在此处。
 
 MIDI 音符号参考:
   C4=60, A4=69, C5=72, C6=84, C7=96
-
-注意：这里的音域指的是"采样文件实际覆盖的 MIDI 音符范围"，
-即经过 +12 半音校正后的有效范围（因为采样文件实际音高比文件名低一个八度）。
 """
 
 from music_plus_scripts.client.music.instrument_def import InstrumentDef
+from music_plus_scripts.client.music.instrument_map_builder import c_octave_a_sample, named_notes, percussion
 
-# 八音盒: 采样 A4(69) ~ G#6(92)，共 24 个半音
 MUSIC_BOX = InstrumentDef(
     name="music_box",
     sound_prefix="music_plus.music_box",
-    lowest_note=57,  # A3 (adjusted 后为 A4=69)
-    highest_note=80,  # G#5 (adjusted 后为 G#6=92)
-    pitch_shift_range=0,
-    note_offset=12,  # 采样文件实际音高比文件名标注低一个八度
+    lowest_note=57,
+    highest_note=80,
+    note_map=named_notes(57, (
+        "a4", "a4s", "b4", "c5", "c5s", "d5", "d5s", "e5",
+        "f5", "f5s", "g5", "g5s", "a5", "a5s", "b5", "c6",
+        "c6s", "d6", "d6s", "e6", "f6", "f6s", "g6", "g6s",
+    )),
+)
+
+STEINWAY = InstrumentDef(
+    name="steinway",
+    sound_prefix="music_plus.steinway",
+    lowest_note=24,
+    highest_note=108,
+    note_map=c_octave_a_sample(range(1, 9), 24, 108),
+)
+
+HARPSICHORD = InstrumentDef(
+    name="harpsichord",
+    sound_prefix="music_plus.harpsichord",
+    lowest_note=36,
+    highest_note=89,
+    note_map=c_octave_a_sample(range(2, 8), 36, 89),
+)
+
+CE_GUITAR = InstrumentDef(
+    name="ce_guitar",
+    sound_prefix="music_plus.ce_guitar",
+    lowest_note=48,
+    highest_note=88,
+    note_map=c_octave_a_sample(range(3, 7), 48, 88),
+)
+
+NYLON_GUITAR = InstrumentDef(
+    name="nylon_guitar",
+    sound_prefix="music_plus.nylon_guitar",
+    lowest_note=48,
+    highest_note=88,
+    note_map=c_octave_a_sample(range(3, 7), 48, 88),
+)
+
+GUZHENG = InstrumentDef(
+    name="guzheng",
+    sound_prefix="music_plus.guzheng",
+    lowest_note=48,
+    highest_note=84,
+    note_map=c_octave_a_sample(range(3, 7), 48, 84),
+)
+
+VIOLIN_SOLO = InstrumentDef(
+    name="violin_solo",
+    sound_prefix="music_plus.violin_solo",
+    lowest_note=60,
+    highest_note=100,
+    note_map=c_octave_a_sample(range(4, 8), 60, 100),
+)
+
+REAL_KIT = InstrumentDef(
+    name="real_kit",
+    sound_prefix="music_plus.real_kit",
+    lowest_note=35,
+    highest_note=51,
+    note_map=percussion("real", True),
+)
+
+LINN_KIT = InstrumentDef(
+    name="linn_kit",
+    sound_prefix="music_plus.linn_kit",
+    lowest_note=35,
+    highest_note=51,
+    note_map=percussion("linn", False),
 )
 
 _REGISTRY = {
     MUSIC_BOX.sound_prefix: MUSIC_BOX,
+    STEINWAY.sound_prefix: STEINWAY,
+    HARPSICHORD.sound_prefix: HARPSICHORD,
+    CE_GUITAR.sound_prefix: CE_GUITAR,
+    NYLON_GUITAR.sound_prefix: NYLON_GUITAR,
+    GUZHENG.sound_prefix: GUZHENG,
+    VIOLIN_SOLO.sound_prefix: VIOLIN_SOLO,
+    REAL_KIT.sound_prefix: REAL_KIT,
+    LINN_KIT.sound_prefix: LINN_KIT,
 }
 
 
 def get_instrument(sound_prefix):
-    """根据 sound_prefix 获取对应的乐器定义。
-
-    Args:
-        sound_prefix: 声音 ID 前缀，如 "music_plus.music_box"
-
-    Returns:
-        InstrumentDef 实例，若未注册则返回 None（此时播放器不做音域过滤）。
-    """
+    """根据 sound_prefix 获取对应的乐器定义。"""
     return _REGISTRY.get(sound_prefix)
