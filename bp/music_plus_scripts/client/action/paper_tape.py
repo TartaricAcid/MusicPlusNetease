@@ -7,7 +7,7 @@ from music_plus_scripts.QuModLibs.Client import *
 from music_plus_scripts.mido import MidiFile
 
 PAPER_TAPE_ITEM = "music_plus:paper_tape"
-SONG_NAME_NBT_KEY = "song_name"
+MIDI_MD5_NBT_KEY = "midi_md5"
 
 factory = clientApi.GetEngineCompFactory()
 game_comp = factory.CreateGame(levelId)
@@ -21,7 +21,7 @@ def test_record_midi(args):
     item_dict = args["itemDict"]
 
     user_data = item_dict.get("userData") or {}
-    if "midi" in user_data:
+    if MIDI_MD5_NBT_KEY in user_data:
         game_comp.SetTipMessage("纸带已经写入过 MIDI 数据，无法再次写入")
         return
 

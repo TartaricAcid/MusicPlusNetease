@@ -48,6 +48,9 @@
       },
       "netease:redstone_property": {
         "value": "break_on_push"
+      },
+      "netease:redstone": {
+        "type": "consumer"
       }
     },
     "permutations": [

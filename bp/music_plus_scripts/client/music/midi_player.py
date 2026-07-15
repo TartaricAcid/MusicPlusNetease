@@ -25,6 +25,7 @@ from music_plus_scripts.mido.midi_decoder import NOTE_ON, NOTE_OFF, SUSTAIN
 MAX_CONCURRENT = 3  # 最多同时播放的会话数
 NOTE_VOLUME = 1.0  # 默认音量
 PLAYBACK_SPEED = 1.0  # 播放速度倍率 (1.0=原速, 2.0=两倍速, 0.5=半速)
+NOTE_OFF_FADE_OUT = 0.2  # note_off 淡出时间（秒）
 MIN_PITCH = 0.0
 MAX_PITCH = 256.0
 
@@ -36,7 +37,6 @@ DISTANCE_CHECK_INTERVAL = 61  # 每隔多少 tick 检查一次距离
 # ─── 粒子效果 ───────────────────────────────────────────────
 NOTE_PARTICLE = "music_plus:note_particle"  # 音符粒子
 NOTE_PARTICLE_LIFETIME = 1.0  # 音符粒子存续时间，最长 1 秒
-NOTE_OFF_FADE_OUT = 0.05  # note_off 淡出时间（秒）
 
 # ─── 全局状态 ───────────────────────────────────────────────
 # 活跃的播放会话列表

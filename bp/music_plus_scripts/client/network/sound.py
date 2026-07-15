@@ -2,6 +2,7 @@
 
 from music_plus_scripts.QuModLibs.Client import *
 from music_plus_scripts.client.music.midi_player import start_playback, stop_at_pos
+from music_plus_scripts.mido.midi_decoder import decode_midi_base64
 
 factory = clientApi.GetEngineCompFactory()
 level_id = clientApi.GetLevelId()
@@ -10,15 +11,18 @@ audio = factory.CreateCustomAudio(level_id)
 
 @AllowCall
 def play_midi_music(args):
-    """接收服务端发来的 MIDI 音符数据，在客户端启动 tick 驱动播放。
+    """接收服务端发来的 MIDI 数据，在客户端启动 tick 驱动播放。
 
     Args 字典:
+        midi: base64 编码的 MIDI 文件字符串
         notes: 音符列表 [[time, type, channel, midi_note, velocity], ...]
         pos: (x, y, z) 音乐盒方块位置
         sound_prefix: 声音 ID 前缀，如 "music_plus.music_box"
         enable_note_off: 是否响应 note_off / sustain_pedal 中断（默认 True）
     """
     notes = args.get("notes", [])
+    if not notes and args.get("midi"):
+        notes = decode_midi_base64(args["midi"])
     pos = args.get("pos", (0, 0, 0))
     sound_prefix = args.get("sound_prefix", "music_plus.music_box")
     enable_note_off = args.get("enable_note_off", True)

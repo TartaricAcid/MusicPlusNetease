@@ -3,7 +3,7 @@
 """方块乐器通用处理模块
 
 纸带右击方块乐器时，根据方块 ID 查找对应的乐器配置，
-解码 MIDI 数据并发送到客户端播放。
+读取 MIDI 数据并发送到客户端播放。
 
 新增方块乐器只需在 BLOCK_INSTRUMENT_REGISTRY 中注册即可。
 """
@@ -11,14 +11,16 @@
 import ast
 
 from music_plus_scripts.QuModLibs.Server import *
-from music_plus_scripts.mido.midi_decoder import decode_midi_base64
 from music_plus_scripts.server.object.block_object import BlockObject
 from music_plus_scripts.server.object.block_use_object import BlockUseObject
 from music_plus_scripts.server.object.item_use_block_object import ItemUseBlockObject
+from music_plus_scripts.server.action.paper_tape_store import get_midi
 from music_plus_scripts.server.utils.item_utils import item_dict_is_empty
 
 PAPER_TAPE_ITEM = "music_plus:paper_tape"
 PAPER_TAPE_DATA_KEY = "music_plus:paper_tape"
+REDSTONE_PLAYING_DATA_KEY = "music_plus:redstone_playing"
+MIDI_MD5_NBT_KEY = "midi_md5"
 
 # 默认测试曲目的 base64 MIDI（纸带无自定义数据时使用）
 DEFAULT_MIDI_BASE64 = (
@@ -97,7 +99,7 @@ def handle_paper_tape_insert(args, instrument_config):
     if item_obj.is_empty():
         return
 
-    use_obj.send_msg("stop_music_at_pos")
+    _stop_midi_sound(use_obj)
 
     old_tape = get_stored_paper_tape(use_obj)
     if not item_dict_is_empty(old_tape):
@@ -119,9 +121,28 @@ def handle_block_instrument_remove(args):
     tape = get_stored_paper_tape(block)
     if not item_dict_is_empty(tape):
         block.drop_items(tape)
-    Call("*", "stop_music_at_pos", {
-        "pos": block.get_pos()
-    })
+    _stop_midi_sound(block)
+
+
+def handle_block_instrument_redstone(args, instrument_config):
+    block = BlockObject(args)
+    new_strength = args.get("newStrength", 0)
+    old_strength = args.get("oldStrength", 0)
+
+    if old_strength <= 0 < new_strength:
+        be_data = block.get_block_entity_data()
+        is_playing = be_data[REDSTONE_PLAYING_DATA_KEY] or False
+        is_playing = not is_playing
+        be_data[REDSTONE_PLAYING_DATA_KEY] = is_playing
+        block.set_block_entity_data(be_data)
+
+        if is_playing:
+            _stop_midi_sound(block)
+            tape = get_stored_paper_tape(block)
+            if not item_dict_is_empty(tape):
+                _play_midi_sound(instrument_config, tape, block)
+        else:
+            _stop_midi_sound(block)
 
 
 def handle_paper_tape_takeout(args):
@@ -143,9 +164,7 @@ def handle_paper_tape_takeout(args):
     be_data[PAPER_TAPE_DATA_KEY] = None
     use_obj.set_block_entity_data(be_data)
 
-    Call("*", "stop_music_at_pos", {
-        "pos": use_obj.get_pos()
-    })
+    _stop_midi_sound(use_obj)
 
     use_obj.drop_items(tape)
     use_obj.cancel()
@@ -163,28 +182,32 @@ def get_stored_paper_tape(block):
     return ast.literal_eval(tape_data)
 
 
-def _get_notes_from_tape(item_dict):
-    """从纸带物品的 userData 中提取 MIDI 数据并解码为音符列表。
-
-    userData 中应包含 "midi" 键，值为 base64 编码的 MIDI 文件字符串。
-    如果纸带没有写入自定义数据，返回默认测试音阶。
-    """
+def _get_midi_from_tape(item_dict):
+    """从纸带 userData 中读取 MIDI 索引，并从服务端存档回查 MIDI 数据。"""
     custom_data = item_dict.get("userData") or {}
+    if MIDI_MD5_NBT_KEY not in custom_data:
+        return DEFAULT_MIDI_BASE64
 
-    if "midi" in custom_data:
-        midi_b64 = custom_data["midi"]["__value__"]
+    midi_md5 = custom_data[MIDI_MD5_NBT_KEY]["__value__"]
+    midi_b64 = get_midi(midi_md5)
+    if midi_b64 is None:
+        return DEFAULT_MIDI_BASE64
     else:
-        midi_b64 = DEFAULT_MIDI_BASE64
-
-    return decode_midi_base64(midi_b64)
+        return midi_b64
 
 
 def _play_midi_sound(instrument_config, tape_item, use_obj):
-    notes = _get_notes_from_tape(tape_item)
-    if notes:
-        use_obj.send_msg("play_midi_music", {
-            "notes": notes,
+    midi_b64 = _get_midi_from_tape(tape_item)
+    if midi_b64:
+        Call("*", "play_midi_music", {
+            "midi": midi_b64,
             "pos": use_obj.get_pos(),
             "sound_prefix": instrument_config["sound_prefix"],
             "enable_note_off": instrument_config["enable_note_off"],
         })
+
+
+def _stop_midi_sound(block):
+    Call("*", "stop_music_at_pos", {
+        "pos": block.get_pos()
+    })
