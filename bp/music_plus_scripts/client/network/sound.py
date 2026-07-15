@@ -16,12 +16,14 @@ def play_midi_music(args):
         midi: MIDI payload 字典
         pos: (x, y, z) 音乐盒方块位置
         sound_prefix: 声音 ID 前缀，如 "music_plus.music_box"
+        instrument_group: Program Change 可使用的乐器组
         enable_note_off: 是否响应 note_off / sustain_pedal 中断（默认 True）
     """
     play_midi_music_data(
         args["midi"],
         args.get("pos", (0, 0, 0)),
         args.get("sound_prefix", "music_plus.music_box"),
+        args.get("instrument_group", "music_box"),
         args.get("enable_note_off", True),
         args.get("midi_md5"),
     )

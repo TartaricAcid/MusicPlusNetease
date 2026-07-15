@@ -7,7 +7,7 @@
 
 核心数据流：
   → 客户端后台解码 MIDI
-  → 事件列表 [[time, type, channel, data1, data2], ...]
+  → 事件列表 [[time, type, channel, data1, data2, program], ...]
   → 客户端缓存为 session
   → tick 事件逐帧驱动播放
 
@@ -18,11 +18,12 @@ import math
 import time
 
 from music_plus_scripts.QuModLibs.Client import *
+from music_plus_scripts.client.music.gm_program_map import resolve_program_sound_prefix
 from music_plus_scripts.client.music.instruments import get_instrument
 from music_plus_scripts.mido.midi_decoder import NOTE_ON, NOTE_OFF, SUSTAIN
 
 # ─── 播放配置 ───────────────────────────────────────────────
-MAX_CONCURRENT = 8  # 最多同时播放的会话数
+MAX_CONCURRENT = 16  # 最多同时播放的会话数
 NOTE_VOLUME = 1.0  # 默认音量
 PLAYBACK_SPEED = 1.0  # 播放速度倍率 (1.0=原速, 2.0=两倍速, 0.5=半速)
 NOTE_OFF_FADE_OUT = 0.2  # note_off 淡出时间（秒）
@@ -44,11 +45,12 @@ NOTE_PARTICLE_LIFETIME = 1.0  # 音符粒子存续时间，最长 1 秒
 # ─── 全局状态 ───────────────────────────────────────────────
 # 活跃的播放会话列表
 # 每个会话: {
-#     "notes": [[t, type, ch, d1, d2], ...], 按时间排序的事件列表
+#     "notes": [[t, type, ch, d1, d2, program], ...], 按时间排序的事件列表
 #     "ptr": int,                        当前播放指针
 #     "start_time": float,               播放开始的 time.time()
 #     "pos": (x, y, z),                  播放位置
 #     "sound_prefix": str,               声音 ID 前缀
+#     "instrument_group": str,           Program Change 可用乐器组
 #     "active_notes": {},                活跃音符 {(channel, note): musicId}
 #     "pedal_state": {},                 踏板状态 {channel: bool}
 #     "sustained_notes": {},             踏板延音中的音符 {(channel, note): musicId}
@@ -65,13 +67,14 @@ _audio = _factory.CreateCustomAudio(levelId)
 _particle_sys = _factory.CreateParticleSystem(levelId)
 
 
-def start_playback(notes, pos, sound_prefix, enable_note_off=True, start_time=None):
+def start_playback(notes, pos, sound_prefix, instrument_group, enable_note_off=True, start_time=None):
     """开始播放一组音符。
 
     Args:
-        notes: 已解码后的事件列表 [[time, type, channel, midi_note, velocity], ...]
+        notes: 已解码后的事件列表 [[time, type, channel, midi_note, velocity, program], ...]
         pos: (x, y, z) 播放位置
         sound_prefix: 声音 ID 前缀，如 "music_plus.music_box"
+        instrument_group: Program Change 可使用的乐器组
         enable_note_off: 是否响应 note_off / sustain_pedal 中断（默认 True）。
             对八音盒等自然衰减乐器可设为 False，音符会持续播放直到自然结束。
         start_time: 可选的统一播放起点，用于让同批播放对齐。
@@ -94,6 +97,7 @@ def start_playback(notes, pos, sound_prefix, enable_note_off=True, start_time=No
         "start_time": start_time if start_time is not None else time.time(),
         "pos": tuple(pos),
         "sound_prefix": sound_prefix,
+        "instrument_group": instrument_group,
         "enable_note_off": enable_note_off,
         "active_notes": {},
         "pedal_state": {},
@@ -102,7 +106,7 @@ def start_playback(notes, pos, sound_prefix, enable_note_off=True, start_time=No
     _active_sessions.append(session)
 
 
-def queue_playback(notes, pos, sound_prefix, enable_note_off=True, batch_key=None):
+def queue_playback(notes, pos, sound_prefix, instrument_group, enable_note_off=True, batch_key=None):
     """把后台线程解码完成的 MIDI 播放请求交给 tick 主线程处理。
 
     解码完成时间可能有先后，这里先按 batch_key 暂存一小段时间，
@@ -127,6 +131,7 @@ def queue_playback(notes, pos, sound_prefix, enable_note_off=True, batch_key=Non
         "notes": notes,
         "pos": tuple(pos),
         "sound_prefix": sound_prefix,
+        "instrument_group": instrument_group,
         "enable_note_off": enable_note_off,
     })
 
@@ -208,6 +213,7 @@ def on_music_tick():
         ptr = session["ptr"]
         pos = session["pos"]
         prefix = session["sound_prefix"]
+        instrument_group = session["instrument_group"]
         active_notes = session["active_notes"]
         pedal_state = session["pedal_state"]
         sustained_notes = session["sustained_notes"]
@@ -221,13 +227,14 @@ def on_music_tick():
             # 音符播放
             if etype == NOTE_ON:
                 midi_note, vel = event[3], event[4]
+                program = event[5] if len(event) > 5 else 0
                 key = (channel, midi_note)
                 if note_off_enabled:
                     # 重击同音：先停掉旧的（无论在 active 还是 sustained 中）
                     old = active_notes.pop(key, None) or sustained_notes.pop(key, None)
                     if old:
                         _audio.StopCustomMusicById(old, NOTE_OFF_FADE_OUT)
-                music_id = _play_note(midi_note, vel, pos, prefix)
+                music_id = _play_note(midi_note, vel, pos, prefix, instrument_group, program)
                 if music_id and note_off_enabled:
                     active_notes[key] = music_id
 
@@ -273,8 +280,12 @@ def on_music_tick():
         _active_sessions.remove(s)
 
 
-def _play_note(midi_note, velocity, pos, sound_prefix):
-    sound = _midi_to_sound(midi_note, sound_prefix)
+def _play_note(midi_note, velocity, pos, sound_prefix, instrument_group, program):
+    resolved_prefix = resolve_program_sound_prefix(sound_prefix, instrument_group, program)
+    if resolved_prefix is None:
+        return None
+
+    sound = _midi_to_sound(midi_note, resolved_prefix)
     if sound is None:
         # 超出乐器音域，跳过此音符
         return None
@@ -314,6 +325,7 @@ def _drain_pending_playbacks():
                 item["notes"],
                 item["pos"],
                 item["sound_prefix"],
+                item["instrument_group"],
                 item["enable_note_off"],
                 start_time,
             )

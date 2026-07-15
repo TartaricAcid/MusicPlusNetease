@@ -29,7 +29,7 @@ _DECODE_CACHE_ORDER = []
 _DECODE_WAITERS = {}
 
 
-def play_midi_music_data(midi_payload, pos, sound_prefix, enable_note_off=True, midi_md5=None):
+def play_midi_music_data(midi_payload, pos, sound_prefix, instrument_group, enable_note_off=True, midi_md5=None):
     # 构建解码请求
     pos = tuple(pos)
     request_version = _next_play_request_version(pos)
@@ -37,6 +37,7 @@ def play_midi_music_data(midi_payload, pos, sound_prefix, enable_note_off=True, 
     request = {
         "pos": pos,
         "sound_prefix": sound_prefix,
+        "instrument_group": instrument_group,
         "enable_note_off": enable_note_off,
         "version": request_version,
     }
@@ -100,6 +101,7 @@ def _queue_if_latest(notes, cache_key, request):
         notes,
         request["pos"],
         request["sound_prefix"],
+        request["instrument_group"],
         request["enable_note_off"],
         batch_key=cache_key
     )

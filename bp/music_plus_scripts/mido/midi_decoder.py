@@ -4,11 +4,11 @@
 
 将 MIDI 文件数据解码为排序后的音符事件列表。
 
-输出格式: [[absolute_time, type, channel, data1, data2], ...] 按时间升序排列。
+输出格式: [[absolute_time, type, channel, data1, data2, program], ...] 按时间升序排列。
 
 type: 0=note_off, 1=note_on, 2=sustain_pedal
-note_on/off: data1=midi_note, data2=velocity
-sustain: data1=pedal_state(1=down,0=up), data2=0
+note_on/off: data1=midi_note, data2=velocity, program=当前 channel 的 Program Change
+sustain: data1=pedal_state(1=down,0=up), data2=0, program=当前 channel 的 Program Change
 """
 
 import base64
@@ -29,7 +29,7 @@ def decode_midi_base64(midi_base64):
         midi_base64: base64 编码的 MIDI 文件字符串
 
     Returns:
-        按时间升序排列的事件列表: [[time, type, channel, data1, data2], ...]
+        按时间升序排列的事件列表: [[time, type, channel, data1, data2, program], ...]
         time 为秒，type: 0=note_off / 1=note_on / 2=sustain_pedal
         channel: 0~15，velocity 为 0.0~1.0
     """
@@ -53,18 +53,23 @@ def _extract_events(midi_file):
     """
     events = []
     current_time = 0.0
+    channel_programs = {}
 
     for msg in midi_file:
         current_time += msg.time
 
+        if msg.type == 'program_change':
+            channel_programs[msg.channel] = msg.program
+
         # 音频停止事件
-        if msg.type == 'note_off' or (msg.type == 'note_on' and msg.velocity == 0):
+        elif msg.type == 'note_off' or (msg.type == 'note_on' and msg.velocity == 0):
             events.append([
                 round(current_time, 4),
                 NOTE_OFF,
                 msg.channel,
                 msg.note,
                 0,
+                channel_programs.get(msg.channel, 0),
             ])
 
         # 音符开始时间，此时 data2 需要额外记录 velocity
@@ -75,6 +80,7 @@ def _extract_events(midi_file):
                 msg.channel,
                 msg.note,
                 round(msg.velocity / 127.0, 2),
+                channel_programs.get(msg.channel, 0),
             ])
 
         # CC#64 延音踏板: value >= 64 踩下, < 64 松开
@@ -85,6 +91,7 @@ def _extract_events(midi_file):
                 msg.channel,
                 1 if msg.value >= 64 else 0,
                 0,
+                channel_programs.get(msg.channel, 0),
             ])
 
     return events

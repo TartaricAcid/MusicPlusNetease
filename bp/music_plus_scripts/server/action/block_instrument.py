@@ -42,56 +42,69 @@ DEFAULT_MIDI_PAYLOAD = pack_midi_payload(base64.b64decode(DEFAULT_MIDI_BASE64))
 #
 # 每条记录的字段:
 #   sound_prefix   - 声音 ID 前缀，对应 sound_definitions.json 中的条目
+#   instrument_group - Program Change 可使用的乐器组
 #   enable_note_off - 是否响应 note_off 截断（弦/管乐器需要，打击/八音盒不需要）
 # ─────────────────────────────────────────────────────────────────────────────────
 
 BLOCK_INSTRUMENT_REGISTRY = {
     "music_plus:music_plus_music_box": {
         "sound_prefix": "music_plus.music_box",
+        "instrument_group": "music_box",
         "enable_note_off": False,
     },
     "music_plus:music_plus_steinway": {
         "sound_prefix": "music_plus.steinway",
+        "instrument_group": "piano",
         "enable_note_off": True,
     },
     "music_plus:music_plus_harpsichord": {
         "sound_prefix": "music_plus.harpsichord",
+        "instrument_group": "piano",
         "enable_note_off": True,
     },
     "music_plus:music_plus_ce_guitar": {
         "sound_prefix": "music_plus.ce_guitar",
+        "instrument_group": "guitar",
         "enable_note_off": True,
     },
     "music_plus:music_plus_nylon_guitar": {
         "sound_prefix": "music_plus.nylon_guitar",
+        "instrument_group": "guitar",
         "enable_note_off": True,
     },
     "music_plus:music_plus_guzheng": {
         "sound_prefix": "music_plus.guzheng",
+        "instrument_group": "ethnic",
         "enable_note_off": True,
     },
     "music_plus:music_plus_violin_solo": {
         "sound_prefix": "music_plus.violin_solo",
+        "instrument_group": "strings",
         "enable_note_off": True,
     },
     "music_plus:music_plus_trumpet": {
         "sound_prefix": "music_plus.trumpet",
+        "instrument_group": "brass",
         "enable_note_off": True,
     },
     "music_plus:music_plus_flute": {
         "sound_prefix": "music_plus.flute",
+        "instrument_group": "pipe",
         "enable_note_off": True,
     },
     "music_plus:music_plus_bass": {
         "sound_prefix": "music_plus.bass",
+        "instrument_group": "bass",
         "enable_note_off": True,
     },
     "music_plus:music_plus_real_kit": {
         "sound_prefix": "music_plus.real_kit",
+        "instrument_group": "drum_kit",
         "enable_note_off": False,
     },
     "music_plus:music_plus_linn_kit": {
         "sound_prefix": "music_plus.linn_kit",
+        "instrument_group": "drum_kit",
         "enable_note_off": False,
     },
 }
@@ -220,6 +233,7 @@ def _play_midi_sound(instrument_config, tape_item, use_obj):
             "midi_md5": midi_md5,
             "pos": use_obj.get_pos(),
             "sound_prefix": instrument_config["sound_prefix"],
+            "instrument_group": instrument_config["instrument_group"],
             "enable_note_off": instrument_config["enable_note_off"],
         })
 
