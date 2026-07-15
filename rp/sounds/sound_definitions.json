@@ -1,6 +1,21 @@
 {
   "format_version": "1.14.0",
   "sound_definitions": {
+    "music_plus.bass.a3": {
+      "sounds": [
+        "sounds/music_plus/bass/a3"
+      ]
+    },
+    "music_plus.bass.a4": {
+      "sounds": [
+        "sounds/music_plus/bass/a4"
+      ]
+    },
+    "music_plus.bass.a5": {
+      "sounds": [
+        "sounds/music_plus/bass/a5"
+      ]
+    },
     "music_plus.ce_guitar.a3": {
       "sounds": [
         "sounds/music_plus/ce_guitar/a3"
@@ -19,6 +34,21 @@
     "music_plus.ce_guitar.a6": {
       "sounds": [
         "sounds/music_plus/ce_guitar/a6"
+      ]
+    },
+    "music_plus.flute.a5": {
+      "sounds": [
+        "sounds/music_plus/flute/a5"
+      ]
+    },
+    "music_plus.flute.a6": {
+      "sounds": [
+        "sounds/music_plus/flute/a6"
+      ]
+    },
+    "music_plus.flute.a7": {
+      "sounds": [
+        "sounds/music_plus/flute/a7"
       ]
     },
     "music_plus.guzheng.a3": {
@@ -73,47 +103,74 @@
     },
     "music_plus.linn_kit.linn_ch": {
       "sounds": [
-        "sounds/music_plus/linn_kit/linn_ch"
+        {
+          "name": "sounds/music_plus/linn_kit/linn_ch",
+          "volume": 0.4
+        }
       ]
     },
     "music_plus.linn_kit.linn_crash": {
       "sounds": [
-        "sounds/music_plus/linn_kit/linn_crash"
+        {
+          "name": "sounds/music_plus/linn_kit/linn_crash",
+          "volume": 0.4
+        }
       ]
     },
     "music_plus.linn_kit.linn_ht": {
       "sounds": [
-        "sounds/music_plus/linn_kit/linn_ht"
+        {
+          "name": "sounds/music_plus/linn_kit/linn_ht",
+          "volume": 0.4
+        }
       ]
     },
     "music_plus.linn_kit.linn_kick": {
       "sounds": [
-        "sounds/music_plus/linn_kit/linn_kick"
+        {
+          "name": "sounds/music_plus/linn_kit/linn_kick",
+          "volume": 0.4
+        }
       ]
     },
     "music_plus.linn_kit.linn_lt": {
       "sounds": [
-        "sounds/music_plus/linn_kit/linn_lt"
+        {
+          "name": "sounds/music_plus/linn_kit/linn_lt",
+          "volume": 0.4
+        }
       ]
     },
     "music_plus.linn_kit.linn_mt": {
       "sounds": [
-        "sounds/music_plus/linn_kit/linn_mt"
+        {
+          "name": "sounds/music_plus/linn_kit/linn_mt",
+          "volume": 0.4
+        }
       ]
     },
     "music_plus.linn_kit.linn_pedal": {
       "sounds": [
-        "sounds/music_plus/linn_kit/linn_pedal"
+        {
+          "name": "sounds/music_plus/linn_kit/linn_pedal",
+          "volume": 0.4
+        }
       ]
     },
     "music_plus.linn_kit.linn_ride": {
       "sounds": [
-        "sounds/music_plus/linn_kit/linn_ride"
+        {
+          "name": "sounds/music_plus/linn_kit/linn_ride",
+          "volume": 0.4
+        }
       ]
     },
     "music_plus.linn_kit.linn_snare": {
       "sounds": [
-        "sounds/music_plus/linn_kit/linn_snare"
+        {
+          "name": "sounds/music_plus/linn_kit/linn_snare",
+          "volume": 0.4
+        }
       ]
     },
     "music_plus.music_box.a4": {
@@ -283,52 +340,82 @@
     },
     "music_plus.real_kit.real_ch": {
       "sounds": [
-        "sounds/music_plus/real_kit/real_ch"
+        {
+          "name": "sounds/music_plus/real_kit/real_ch",
+          "volume": 0.4
+        }
       ]
     },
     "music_plus.real_kit.real_crash": {
       "sounds": [
-        "sounds/music_plus/real_kit/real_crash"
+        {
+          "name": "sounds/music_plus/real_kit/real_crash",
+          "volume": 0.4
+        }
       ]
     },
     "music_plus.real_kit.real_ht": {
       "sounds": [
-        "sounds/music_plus/real_kit/real_ht"
+        {
+          "name": "sounds/music_plus/real_kit/real_ht",
+          "volume": 0.4
+        }
       ]
     },
     "music_plus.real_kit.real_kick": {
       "sounds": [
-        "sounds/music_plus/real_kit/real_kick"
+        {
+          "name": "sounds/music_plus/real_kit/real_kick",
+          "volume": 0.4
+        }
       ]
     },
     "music_plus.real_kit.real_lt": {
       "sounds": [
-        "sounds/music_plus/real_kit/real_lt"
+        {
+          "name": "sounds/music_plus/real_kit/real_lt",
+          "volume": 0.4
+        }
       ]
     },
     "music_plus.real_kit.real_mt": {
       "sounds": [
-        "sounds/music_plus/real_kit/real_mt"
+        {
+          "name": "sounds/music_plus/real_kit/real_mt",
+          "volume": 0.4
+        }
       ]
     },
     "music_plus.real_kit.real_oh": {
       "sounds": [
-        "sounds/music_plus/real_kit/real_oh"
+        {
+          "name": "sounds/music_plus/real_kit/real_oh",
+          "volume": 0.4
+        }
       ]
     },
     "music_plus.real_kit.real_pedal": {
       "sounds": [
-        "sounds/music_plus/real_kit/real_pedal"
+        {
+          "name": "sounds/music_plus/real_kit/real_pedal",
+          "volume": 0.4
+        }
       ]
     },
     "music_plus.real_kit.real_ride": {
       "sounds": [
-        "sounds/music_plus/real_kit/real_ride"
+        {
+          "name": "sounds/music_plus/real_kit/real_ride",
+          "volume": 0.4
+        }
       ]
     },
     "music_plus.real_kit.real_snare": {
       "sounds": [
-        "sounds/music_plus/real_kit/real_snare"
+        {
+          "name": "sounds/music_plus/real_kit/real_snare",
+          "volume": 0.4
+        }
       ]
     },
     "music_plus.steinway.a1": {

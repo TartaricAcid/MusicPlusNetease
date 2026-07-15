@@ -79,6 +79,22 @@ TRUMPET = InstrumentDef(
     note_map=octave_up(c_octave_a_sample(range(4, 8), 40, 84)),
 )
 
+FLUTE = InstrumentDef(
+    name="flute",
+    sound_prefix="music_plus.flute",
+    lowest_note=47,
+    highest_note=84,
+    note_map=octave_up(c_octave_a_sample(range(5, 8), 47, 84)),
+)
+
+BASS = InstrumentDef(
+    name="bass",
+    sound_prefix="music_plus.bass",
+    lowest_note=28,
+    highest_note=64,
+    note_map=c_octave_a_sample(range(3, 6), 28, 64),
+)
+
 REAL_KIT = InstrumentDef(
     name="real_kit",
     sound_prefix="music_plus.real_kit",
@@ -104,6 +120,8 @@ _REGISTRY = {
     GUZHENG.sound_prefix: GUZHENG,
     VIOLIN_SOLO.sound_prefix: VIOLIN_SOLO,
     TRUMPET.sound_prefix: TRUMPET,
+    FLUTE.sound_prefix: FLUTE,
+    BASS.sound_prefix: BASS,
     REAL_KIT.sound_prefix: REAL_KIT,
     LINN_KIT.sound_prefix: LINN_KIT,
 }

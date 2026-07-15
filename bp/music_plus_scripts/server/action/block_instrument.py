@@ -78,6 +78,14 @@ BLOCK_INSTRUMENT_REGISTRY = {
         "sound_prefix": "music_plus.trumpet",
         "enable_note_off": True,
     },
+    "music_plus:music_plus_flute": {
+        "sound_prefix": "music_plus.flute",
+        "enable_note_off": True,
+    },
+    "music_plus:music_plus_bass": {
+        "sound_prefix": "music_plus.bass",
+        "enable_note_off": True,
+    },
     "music_plus:music_plus_real_kit": {
         "sound_prefix": "music_plus.real_kit",
         "enable_note_off": False,
