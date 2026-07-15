@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
-import _md5
 import traceback
 
 from music_plus_scripts.QuModLibs.Modules.Thread.Client import RUN_IN_MAIN_THREAD
 from music_plus_scripts.QuModLibs.Modules.Thread.Util import QThreadPool
 from music_plus_scripts.client.music.midi_player import cancel_queued_playback_at_pos, queue_playback, stop_at_pos
-from music_plus_scripts.mido.midi_decoder import decode_midi_base64
+from music_plus_scripts.mido.midi_decoder import decode_midi_payload
+from music_plus_scripts.utils.midi_payload import get_midi_payload_md5
 
 # MIDI 解码线程池
 _DECODE_POOL = QThreadPool(maxThreadCount=1, daemon=True).start()
@@ -29,11 +29,11 @@ _DECODE_CACHE_ORDER = []
 _DECODE_WAITERS = {}
 
 
-def play_midi_music_data(midi_base64, pos, sound_prefix, enable_note_off=True, midi_md5=None):
+def play_midi_music_data(midi_payload, pos, sound_prefix, enable_note_off=True, midi_md5=None):
     # 构建解码请求
     pos = tuple(pos)
     request_version = _next_play_request_version(pos)
-    cache_key = _get_cache_key(midi_base64, midi_md5)
+    cache_key = _get_cache_key(midi_payload, midi_md5)
     request = {
         "pos": pos,
         "sound_prefix": sound_prefix,
@@ -63,7 +63,7 @@ def play_midi_music_data(midi_base64, pos, sound_prefix, enable_note_off=True, m
     # 尝试解码 MIDI 数据
     def decode_task():
         try:
-            decoded_notes = decode_midi_base64(midi_base64)
+            decoded_notes = decode_midi_payload(midi_payload)
         except Exception:
             # 如果解码失败，则打印异常信息，并清理等待列表
             traceback.print_exc()
@@ -129,8 +129,7 @@ def _touch_cache_key(cache_key):
     _DECODE_CACHE_ORDER.append(cache_key)
 
 
-def _get_cache_key(midi_base64, midi_md5=None):
+def _get_cache_key(midi_payload, midi_md5=None):
     if midi_md5:
         return midi_md5
-    midi_base64 = midi_base64.encode("utf-8")
-    return _md5.new(midi_base64).hexdigest()
+    return get_midi_payload_md5(midi_payload)

@@ -13,7 +13,7 @@ def play_midi_music(args):
     """接收服务端发来的 MIDI 数据，在客户端启动 tick 驱动播放。
 
     Args 字典:
-        midi: base64 编码的 MIDI 文件字符串
+        midi: MIDI payload 字典
         pos: (x, y, z) 音乐盒方块位置
         sound_prefix: 声音 ID 前缀，如 "music_plus.music_box"
         enable_note_off: 是否响应 note_off / sustain_pedal 中断（默认 True）

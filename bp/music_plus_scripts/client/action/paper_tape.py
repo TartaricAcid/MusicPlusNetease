@@ -5,6 +5,7 @@ import io
 
 from music_plus_scripts.QuModLibs.Client import *
 from music_plus_scripts.mido import MidiFile
+from music_plus_scripts.utils.midi_payload import pack_midi_payload
 
 PAPER_TAPE_ITEM = "music_plus:paper_tape"
 MIDI_MD5_NBT_KEY = "midi_md5"
@@ -42,6 +43,6 @@ def test_record_midi(args):
         return
 
     Call("write_paper_tape_midi", {
-        "midi": clipboard_text,
+        "midi": pack_midi_payload(midi_bytes),
     })
     args["ret"] = True

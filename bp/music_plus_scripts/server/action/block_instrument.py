@@ -9,6 +9,7 @@
 """
 
 import ast
+import base64
 
 from music_plus_scripts.QuModLibs.Server import *
 from music_plus_scripts.server.action.paper_tape_store import get_midi
@@ -16,6 +17,7 @@ from music_plus_scripts.server.object.block_object import BlockObject
 from music_plus_scripts.server.object.block_use_object import BlockUseObject
 from music_plus_scripts.server.object.item_use_block_object import ItemUseBlockObject
 from music_plus_scripts.server.utils.item_utils import item_dict_is_empty
+from music_plus_scripts.utils.midi_payload import pack_midi_payload
 
 PAPER_TAPE_ITEM = "music_plus:paper_tape"
 PAPER_TAPE_DATA_KEY = "music_plus:paper_tape"
@@ -31,6 +33,8 @@ DEFAULT_MIDI_BASE64 = (
     "MAACQTFqBQJBMAACQSlqBQJBKAACQSFqDAJBIAACQSlqBQJBKAACQTFqBQJBMAACQT1qBQJBPAACQTVqBQJBNAACQTVqGAJBNAACQRVqBQJB"
     "FAACQRFqBQJBEAACQQ1qDAJBDAACQR1qBQJBHAACQSFqBQJBIAACQSlqDAJBKAACQTFqBQJBMAACQSlqBQJBKAACQSFqJAJBIAIMA/y8A"
 )
+
+DEFAULT_MIDI_PAYLOAD = pack_midi_payload(base64.b64decode(DEFAULT_MIDI_BASE64))
 
 # ─── 方块乐器注册表 ──────────────────────────────────────────────────────────────
 # 全局映射：方块 ID → 乐器播放配置
@@ -190,21 +194,21 @@ def _get_midi_from_tape(item_dict):
     """从纸带 userData 中读取 MIDI 索引，并从服务端存档回查 MIDI 数据。"""
     custom_data = item_dict.get("userData") or {}
     if MIDI_MD5_NBT_KEY not in custom_data:
-        return DEFAULT_MIDI_BASE64, None
+        return DEFAULT_MIDI_PAYLOAD, None
 
     midi_md5 = custom_data[MIDI_MD5_NBT_KEY]["__value__"]
-    midi_b64 = get_midi(midi_md5)
-    if midi_b64 is None:
-        return DEFAULT_MIDI_BASE64, None
+    midi_payload = get_midi(midi_md5)
+    if midi_payload is None:
+        return DEFAULT_MIDI_PAYLOAD, None
     else:
-        return midi_b64, midi_md5
+        return midi_payload, midi_md5
 
 
 def _play_midi_sound(instrument_config, tape_item, use_obj):
-    midi_b64, midi_md5 = _get_midi_from_tape(tape_item)
-    if midi_b64:
+    midi_payload, midi_md5 = _get_midi_from_tape(tape_item)
+    if midi_payload:
         Call("*", "play_midi_music", {
-            "midi": midi_b64,
+            "midi": midi_payload,
             "midi_md5": midi_md5,
             "pos": use_obj.get_pos(),
             "sound_prefix": instrument_config["sound_prefix"],

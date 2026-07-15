@@ -2,7 +2,7 @@
 
 """MIDI 解码器
 
-将 base64 编码的 MIDI 文件解码为排序后的音符事件列表。
+将 MIDI 文件数据解码为排序后的音符事件列表。
 
 输出格式: [[absolute_time, type, channel, data1, data2], ...] 按时间升序排列。
 
@@ -15,6 +15,7 @@ import base64
 import io
 
 from music_plus_scripts.mido import MidiFile
+from music_plus_scripts.utils.midi_payload import unpack_midi_payload
 
 NOTE_OFF = 0
 NOTE_ON = 1
@@ -33,6 +34,13 @@ def decode_midi_base64(midi_base64):
         channel: 0~15，velocity 为 0.0~1.0
     """
     midi_bytes = base64.b64decode(midi_base64)
+    midi_file = MidiFile(file=io.BytesIO(midi_bytes), charset='utf-8')
+    return _extract_events(midi_file)
+
+
+def decode_midi_payload(midi_payload):
+    """将 MIDI payload 解码为音符事件列表。"""
+    midi_bytes = unpack_midi_payload(midi_payload)
     midi_file = MidiFile(file=io.BytesIO(midi_bytes), charset='utf-8')
     return _extract_events(midi_file)
 

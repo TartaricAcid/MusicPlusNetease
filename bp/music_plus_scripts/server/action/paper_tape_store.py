@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
-import _md5
-
 from music_plus_scripts.QuModLibs.Modules.DataStore.Server import ServerAutoStoreCls
+from music_plus_scripts.utils.midi_payload import get_midi_payload_md5
 
 
 class PaperTapeMidiStore(ServerAutoStoreCls):
@@ -13,11 +12,10 @@ class PaperTapeMidiStore(ServerAutoStoreCls):
     songs = {}
 
 
-def save_midi(midi_base64):
-    midi_bytes = midi_base64.encode("utf-8")
-    midi_md5 = _md5.new(midi_bytes).hexdigest()
+def save_midi(midi_payload):
+    midi_md5 = get_midi_payload_md5(midi_payload)
     if midi_md5 not in PaperTapeMidiStore.songs:
-        PaperTapeMidiStore.songs[midi_md5] = midi_base64
+        PaperTapeMidiStore.songs[midi_md5] = midi_payload
         PaperTapeMidiStore.mSignNeedUpdate()
     return midi_md5
 
