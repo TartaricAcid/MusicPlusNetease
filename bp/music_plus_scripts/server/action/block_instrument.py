@@ -62,6 +62,21 @@ BLOCK_INSTRUMENT_REGISTRY = {
         "instrument_group": "piano",
         "enable_note_off": True,
     },
+    "music_plus:music_plus_honkytonk": {
+        "sound_prefix": "music_plus.honkytonk",
+        "instrument_group": "piano",
+        "enable_note_off": True,
+    },
+    "music_plus:music_plus_rhodes": {
+        "sound_prefix": "music_plus.rhodes",
+        "instrument_group": "piano",
+        "enable_note_off": True,
+    },
+    "music_plus:music_plus_vibra": {
+        "sound_prefix": "music_plus.vibra",
+        "instrument_group": "music_box",
+        "enable_note_off": True,
+    },
     "music_plus:music_plus_ce_guitar": {
         "sound_prefix": "music_plus.ce_guitar",
         "instrument_group": "guitar",

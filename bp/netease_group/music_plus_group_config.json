@@ -16,6 +16,9 @@
                 "music_plus:music_plus_bass",
                 "music_plus:music_plus_real_kit",
                 "music_plus:music_plus_linn_kit",
+                "music_plus:music_plus_honkytonk",
+                "music_plus:music_plus_rhodes",
+                "music_plus:music_plus_vibra",
                 "music_plus:paper_tape"
             ]
         }

@@ -8,9 +8,9 @@ PROGRAM_TO_INSTRUMENT = {
     # 钢琴
     1: "music_plus.steinway",
     2: "music_plus.steinway",
-    3: "music_plus.steinway",
-    4: "music_plus.steinway",
-    5: "music_plus.steinway",
+    3: "music_plus.honkytonk",
+    4: "music_plus.rhodes",
+    5: "music_plus.rhodes",
     6: "music_plus.harpsichord",
     7: "music_plus.harpsichord",
 
@@ -18,7 +18,7 @@ PROGRAM_TO_INSTRUMENT = {
     8: "music_plus.music_box",
     9: "music_plus.music_box",
     10: "music_plus.music_box",
-    11: "music_plus.music_box",
+    11: "music_plus.vibra",
     12: "music_plus.music_box",
     13: "music_plus.music_box",
     14: "music_plus.music_box",
@@ -102,10 +102,13 @@ PROGRAM_TO_INSTRUMENT = {
 INSTRUMENT_GROUPS = {
     "music_box": {
         "music_plus.music_box",
+        "music_plus.vibra",
     },
     "piano": {
         "music_plus.steinway",
         "music_plus.harpsichord",
+        "music_plus.honkytonk",
+        "music_plus.rhodes",
     },
     "guitar": {
         "music_plus.nylon_guitar",

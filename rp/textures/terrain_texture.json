@@ -37,6 +37,15 @@
     },
     "music_plus:linn_kit": {
       "textures": "textures/music_plus/block/music_box"
+    },
+    "music_plus:honkytonk": {
+      "textures": "textures/music_plus/block/music_box"
+    },
+    "music_plus:rhodes": {
+      "textures": "textures/music_plus/block/music_box"
+    },
+    "music_plus:vibra": {
+      "textures": "textures/music_plus/block/music_box"
     }
   }
 }

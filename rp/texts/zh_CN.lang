@@ -11,4 +11,7 @@ tile.music_plus:music_plus_flute.name=笛子
 tile.music_plus:music_plus_bass.name=贝斯
 tile.music_plus:music_plus_real_kit.name=原声鼓
 tile.music_plus:music_plus_linn_kit.name=复古电子鼓
+tile.music_plus:music_plus_honkytonk.name=酒吧钢琴
+tile.music_plus:music_plus_rhodes.name=电钢琴
+tile.music_plus:music_plus_vibra.name=颤音琴
 item.music_plus:paper_tape.name=纸带

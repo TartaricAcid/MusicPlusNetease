@@ -35,5 +35,14 @@
   },
   "music_plus:music_plus_linn_kit": {
     "sound": "wood"
+  },
+  "music_plus:music_plus_honkytonk": {
+    "sound": "wood"
+  },
+  "music_plus:music_plus_rhodes": {
+    "sound": "wood"
+  },
+  "music_plus:music_plus_vibra": {
+    "sound": "wood"
   }
 }

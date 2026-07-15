@@ -161,6 +161,54 @@
         }
       ]
     },
+    "music_plus.honkytonk.a2": {
+      "sounds": [
+        {
+          "name": "sounds/music_plus/honkytonk/a2",
+          "volume": 0.5
+        }
+      ]
+    },
+    "music_plus.honkytonk.a3": {
+      "sounds": [
+        {
+          "name": "sounds/music_plus/honkytonk/a3",
+          "volume": 0.5
+        }
+      ]
+    },
+    "music_plus.honkytonk.a4": {
+      "sounds": [
+        {
+          "name": "sounds/music_plus/honkytonk/a4",
+          "volume": 0.5
+        }
+      ]
+    },
+    "music_plus.honkytonk.a5": {
+      "sounds": [
+        {
+          "name": "sounds/music_plus/honkytonk/a5",
+          "volume": 0.5
+        }
+      ]
+    },
+    "music_plus.honkytonk.a6": {
+      "sounds": [
+        {
+          "name": "sounds/music_plus/honkytonk/a6",
+          "volume": 0.5
+        }
+      ]
+    },
+    "music_plus.honkytonk.a7": {
+      "sounds": [
+        {
+          "name": "sounds/music_plus/honkytonk/a7",
+          "volume": 0.5
+        }
+      ]
+    },
     "music_plus.linn_kit.linn_ch": {
       "sounds": [
         {
@@ -577,6 +625,54 @@
         }
       ]
     },
+    "music_plus.rhodes.a2": {
+      "sounds": [
+        {
+          "name": "sounds/music_plus/rhodes/a2",
+          "volume": 0.5
+        }
+      ]
+    },
+    "music_plus.rhodes.a3": {
+      "sounds": [
+        {
+          "name": "sounds/music_plus/rhodes/a3",
+          "volume": 0.5
+        }
+      ]
+    },
+    "music_plus.rhodes.a4": {
+      "sounds": [
+        {
+          "name": "sounds/music_plus/rhodes/a4",
+          "volume": 0.5
+        }
+      ]
+    },
+    "music_plus.rhodes.a5": {
+      "sounds": [
+        {
+          "name": "sounds/music_plus/rhodes/a5",
+          "volume": 0.5
+        }
+      ]
+    },
+    "music_plus.rhodes.a6": {
+      "sounds": [
+        {
+          "name": "sounds/music_plus/rhodes/a6",
+          "volume": 0.5
+        }
+      ]
+    },
+    "music_plus.rhodes.a7": {
+      "sounds": [
+        {
+          "name": "sounds/music_plus/rhodes/a7",
+          "volume": 0.5
+        }
+      ]
+    },
     "music_plus.steinway.a1": {
       "sounds": [
         {
@@ -669,6 +765,30 @@
       "sounds": [
         {
           "name": "sounds/music_plus/trumpet/a7",
+          "volume": 0.5
+        }
+      ]
+    },
+    "music_plus.vibra.a4": {
+      "sounds": [
+        {
+          "name": "sounds/music_plus/vibra/a4",
+          "volume": 0.5
+        }
+      ]
+    },
+    "music_plus.vibra.a5": {
+      "sounds": [
+        {
+          "name": "sounds/music_plus/vibra/a5",
+          "volume": 0.5
+        }
+      ]
+    },
+    "music_plus.vibra.a6": {
+      "sounds": [
+        {
+          "name": "sounds/music_plus/vibra/a6",
           "volume": 0.5
         }
       ]

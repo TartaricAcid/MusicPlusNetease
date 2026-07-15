@@ -39,6 +39,30 @@ HARPSICHORD = InstrumentDef(
     note_map=octave_up(c_octave_a_sample(range(2, 8), 36, 89)),
 )
 
+HONKYTONK = InstrumentDef(
+    name="honkytonk",
+    sound_prefix="music_plus.honkytonk",
+    lowest_note=36,
+    highest_note=89,
+    note_map=octave_up(c_octave_a_sample(range(2, 8), 36, 89)),
+)
+
+RHODES = InstrumentDef(
+    name="rhodes",
+    sound_prefix="music_plus.rhodes",
+    lowest_note=36,
+    highest_note=89,
+    note_map=octave_up(c_octave_a_sample(range(2, 8), 36, 89)),
+)
+
+VIBRA = InstrumentDef(
+    name="vibra",
+    sound_prefix="music_plus.vibra",
+    lowest_note=60,
+    highest_note=89,
+    note_map=octave_up(c_octave_a_sample(range(4, 7), 60, 89)),
+)
+
 CE_GUITAR = InstrumentDef(
     name="ce_guitar",
     sound_prefix="music_plus.ce_guitar",
@@ -115,6 +139,9 @@ _REGISTRY = {
     MUSIC_BOX.sound_prefix: MUSIC_BOX,
     STEINWAY.sound_prefix: STEINWAY,
     HARPSICHORD.sound_prefix: HARPSICHORD,
+    HONKYTONK.sound_prefix: HONKYTONK,
+    RHODES.sound_prefix: RHODES,
+    VIBRA.sound_prefix: VIBRA,
     CE_GUITAR.sound_prefix: CE_GUITAR,
     NYLON_GUITAR.sound_prefix: NYLON_GUITAR,
     GUZHENG.sound_prefix: GUZHENG,
