@@ -6,7 +6,7 @@
 每帧约 1/30 秒，通过比较 elapsed time 与事件时间戳来决定播放。
 
 核心数据流：
-  → 服务端解码 MIDI
+  → 客户端后台解码 MIDI
   → 事件列表 [[time, type, channel, data1, data2], ...]
   → 客户端缓存为 session
   → tick 事件逐帧驱动播放
@@ -22,7 +22,7 @@ from music_plus_scripts.client.music.instruments import get_instrument
 from music_plus_scripts.mido.midi_decoder import NOTE_ON, NOTE_OFF, SUSTAIN
 
 # ─── 播放配置 ───────────────────────────────────────────────
-MAX_CONCURRENT = 3  # 最多同时播放的会话数
+MAX_CONCURRENT = 8  # 最多同时播放的会话数
 NOTE_VOLUME = 1.0  # 默认音量
 PLAYBACK_SPEED = 1.0  # 播放速度倍率 (1.0=原速, 2.0=两倍速, 0.5=半速)
 NOTE_OFF_FADE_OUT = 0.2  # note_off 淡出时间（秒）
@@ -33,6 +33,9 @@ MAX_PITCH = 256.0
 MAX_START_DISTANCE = 64  # 开始播放时，超过此距离则忽略
 MAX_LISTEN_DISTANCE = 72  # tick 中检查，超过此距离则中断播放
 DISTANCE_CHECK_INTERVAL = 61  # 每隔多少 tick 检查一次距离
+
+# ─── 合批播放 ───────────────────────────────────────────────
+PLAYBACK_BATCH_WINDOW = 0.1  # 等待同批 MIDI 解码结果的时间窗口（秒）
 
 # ─── 粒子效果 ───────────────────────────────────────────────
 NOTE_PARTICLE = "music_plus:note_particle"  # 音符粒子
@@ -51,7 +54,10 @@ NOTE_PARTICLE_LIFETIME = 1.0  # 音符粒子存续时间，最长 1 秒
 #     "sustained_notes": {},             踏板延音中的音符 {(channel, note): musicId}
 # }
 _active_sessions = []
+
+# ─── 其他内容 ───────────────────────────────────────────────
 _distance_check_tick = 0  # 距离检测计数器
+_pending_batches = {}  # 合批播放
 
 _factory = clientApi.GetEngineCompFactory()
 _game = _factory.CreateGame(levelId)
@@ -59,15 +65,16 @@ _audio = _factory.CreateCustomAudio(levelId)
 _particle_sys = _factory.CreateParticleSystem(levelId)
 
 
-def start_playback(notes, pos, sound_prefix, enable_note_off=True):
+def start_playback(notes, pos, sound_prefix, enable_note_off=True, start_time=None):
     """开始播放一组音符。
 
     Args:
-        notes: 服务端解码后的事件列表 [[time, type, channel, midi_note, velocity], ...]
+        notes: 已解码后的事件列表 [[time, type, channel, midi_note, velocity], ...]
         pos: (x, y, z) 播放位置
         sound_prefix: 声音 ID 前缀，如 "music_plus.music_box"
         enable_note_off: 是否响应 note_off / sustain_pedal 中断（默认 True）。
             对八音盒等自然衰减乐器可设为 False，音符会持续播放直到自然结束。
+        start_time: 可选的统一播放起点，用于让同批播放对齐。
     """
     if not notes:
         return
@@ -84,7 +91,7 @@ def start_playback(notes, pos, sound_prefix, enable_note_off=True):
     session = {
         "notes": notes,
         "ptr": 0,
-        "start_time": time.time(),
+        "start_time": start_time if start_time is not None else time.time(),
         "pos": tuple(pos),
         "sound_prefix": sound_prefix,
         "enable_note_off": enable_note_off,
@@ -93,6 +100,50 @@ def start_playback(notes, pos, sound_prefix, enable_note_off=True):
         "sustained_notes": {},
     }
     _active_sessions.append(session)
+
+
+def queue_playback(notes, pos, sound_prefix, enable_note_off=True, batch_key=None):
+    """把后台线程解码完成的 MIDI 播放请求交给 tick 主线程处理。
+
+    解码完成时间可能有先后，这里先按 batch_key 暂存一小段时间，
+    等同批请求尽量到齐后，再由 _drain_pending_playbacks 在 tick 中统一开始播放。
+    """
+    if not notes:
+        return
+
+    now = time.time()
+    if batch_key is None:
+        batch_key = ("single", now, tuple(pos))
+
+    batch = _pending_batches.get(batch_key)
+    if batch is None:
+        batch = {
+            "flush_time": now + PLAYBACK_BATCH_WINDOW,
+            "items": [],
+        }
+        _pending_batches[batch_key] = batch
+
+    batch["items"].append({
+        "notes": notes,
+        "pos": tuple(pos),
+        "sound_prefix": sound_prefix,
+        "enable_note_off": enable_note_off,
+    })
+
+
+def cancel_queued_playback_at_pos(pos):
+    """取消指定位置尚未进入播放会话的排队请求。
+
+    这里只清理 _pending_batches 中等待合批的请求；已经开始播放的会话需要用 stop_at_pos 停止。
+    """
+    pos = tuple(pos)
+    empty_keys = []
+    for batch_key, batch in _pending_batches.items():
+        batch["items"] = [item for item in batch["items"] if item["pos"] != pos]
+        if not batch["items"]:
+            empty_keys.append(batch_key)
+    for batch_key in empty_keys:
+        _pending_batches.pop(batch_key, None)
 
 
 def stop_all():
@@ -123,6 +174,9 @@ def _stop_session_sounds(session):
 
 
 def on_music_tick():
+    # 先检查是否有排队的播放请求需要合批处理
+    _drain_pending_playbacks()
+
     # 没有音频时，直接返回
     if not _active_sessions:
         return
@@ -239,6 +293,30 @@ def _play_note(midi_note, velocity, pos, sound_prefix):
         _game.AddTimer(NOTE_PARTICLE_LIFETIME, _remove_particle, particle_id)
 
     return music_id
+
+
+def _drain_pending_playbacks():
+    """将已到合批时间的排队请求转成真正的播放会话。
+
+    同一个 batch 里的所有请求共用一个 start_time，避免多个 MIDI 因解码完成顺序不同而错开起播。
+    """
+    if not _pending_batches:
+        return
+
+    now = time.time()
+    ready_keys = [batch_key for batch_key, batch in _pending_batches.items() if batch["flush_time"] <= now]
+    pending_batches = [_pending_batches.pop(batch_key) for batch_key in ready_keys]
+
+    for batch in pending_batches:
+        start_time = time.time()
+        for item in batch["items"]:
+            start_playback(
+                item["notes"],
+                item["pos"],
+                item["sound_prefix"],
+                item["enable_note_off"],
+                start_time,
+            )
 
 
 def _remove_particle(particle_id):

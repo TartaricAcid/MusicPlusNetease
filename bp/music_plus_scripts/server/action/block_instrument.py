@@ -11,10 +11,10 @@
 import ast
 
 from music_plus_scripts.QuModLibs.Server import *
+from music_plus_scripts.server.action.paper_tape_store import get_midi
 from music_plus_scripts.server.object.block_object import BlockObject
 from music_plus_scripts.server.object.block_use_object import BlockUseObject
 from music_plus_scripts.server.object.item_use_block_object import ItemUseBlockObject
-from music_plus_scripts.server.action.paper_tape_store import get_midi
 from music_plus_scripts.server.utils.item_utils import item_dict_is_empty
 
 PAPER_TAPE_ITEM = "music_plus:paper_tape"
@@ -190,21 +190,22 @@ def _get_midi_from_tape(item_dict):
     """从纸带 userData 中读取 MIDI 索引，并从服务端存档回查 MIDI 数据。"""
     custom_data = item_dict.get("userData") or {}
     if MIDI_MD5_NBT_KEY not in custom_data:
-        return DEFAULT_MIDI_BASE64
+        return DEFAULT_MIDI_BASE64, None
 
     midi_md5 = custom_data[MIDI_MD5_NBT_KEY]["__value__"]
     midi_b64 = get_midi(midi_md5)
     if midi_b64 is None:
-        return DEFAULT_MIDI_BASE64
+        return DEFAULT_MIDI_BASE64, None
     else:
-        return midi_b64
+        return midi_b64, midi_md5
 
 
 def _play_midi_sound(instrument_config, tape_item, use_obj):
-    midi_b64 = _get_midi_from_tape(tape_item)
+    midi_b64, midi_md5 = _get_midi_from_tape(tape_item)
     if midi_b64:
         Call("*", "play_midi_music", {
             "midi": midi_b64,
+            "midi_md5": midi_md5,
             "pos": use_obj.get_pos(),
             "sound_prefix": instrument_config["sound_prefix"],
             "enable_note_off": instrument_config["enable_note_off"],

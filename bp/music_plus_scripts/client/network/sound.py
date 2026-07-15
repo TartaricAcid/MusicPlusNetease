@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from music_plus_scripts.QuModLibs.Client import *
-from music_plus_scripts.client.music.midi_player import start_playback, stop_at_pos
-from music_plus_scripts.mido.midi_decoder import decode_midi_base64
+from music_plus_scripts.client.music.midi_playback_controller import play_midi_music_data, stop_midi_music_at_pos
 
 factory = clientApi.GetEngineCompFactory()
 level_id = clientApi.GetLevelId()
@@ -15,24 +14,22 @@ def play_midi_music(args):
 
     Args 字典:
         midi: base64 编码的 MIDI 文件字符串
-        notes: 音符列表 [[time, type, channel, midi_note, velocity], ...]
         pos: (x, y, z) 音乐盒方块位置
         sound_prefix: 声音 ID 前缀，如 "music_plus.music_box"
         enable_note_off: 是否响应 note_off / sustain_pedal 中断（默认 True）
     """
-    notes = args.get("notes", [])
-    if not notes and args.get("midi"):
-        notes = decode_midi_base64(args["midi"])
-    pos = args.get("pos", (0, 0, 0))
-    sound_prefix = args.get("sound_prefix", "music_plus.music_box")
-    enable_note_off = args.get("enable_note_off", True)
-    if notes:
-        start_playback(notes, pos, sound_prefix, enable_note_off)
+    play_midi_music_data(
+        args["midi"],
+        args.get("pos", (0, 0, 0)),
+        args.get("sound_prefix", "music_plus.music_box"),
+        args.get("enable_note_off", True),
+        args.get("midi_md5"),
+    )
 
 
 @AllowCall
 def stop_music_at_pos(args):
-    stop_at_pos(args.get("pos", (0, 0, 0)))
+    stop_midi_music_at_pos(args.get("pos", (0, 0, 0)))
 
 
 @AllowCall
