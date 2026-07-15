@@ -21,6 +21,9 @@
   "music_plus:music_plus_violin_solo": {
     "sound": "wood"
   },
+  "music_plus:music_plus_trumpet": {
+    "sound": "wood"
+  },
   "music_plus:music_plus_real_kit": {
     "sound": "wood"
   },

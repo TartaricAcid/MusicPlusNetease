@@ -70,6 +70,10 @@ BLOCK_INSTRUMENT_REGISTRY = {
         "sound_prefix": "music_plus.violin_solo",
         "enable_note_off": True,
     },
+    "music_plus:music_plus_trumpet": {
+        "sound_prefix": "music_plus.trumpet",
+        "enable_note_off": True,
+    },
     "music_plus:music_plus_real_kit": {
         "sound_prefix": "music_plus.real_kit",
         "enable_note_off": False,

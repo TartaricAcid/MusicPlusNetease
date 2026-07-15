@@ -371,6 +371,26 @@
         "sounds/music_plus/steinway/a8"
       ]
     },
+    "music_plus.trumpet.a4": {
+      "sounds": [
+        "sounds/music_plus/trumpet/a4"
+      ]
+    },
+    "music_plus.trumpet.a5": {
+      "sounds": [
+        "sounds/music_plus/trumpet/a5"
+      ]
+    },
+    "music_plus.trumpet.a6": {
+      "sounds": [
+        "sounds/music_plus/trumpet/a6"
+      ]
+    },
+    "music_plus.trumpet.a7": {
+      "sounds": [
+        "sounds/music_plus/trumpet/a7"
+      ]
+    },
     "music_plus.violin_solo.a4": {
       "sounds": [
         "sounds/music_plus/violin_solo/a4"

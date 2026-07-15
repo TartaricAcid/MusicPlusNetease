@@ -23,6 +23,9 @@
     "music_plus:violin_solo": {
       "textures": "textures/music_plus/block/music_box"
     },
+    "music_plus:trumpet": {
+      "textures": "textures/music_plus/block/music_box"
+    },
     "music_plus:real_kit": {
       "textures": "textures/music_plus/block/music_box"
     },

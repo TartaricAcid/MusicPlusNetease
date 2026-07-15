@@ -71,6 +71,14 @@ VIOLIN_SOLO = InstrumentDef(
     note_map=octave_up(c_octave_a_sample(range(4, 8), 55, 100)),
 )
 
+TRUMPET = InstrumentDef(
+    name="trumpet",
+    sound_prefix="music_plus.trumpet",
+    lowest_note=40,
+    highest_note=84,
+    note_map=octave_up(c_octave_a_sample(range(4, 8), 40, 84)),
+)
+
 REAL_KIT = InstrumentDef(
     name="real_kit",
     sound_prefix="music_plus.real_kit",
@@ -95,6 +103,7 @@ _REGISTRY = {
     NYLON_GUITAR.sound_prefix: NYLON_GUITAR,
     GUZHENG.sound_prefix: GUZHENG,
     VIOLIN_SOLO.sound_prefix: VIOLIN_SOLO,
+    TRUMPET.sound_prefix: TRUMPET,
     REAL_KIT.sound_prefix: REAL_KIT,
     LINN_KIT.sound_prefix: LINN_KIT,
 }
