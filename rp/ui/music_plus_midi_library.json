@@ -1,0 +1,479 @@
+{
+  "namespace": "music_plus_midi_library",
+  "main@common.base_screen": {
+    "$screen_content": "music_plus_midi_library.root_panel",
+    "button_mappings": [
+      {
+        "from_button_id": "button.menu_cancel",
+        "mapping_type": "global",
+        "to_button_id": "#screen_close"
+      },
+      {
+        "from_button_id": "button.menu_inventory_cancel",
+        "mapping_type": "global",
+        "to_button_id": "#screen_close"
+      }
+    ]
+  },
+  "root_panel": {
+    "type": "panel",
+    "size": ["95%", "95%"],
+    "anchor_from": "center",
+    "anchor_to": "center",
+    "layer": 1,
+    "controls": [
+      {
+        "panel_bg": {
+          "type": "image",
+          "texture": "textures/ui/White",
+          "size": ["100%", "100%"],
+          "color": [0.1, 0.1, 0.1],
+          "alpha": 0.75,
+          "layer": 0
+        }
+      },
+      {
+        "title_bar": {
+          "type": "panel",
+          "size": ["100%", 26],
+          "anchor_from": "top_middle",
+          "anchor_to": "top_middle",
+          "layer": 1,
+          "controls": [
+            {
+              "title_bg": {
+                "type": "image",
+                "texture": "textures/ui/White",
+                "size": ["100%", "100%"],
+                "color": [0.1, 0.1, 0.1]
+              }
+            },
+            {
+              "title_label": {
+                "type": "label",
+                "text": "§lMIDI 音乐库",
+                "color": [0.75, 0.75, 0.75],
+                "anchor_from": "center",
+                "anchor_to": "center",
+                "layer": 1
+              }
+            }
+          ]
+        }
+      },
+      {
+        "close_btn@common.close_button": {
+          "$close_button_to_button_id": "#screen_close",
+          "size": [18, 18],
+          "offset": [-4, 4],
+          "anchor_from": "top_right",
+          "anchor_to": "top_right",
+          "layer": 10
+        }
+      },
+      {
+        "body": {
+          "type": "panel",
+          "size": ["100%", "100% - 26px"],
+          "offset": [0, 26],
+          "anchor_from": "top_left",
+          "anchor_to": "top_left",
+          "layer": 1,
+          "controls": [
+            {
+              "left@music_plus_midi_library.left_panel": {}
+            },
+            {
+              "right@music_plus_midi_library.right_panel": {}
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "left_panel": {
+    "type": "panel",
+    "size": ["33.3%", "100%"],
+    "anchor_from": "top_left",
+    "anchor_to": "top_left",
+    "controls": [
+      {
+        "left_inner": {
+          "type": "stack_panel",
+          "orientation": "vertical",
+          "size": ["100% - 16px", "100%c"],
+          "offset": [0, 8],
+          "anchor_from": "top_middle",
+          "anchor_to": "top_middle",
+          "controls": [
+            {
+              "paste_btn@music_plus_midi_library.action_button": {
+                "$button_text": "从剪贴板粘贴 MIDI",
+                "$pressed_button_name": "#music_plus_midi_paste"
+              }
+            },
+            {
+              "spacer_1": {
+                "type": "panel",
+                "size": ["100%", 4]
+              }
+            },
+            {
+              "notice_label": {
+                "type": "label",
+                "text": "#music_plus_midi_notice",
+                "color": [1, 0, 0],
+                "size": ["100%", 20],
+                "text_alignment": "center",
+                "bindings": [
+                  {
+                    "binding_condition": "always_when_visible",
+                    "binding_name": "#music_plus_midi_notice"
+                  }
+                ]
+              }
+            },
+            {
+              "spacer_2": {
+                "type": "panel",
+                "size": ["100%", 4]
+              }
+            },
+            {
+              "edit_section@music_plus_midi_library.edit_section": {}
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "edit_section": {
+    "type": "panel",
+    "size": ["100%", "100%c"],
+    "visible": false,
+    "controls": [
+      {
+        "edit_inner": {
+          "type": "stack_panel",
+          "orientation": "vertical",
+          "size": ["100%", "100%c"],
+          "controls": [
+            {
+              "spacer_s1": {
+                "type": "panel",
+                "size": ["100%", 6]
+              }
+            },
+            {
+              "title_label": {
+                "type": "label",
+                "text": "歌曲名称",
+                "color": [0.7, 0.7, 0.7],
+                "size": ["100%", 12],
+                "text_alignment": "center"
+              }
+            },
+            {
+              "spacer_t1": {
+                "type": "panel",
+                "size": ["100%", 2]
+              }
+            },
+            {
+              "title_edit@common.text_edit_box": {
+                "type": "edit_box",
+                "size": ["100%", 22],
+                "max_length": 50,
+                "$edit_box_default_texture": "textures/ui/edit_box_indent",
+                "$edit_box_hover_texture": "textures/ui/edit_box_indent_hover",
+                "$font_scale_factor": 1,
+                "$font_size": "normal",
+                "$is_new_nine_slice": false,
+                "$nine_slice_buttom": 0,
+                "$nine_slice_left": 0,
+                "$nine_slice_right": 0,
+                "$nine_slice_top": 0,
+                "$nineslice_size": [0, 0, 0, 0],
+                "$place_holder_text": "请输入歌曲名称",
+                "$place_holder_text_color": [0.5, 0.5, 0.5],
+                "$text_background_default": "netease_editor_template_namespace.edit_box_background_default",
+                "$text_background_hover": "netease_editor_template_namespace.edit_box_background_hover",
+                "$text_box_text_color": [1, 1, 1],
+                "$text_edit_box_content_binding_name": "#netease_editor_template_namespace.message_content",
+                "$text_edit_box_label_anchor_point": "right_middle",
+                "$text_edit_box_label_min_size": ["100%", 0],
+                "$text_edit_box_label_size": ["default", "default"]
+              }
+            },
+            {
+              "spacer_t2": {
+                "type": "panel",
+                "size": ["100%", 16]
+              }
+            },
+            {
+              "save_btn@music_plus_midi_library.action_button": {
+                "size": ["100%", 24],
+                "$button_text": "§l保存",
+                "$pressed_button_name": "#music_plus_midi_save"
+              }
+            },
+            {
+              "spacer_t3": {
+                "type": "panel",
+                "size": ["100%", 4]
+              }
+            },
+            {
+              "delete_btn@music_plus_midi_library.danger_button": {
+                "size": ["100%", 24],
+                "$button_text": "§l删除",
+                "$pressed_button_name": "#music_plus_midi_delete"
+              }
+            },
+            {
+              "spacer_t4": {
+                "type": "panel",
+                "size": ["100%", 4]
+              }
+            },
+            {
+              "burn_btn@music_plus_midi_library.action_button": {
+                "size": ["100%", 24],
+                "$button_text": "§l刻录",
+                "$pressed_button_name": "#music_plus_midi_burn"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "right_panel": {
+    "type": "panel",
+    "size": ["66.7%", "100%"],
+    "anchor_from": "top_right",
+    "anchor_to": "top_right",
+    "controls": [
+      {
+        "empty_hint": {
+          "type": "label",
+          "text": "§7暂无歌曲， 请粘贴 MIDI 添加",
+          "color": [0.45, 0.45, 0.45],
+          "anchor_from": "center",
+          "anchor_to": "center"
+        }
+      },
+      {
+        "song_scroll@common.scrolling_panel": {
+          "size": ["100% - 8px", "100% - 16px"],
+          "offset": [0, 8],
+          "$show_background": false,
+          "anchor_from": "top_left",
+          "anchor_to": "top_left",
+          "$scrolling_content": "music_plus_midi_library.song_list"
+        }
+      }
+    ]
+  },
+  "song_list": {
+    "type": "stack_grid",
+    "anchor_from": "top_middle",
+    "anchor_to": "top_middle",
+    "size": ["100%", "default"],
+    "orientation": "vertical",
+    "item_count": 20,
+    "collection_name": "music_plus_midi_items",
+    "bindings": [
+      {
+        "binding_condition": "always_when_visible",
+        "binding_name": "#music_plus_midi_item_count",
+        "binding_name_override": "#StackGridItemsCount"
+      }
+    ],
+    "property_bag": {
+      "#music_plus_midi_item_count": 20
+    },
+    "controls": [
+      {
+        "song_item@music_plus_midi_library.song_item": {}
+      }
+    ]
+  },
+  "song_item@common.toggle": {
+    "size": ["100%", 24],
+    "$toggle_grid_collection_name": "music_plus_midi_items",
+    "$item_collection_name": "music_plus_midi_items",
+    "$radio_toggle_group": true,
+    "$toggle_name": "#music_plus_midi_select",
+    "$toggle_group_default_selected": -1,
+    "$unchecked_control": "music_plus_midi_library.song_unchecked_state",
+    "$checked_control": "music_plus_midi_library.song_checked_state",
+    "$unchecked_hover_control": "music_plus_midi_library.song_hover_state",
+    "$checked_hover_control": "music_plus_midi_library.song_checked_state",
+    "$unchecked_locked_control": "music_plus_midi_library.song_unchecked_state",
+    "$checked_locked_control": "music_plus_midi_library.song_checked_state",
+    "$unchecked_locked_hover_control": "music_plus_midi_library.song_hover_state",
+    "$checked_locked_hover_control": "music_plus_midi_library.song_checked_state"
+  },
+  "song_unchecked_state@music_plus_midi_library.song_item_state": {
+    "$state_color": [0.18, 0.18, 0.22],
+    "$state_alpha": 0.7
+  },
+  "song_hover_state@music_plus_midi_library.song_item_state": {
+    "$state_color": [0.25, 0.3, 0.45],
+    "$state_alpha": 1.0
+  },
+  "song_checked_state@music_plus_midi_library.song_item_state": {
+    "$state_color": [0.25, 0.35, 0.55],
+    "$state_alpha": 1.0
+  },
+  "song_item_state": {
+    "type": "image",
+    "texture": "textures/ui/White",
+    "size": ["100%", "100%"],
+    "color": "$state_color",
+    "alpha": "$state_alpha",
+    "controls": [
+      {
+        "song_title": {
+          "type": "label",
+          "text": "#music_plus_midi_title",
+          "color": [0.9, 0.9, 0.9],
+          "size": ["100% - 60px", "default"],
+          "offset": [8, 0],
+          "anchor_from": "left_middle",
+          "anchor_to": "left_middle",
+          "text_alignment": "left",
+          "layer": 2,
+          "bindings": [
+            {
+              "binding_collection_name": "$item_collection_name",
+              "binding_name": "#music_plus_midi_title",
+              "binding_type": "collection"
+            }
+          ]
+        }
+      },
+      {
+        "song_duration": {
+          "type": "label",
+          "text": "#music_plus_midi_duration",
+          "color": [0.55, 0.55, 0.55],
+          "offset": [-8, 0],
+          "anchor_from": "right_middle",
+          "anchor_to": "right_middle",
+          "text_alignment": "right",
+          "layer": 2,
+          "bindings": [
+            {
+              "binding_collection_name": "$item_collection_name",
+              "binding_name": "#music_plus_midi_duration",
+              "binding_type": "collection"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "action_button@common.button": {
+    "size": ["100%", 24],
+    "default_control": "default",
+    "hover_control": "hover",
+    "pressed_control": "pressed",
+    "button_mappings": [
+      {
+        "from_button_id": "button.menu_select",
+        "mapping_type": "pressed",
+        "to_button_id": "$pressed_button_name"
+      }
+    ],
+    "controls": [
+      {
+        "default": {
+          "type": "image",
+          "texture": "textures/ui/White",
+          "size": ["100%", "100%"],
+          "color": [0.22, 0.35, 0.55],
+          "layer": 0
+        }
+      },
+      {
+        "hover": {
+          "type": "image",
+          "texture": "textures/ui/White",
+          "size": ["100%", "100%"],
+          "color": [0.28, 0.42, 0.65],
+          "layer": 0
+        }
+      },
+      {
+        "pressed": {
+          "type": "image",
+          "texture": "textures/ui/White",
+          "size": ["100%", "100%"],
+          "color": [0.18, 0.3, 0.48],
+          "layer": 0
+        }
+      },
+      {
+        "button_label": {
+          "type": "label",
+          "text": "$button_text",
+          "color": [1, 1, 1],
+          "layer": 1
+        }
+      }
+    ]
+  },
+  "danger_button@common.button": {
+    "size": ["100%", 24],
+    "default_control": "default",
+    "hover_control": "hover",
+    "pressed_control": "pressed",
+    "button_mappings": [
+      {
+        "from_button_id": "button.menu_select",
+        "mapping_type": "pressed",
+        "to_button_id": "$pressed_button_name"
+      }
+    ],
+    "controls": [
+      {
+        "default": {
+          "type": "image",
+          "texture": "textures/ui/White",
+          "size": ["100%", "100%"],
+          "color": [0.5, 0.2, 0.2],
+          "layer": 0
+        }
+      },
+      {
+        "hover": {
+          "type": "image",
+          "texture": "textures/ui/White",
+          "size": ["100%", "100%"],
+          "color": [0.6, 0.25, 0.25],
+          "layer": 0
+        }
+      },
+      {
+        "pressed": {
+          "type": "image",
+          "texture": "textures/ui/White",
+          "size": ["100%", "100%"],
+          "color": [0.4, 0.15, 0.15],
+          "layer": 0
+        }
+      },
+      {
+        "button_label": {
+          "type": "label",
+          "text": "$button_text",
+          "color": [1, 1, 1],
+          "layer": 1
+        }
+      }
+    ]
+  }
+}

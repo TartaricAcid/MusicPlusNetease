@@ -21,3 +21,6 @@ MUSIC_PLUS_MOD.Client("client.network.player")
 # 事件注册
 MUSIC_PLUS_MOD.Client("client.event.tick")
 MUSIC_PLUS_MOD.Client("client.event.item_use")
+# 电脑方块
+MUSIC_PLUS_MOD.Client("client.action.computer")
+MUSIC_PLUS_MOD.Client("client.ui.computer_ui")
