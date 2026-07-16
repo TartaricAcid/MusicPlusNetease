@@ -2,6 +2,9 @@
   "resource_pack_name": "music_plus",
   "texture_name": "atlas.terrain",
   "texture_data": {
+    "music_plus:computer": {
+      "textures": "textures/music_plus/block/computer"
+    },
     "music_plus:music_box": {
       "textures": "textures/music_plus/block/music_box"
     },

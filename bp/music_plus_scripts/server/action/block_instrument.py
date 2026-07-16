@@ -12,7 +12,7 @@ import ast
 import base64
 
 from music_plus_scripts.QuModLibs.Server import *
-from music_plus_scripts.server.action.paper_tape_store import get_midi
+from music_plus_scripts.server.store.midi_store import get_midi
 from music_plus_scripts.server.object.block_object import BlockObject
 from music_plus_scripts.server.object.block_use_object import BlockUseObject
 from music_plus_scripts.server.object.item_use_block_object import ItemUseBlockObject

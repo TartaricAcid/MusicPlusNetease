@@ -4,6 +4,7 @@
             "group_name": "item_category.music_plus:main.name",
             "icon": "music_plus:music_plus_music_box",
             "list": [
+                "music_plus:music_plus_computer",
                 "music_plus:music_plus_music_box",
                 "music_plus:music_plus_steinway",
                 "music_plus:music_plus_harpsichord",

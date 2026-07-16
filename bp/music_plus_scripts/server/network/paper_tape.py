@@ -2,7 +2,7 @@
 
 from music_plus_scripts.QuModLibs.Server import *
 from music_plus_scripts.server.action.block_instrument import PAPER_TAPE_ITEM
-from music_plus_scripts.server.action.paper_tape_store import save_midi
+from music_plus_scripts.server.store.midi_store import save_midi
 from music_plus_scripts.server.utils.item_utils import get_mainhand_item_dict, set_mainhand_item_dict
 
 MIDI_NBT_KEY = "midi"
