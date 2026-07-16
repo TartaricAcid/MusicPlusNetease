@@ -27,8 +27,11 @@ MAX_CONCURRENT = 16  # 最多同时播放的会话数
 NOTE_VOLUME = 1.0  # 默认音量
 PLAYBACK_SPEED = 1.0  # 播放速度倍率 (1.0=原速, 2.0=两倍速, 0.5=半速)
 NOTE_OFF_FADE_OUT = 0.2  # note_off 淡出时间（秒）
+
+# ─── 其他常量 ───────────────────────────────────────────────
 MIN_PITCH = 0.0
 MAX_PITCH = 256.0
+GM_PERCUSSION_CHANNEL = 9  # GM 标准打击乐通道 (Channel 10, 0-indexed 为 9)
 
 # ─── 距离检测 ───────────────────────────────────────────────
 MAX_START_DISTANCE = 64  # 开始播放时，超过此距离则忽略
@@ -223,6 +226,15 @@ def on_music_tick():
         while ptr < len(notes) and notes[ptr][0] <= now:
             event = notes[ptr]
             etype, channel = event[1], event[2]
+
+            # GM 打击乐通道过滤：
+            # Channel 10 (0-indexed=9) 仅用于鼓类乐器，非鼓组跳过；
+            # 鼓组仅处理 Channel 10，跳过旋律通道。
+            is_percussion_ch = (channel == GM_PERCUSSION_CHANNEL)
+            is_drum_group = (instrument_group == "drum_kit")
+            if is_percussion_ch != is_drum_group:
+                ptr += 1
+                continue
 
             # 音符播放
             if etype == NOTE_ON:
