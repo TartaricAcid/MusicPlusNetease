@@ -27,96 +27,96 @@ STEINWAY = InstrumentDef(
     name="steinway",
     sound_prefix="music_plus.steinway",
     lowest_note=24,
-    highest_note=108,
-    note_map=octave_up(c_octave_a_sample(range(1, 9), 24, 108)),
+    highest_note=119,
+    note_map=octave_up(c_octave_a_sample(range(1, 9), 24, 119)),
 )
 
 HARPSICHORD = InstrumentDef(
     name="harpsichord",
     sound_prefix="music_plus.harpsichord",
     lowest_note=36,
-    highest_note=89,
-    note_map=octave_up(c_octave_a_sample(range(2, 8), 36, 89)),
+    highest_note=107,
+    note_map=octave_up(c_octave_a_sample(range(2, 8), 36, 107)),
 )
 
 HONKYTONK = InstrumentDef(
     name="honkytonk",
     sound_prefix="music_plus.honkytonk",
     lowest_note=36,
-    highest_note=89,
-    note_map=octave_up(c_octave_a_sample(range(2, 8), 36, 89)),
+    highest_note=107,
+    note_map=octave_up(c_octave_a_sample(range(2, 8), 36, 107)),
 )
 
 RHODES = InstrumentDef(
     name="rhodes",
     sound_prefix="music_plus.rhodes",
     lowest_note=36,
-    highest_note=89,
-    note_map=octave_up(c_octave_a_sample(range(2, 8), 36, 89)),
+    highest_note=107,
+    note_map=octave_up(c_octave_a_sample(range(2, 8), 36, 107)),
 )
 
 VIBRA = InstrumentDef(
     name="vibra",
     sound_prefix="music_plus.vibra",
     lowest_note=60,
-    highest_note=89,
-    note_map=octave_up(c_octave_a_sample(range(4, 7), 60, 89)),
+    highest_note=95,
+    note_map=octave_up(c_octave_a_sample(range(4, 7), 60, 95)),
 )
 
 CE_GUITAR = InstrumentDef(
     name="ce_guitar",
     sound_prefix="music_plus.ce_guitar",
-    lowest_note=40,
-    highest_note=88,
-    note_map=octave_up(c_octave_a_sample(range(3, 7), 40, 88)),
+    lowest_note=48,
+    highest_note=95,
+    note_map=octave_up(c_octave_a_sample(range(3, 7), 48, 95)),
 )
 
 NYLON_GUITAR = InstrumentDef(
     name="nylon_guitar",
     sound_prefix="music_plus.nylon_guitar",
-    lowest_note=40,
-    highest_note=88,
-    note_map=octave_up(c_octave_a_sample(range(3, 7), 40, 88)),
+    lowest_note=48,
+    highest_note=95,
+    note_map=octave_up(c_octave_a_sample(range(3, 7), 48, 95)),
 )
 
 GUZHENG = InstrumentDef(
     name="guzheng",
     sound_prefix="music_plus.guzheng",
     lowest_note=48,
-    highest_note=84,
-    note_map=octave_up(c_octave_a_sample(range(3, 7), 48, 84)),
+    highest_note=95,
+    note_map=octave_up(c_octave_a_sample(range(3, 7), 48, 95)),
 )
 
 VIOLIN_SOLO = InstrumentDef(
     name="violin_solo",
     sound_prefix="music_plus.violin_solo",
-    lowest_note=55,
-    highest_note=100,
-    note_map=octave_up(c_octave_a_sample(range(4, 8), 55, 100)),
+    lowest_note=60,
+    highest_note=107,
+    note_map=octave_up(c_octave_a_sample(range(4, 8), 60, 107)),
 )
 
 TRUMPET = InstrumentDef(
     name="trumpet",
     sound_prefix="music_plus.trumpet",
-    lowest_note=40,
-    highest_note=84,
-    note_map=octave_up(c_octave_a_sample(range(4, 8), 40, 84)),
+    lowest_note=60,
+    highest_note=107,
+    note_map=octave_up(c_octave_a_sample(range(4, 8), 60, 107)),
 )
 
 FLUTE = InstrumentDef(
     name="flute",
     sound_prefix="music_plus.flute",
-    lowest_note=47,
-    highest_note=84,
-    note_map=octave_up(c_octave_a_sample(range(5, 8), 47, 84)),
+    lowest_note=72,
+    highest_note=107,
+    note_map=octave_up(c_octave_a_sample(range(5, 8), 72, 107)),
 )
 
 BASS = InstrumentDef(
     name="bass",
     sound_prefix="music_plus.bass",
-    lowest_note=28,
-    highest_note=64,
-    note_map=c_octave_a_sample(range(3, 6), 28, 64),
+    lowest_note=48,
+    highest_note=83,
+    note_map=c_octave_a_sample(range(3, 6), 48, 83),
 )
 
 REAL_KIT = InstrumentDef(

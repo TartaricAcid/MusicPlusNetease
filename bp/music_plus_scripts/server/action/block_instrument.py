@@ -89,12 +89,12 @@ BLOCK_INSTRUMENT_REGISTRY = {
     },
     "music_plus:music_plus_guzheng": {
         "sound_prefix": "music_plus.guzheng",
-        "instrument_group": "ethnic",
+        "instrument_group": "guzheng",
         "enable_note_off": True,
     },
     "music_plus:music_plus_violin_solo": {
         "sound_prefix": "music_plus.violin_solo",
-        "instrument_group": "strings",
+        "instrument_group": "violin",
         "enable_note_off": True,
     },
     "music_plus:music_plus_trumpet": {

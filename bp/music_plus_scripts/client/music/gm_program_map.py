@@ -114,12 +114,13 @@ INSTRUMENT_GROUPS = {
         "music_plus.nylon_guitar",
         "music_plus.ce_guitar",
     },
+    "violin": {
+        "music_plus.violin_solo",
+    },
     "bass": {
         "music_plus.bass",
     },
-    "strings": {
-        "music_plus.violin_solo",
-        "music_plus.bass",
+    "guzheng": {
         "music_plus.guzheng",
     },
     "brass": {
