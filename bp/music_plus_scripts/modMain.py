@@ -25,6 +25,8 @@ MUSIC_PLUS_MOD.Client("client.network.instrument")
 # 事件注册
 MUSIC_PLUS_MOD.Client("client.event.tick")
 MUSIC_PLUS_MOD.Client("client.event.item_use")
+MUSIC_PLUS_MOD.Client("client.event.render")
+MUSIC_PLUS_MOD.Client("client.event.script")
 # UI 注册
 MUSIC_PLUS_MOD.Client("client.ui.computer_ui")
 MUSIC_PLUS_MOD.Client("client.ui.instrument_ui")

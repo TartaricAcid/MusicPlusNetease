@@ -2,6 +2,7 @@
 
 from music_plus_scripts.QuModLibs.Client import *
 from music_plus_scripts.client.music.midi_playback_controller import play_midi_music_data, stop_midi_music_at_pos
+from music_plus_scripts.client.music.midi_player import stop_player_animation
 
 factory = clientApi.GetEngineCompFactory()
 level_id = clientApi.GetLevelId()
@@ -26,12 +27,18 @@ def play_midi_music(args):
         args.get("instrument_group", "music_box"),
         args.get("enable_note_off", True),
         args.get("midi_md5"),
+        args.get("performer_id"),
     )
 
 
 @AllowCall
 def stop_music_at_pos(args):
     stop_midi_music_at_pos(args.get("pos", (0, 0, 0)))
+
+
+@AllowCall
+def stop_player_piano_animation(args):
+    stop_player_animation(args["player_id"])
 
 
 @AllowCall

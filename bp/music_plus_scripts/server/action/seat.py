@@ -67,13 +67,17 @@ def handle_seat_tick(args):
 
 
 def handle_seat_start_riding(args):
-    if get_seated_instrument(args["rideId"]) is not None:
-        Call(args["id"], "set_instrument_hud_visible", {"visible": True})
+    player_id = args["id"]
+    ride_id = args["rideId"]
+    if get_seated_instrument(ride_id) is not None:
+        Call(player_id, "set_instrument_hud_visible", {"visible": True})
 
 
 def handle_seat_stop_riding(args):
     ride_id = args["rideId"]
+    player_id = args["id"]
     if get_seated_instrument(ride_id) is not None:
-        Call(args["id"], "set_instrument_hud_visible", {"visible": False})
+        Call(player_id, "set_instrument_hud_visible", {"visible": False})
+        Call("*", "stop_player_piano_animation", {"player_id": player_id})
     if is_seat(ride_id):
         remove_seat(ride_id)

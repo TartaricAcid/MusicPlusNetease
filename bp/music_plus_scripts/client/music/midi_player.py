@@ -20,6 +20,12 @@ import time
 from music_plus_scripts.QuModLibs.Client import *
 from music_plus_scripts.client.music.gm_program_map import resolve_program_sound_prefix
 from music_plus_scripts.client.music.instruments import get_instrument
+from music_plus_scripts.client.music.piano_animation import (
+    on_piano_animation_tick,
+    start_piano_animation,
+    stop_piano_animation,
+    update_piano_notes,
+)
 from music_plus_scripts.mido.midi_decoder import NOTE_ON, NOTE_OFF, SUSTAIN
 
 # ─── 播放配置 ───────────────────────────────────────────────
@@ -70,7 +76,7 @@ _audio = _factory.CreateCustomAudio(levelId)
 _particle_sys = _factory.CreateParticleSystem(levelId)
 
 
-def start_playback(notes, pos, sound_prefix, instrument_group, enable_note_off=True, start_time=None):
+def start_playback(notes, pos, sound_prefix, instrument_group, enable_note_off=True, performer_id=None, start_time=None):
     """开始播放一组音符。
 
     Args:
@@ -80,6 +86,7 @@ def start_playback(notes, pos, sound_prefix, instrument_group, enable_note_off=T
         instrument_group: Program Change 可使用的乐器组
         enable_note_off: 是否响应 note_off / sustain_pedal 中断（默认 True）。
             对八音盒等自然衰减乐器可设为 False，音符会持续播放直到自然结束。
+        performer_id: 演奏此乐器的玩家
         start_time: 可选的统一播放起点，用于让同批播放对齐。
     """
     if not notes:
@@ -102,14 +109,17 @@ def start_playback(notes, pos, sound_prefix, instrument_group, enable_note_off=T
         "sound_prefix": sound_prefix,
         "instrument_group": instrument_group,
         "enable_note_off": enable_note_off,
+        "performer_id": performer_id,
+        "animation_stopped": False,
         "active_notes": {},
         "pedal_state": {},
         "sustained_notes": {},
     }
     _active_sessions.append(session)
+    start_piano_animation(performer_id)
 
 
-def queue_playback(notes, pos, sound_prefix, instrument_group, enable_note_off=True, batch_key=None):
+def queue_playback(notes, pos, sound_prefix, instrument_group, enable_note_off=True, performer_id=None, batch_key=None):
     """把后台线程解码完成的 MIDI 播放请求交给 tick 主线程处理。
 
     解码完成时间可能有先后，这里先按 batch_key 暂存一小段时间，
@@ -136,6 +146,7 @@ def queue_playback(notes, pos, sound_prefix, instrument_group, enable_note_off=T
         "sound_prefix": sound_prefix,
         "instrument_group": instrument_group,
         "enable_note_off": enable_note_off,
+        "performer_id": performer_id,
     })
 
 
@@ -173,17 +184,27 @@ def stop_at_pos(pos):
         _active_sessions.remove(s)
 
 
+def stop_player_animation(player_id):
+    for session in _active_sessions:
+        if session.get("performer_id") != player_id:
+            continue
+        _stop_session_animation(session)
+        session["performer_id"] = None
+
+
 def _stop_session_sounds(session):
     """停止单个会话中所有活跃音符。"""
     for mid in session.get("active_notes", {}).values():
         _audio.StopCustomMusicById(mid, NOTE_OFF_FADE_OUT)
     for mid in session.get("sustained_notes", {}).values():
         _audio.StopCustomMusicById(mid, NOTE_OFF_FADE_OUT)
+    _stop_session_animation(session)
 
 
 def on_music_tick():
     # 先检查是否有排队的播放请求需要合批处理
     _drain_pending_playbacks()
+    on_piano_animation_tick()
 
     # 没有音频时，直接返回
     if not _active_sessions:
@@ -221,6 +242,7 @@ def on_music_tick():
         pedal_state = session["pedal_state"]
         sustained_notes = session["sustained_notes"]
         note_off_enabled = session["enable_note_off"]
+        played_notes = []
 
         # 处理所有已到达时间点的事件
         while ptr < len(notes) and notes[ptr][0] <= now:
@@ -249,6 +271,8 @@ def on_music_tick():
                 music_id = _play_note(midi_note, vel, pos, prefix, instrument_group, program)
                 if music_id and note_off_enabled:
                     active_notes[key] = music_id
+                if music_id:
+                    played_notes.append((midi_note, vel))
 
             elif etype == NOTE_OFF and note_off_enabled:
                 midi_note = event[3]
@@ -276,6 +300,7 @@ def on_music_tick():
             ptr += 1
 
         session["ptr"] = ptr
+        update_piano_notes(session["performer_id"], played_notes)
 
         # 所有事件处理完毕
         if ptr >= len(notes):
@@ -285,6 +310,7 @@ def on_music_tick():
                     _audio.StopCustomMusicById(mid, NOTE_OFF_FADE_OUT)
                 for mid in sustained_notes.values():
                     _audio.StopCustomMusicById(mid, NOTE_OFF_FADE_OUT)
+            _stop_session_animation(session)
             finished.append(session)
 
     # 清理已结束的会话
@@ -339,6 +365,7 @@ def _drain_pending_playbacks():
                 item["sound_prefix"],
                 item["instrument_group"],
                 item["enable_note_off"],
+                item["performer_id"],
                 start_time,
             )
 
@@ -346,6 +373,13 @@ def _drain_pending_playbacks():
 def _remove_particle(particle_id):
     """移除粒子实例。"""
     _particle_sys.Remove(particle_id)
+
+
+def _stop_session_animation(session):
+    if session.get("animation_stopped"):
+        return
+    session["animation_stopped"] = True
+    stop_piano_animation(session.get("performer_id"))
 
 
 def _midi_to_sound(midi_note, sound_prefix):

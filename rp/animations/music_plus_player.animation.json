@@ -1,0 +1,31 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "animation.music_plus.player.piano_play": {
+      "loop": true,
+      "bones": {
+        "head": {
+          "rotation": [
+            5,
+            0,
+            0
+          ]
+        },
+        "leftarm": {
+          "rotation": [
+            -25,
+            "query.mod.music_plus_piano_left_y",
+            0
+          ]
+        },
+        "rightarm": {
+          "rotation": [
+            -25,
+            "query.mod.music_plus_piano_right_y",
+            0
+          ]
+        }
+      }
+    }
+  }
+}

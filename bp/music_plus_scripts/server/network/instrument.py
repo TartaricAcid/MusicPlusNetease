@@ -52,6 +52,7 @@ def play_instrument_midi(player_id, args):
     Call("*", "play_midi_music", {
         "midi": midi_payload,
         "midi_md5": midi_md5,
+        "performer_id": player_id,
         "pos": instrument["pos"],
         "sound_prefix": instrument["sound_prefix"],
         "instrument_group": instrument["instrument_group"],
