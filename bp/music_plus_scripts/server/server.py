@@ -9,3 +9,6 @@ item_comp = factory.CreateItem(levelId)
 item_comp.GetUserDataInEvent("ServerItemUseOnEvent")
 item_comp.GetUserDataInEvent("ServerBlockUseEvent")
 item_comp.GetUserDataInEvent("BlockRemoveServerEvent")
+
+# tick 实体
+serverApi.AddEntityTickEventWhiteList("music_plus:seat")

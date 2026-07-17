@@ -1,0 +1,301 @@
+{
+  "namespace": "music_plus_instrument_library",
+  "main@common.base_screen": {
+    "$screen_content": "music_plus_instrument_library.root_panel",
+    "button_mappings": [
+      {
+        "from_button_id": "button.menu_cancel",
+        "mapping_type": "global",
+        "to_button_id": "#screen_close"
+      },
+      {
+        "from_button_id": "button.menu_inventory_cancel",
+        "mapping_type": "global",
+        "to_button_id": "#screen_close"
+      }
+    ]
+  },
+  "root_panel": {
+    "type": "panel",
+    "size": ["95%", "95%"],
+    "anchor_from": "center",
+    "anchor_to": "center",
+    "layer": 1,
+    "controls": [
+      {
+        "panel_bg": {
+          "type": "image",
+          "texture": "textures/ui/White",
+          "size": ["100%", "100%"],
+          "color": [0.1, 0.1, 0.1],
+          "alpha": 0.75,
+          "layer": 0
+        }
+      },
+      {
+        "title_bar": {
+          "type": "panel",
+          "size": ["100%", 26],
+          "anchor_from": "top_middle",
+          "anchor_to": "top_middle",
+          "layer": 1,
+          "controls": [
+            {
+              "title_bg": {
+                "type": "image",
+                "texture": "textures/ui/White",
+                "size": ["100%", "100%"],
+                "color": [0.1, 0.1, 0.1]
+              }
+            },
+            {
+              "title_label": {
+                "type": "label",
+                "text": "§l乐器曲库",
+                "color": [0.75, 0.75, 0.75],
+                "anchor_from": "center",
+                "anchor_to": "center",
+                "layer": 1
+              }
+            }
+          ]
+        }
+      },
+      {
+        "close_btn@common.close_button": {
+          "$close_button_to_button_id": "#screen_close",
+          "size": [18, 18],
+          "offset": [-4, 4],
+          "anchor_from": "top_right",
+          "anchor_to": "top_right",
+          "layer": 10
+        }
+      },
+      {
+        "body": {
+          "type": "panel",
+          "size": ["100%", "100% - 26px"],
+          "offset": [0, 26],
+          "anchor_from": "top_left",
+          "anchor_to": "top_left",
+          "controls": [
+            {"left@music_plus_instrument_library.left_panel": {}},
+            {"right@music_plus_instrument_library.right_panel": {}}
+          ]
+        }
+      }
+    ]
+  },
+  "left_panel": {
+    "type": "panel",
+    "size": ["33.3%", "100%"],
+    "anchor_from": "top_left",
+    "anchor_to": "top_left",
+    "controls": [
+      {
+        "left_inner": {
+          "type": "stack_panel",
+          "orientation": "vertical",
+          "size": ["100% - 16px", "100%c"],
+          "offset": [0, 12],
+          "anchor_from": "top_middle",
+          "anchor_to": "top_middle",
+          "controls": [
+            {
+              "hint": {
+                "type": "label",
+                "text": "§7从右侧选择一首歌曲",
+                "size": ["100%", 18],
+                "text_alignment": "center"
+              }
+            },
+            {"gap_1": {"type": "panel", "size": ["100%", 8]}},
+            {
+              "selection": {
+                "type": "panel",
+                "size": ["100%", "100%c"],
+                "visible": false,
+                "controls": [
+                  {
+                    "selection_inner": {
+                      "type": "stack_panel",
+                      "orientation": "vertical",
+                      "size": ["100%", "100%c"],
+                      "controls": [
+                        {
+                          "title": {
+                            "type": "label",
+                            "text": "",
+                            "color": [0.9, 0.9, 0.9],
+                            "size": ["100%", 28],
+                            "text_alignment": "center"
+                          }
+                        },
+                        {
+                          "duration": {
+                            "type": "label",
+                            "text": "",
+                            "color": [0.55, 0.55, 0.55],
+                            "size": ["100%", 16],
+                            "text_alignment": "center"
+                          }
+                        },
+                        {"gap_2": {"type": "panel", "size": ["100%", 12]}},
+                        {
+                          "play@music_plus_midi_library.action_button": {
+                            "$button_text": "§l播放",
+                            "$pressed_button_name": "#music_plus_instrument_play"
+                          }
+                        },
+                        {"gap_3": {"type": "panel", "size": ["100%", 4]}},
+                        {
+                          "stop@music_plus_midi_library.danger_button": {
+                            "$button_text": "§l停止",
+                            "$pressed_button_name": "#music_plus_instrument_stop"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            {"gap_4": {"type": "panel", "size": ["100%", 10]}},
+            {
+              "notice": {
+                "type": "label",
+                "text": "",
+                "color": [0.85, 0.75, 0.45],
+                "size": ["100%", 20],
+                "text_alignment": "center"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "right_panel": {
+    "type": "panel",
+    "size": ["66.7%", "100%"],
+    "anchor_from": "top_right",
+    "anchor_to": "top_right",
+    "controls": [
+      {
+        "empty_hint": {
+          "type": "label",
+          "text": "§7暂无可播放歌曲",
+          "color": [0.45, 0.45, 0.45],
+          "anchor_from": "center",
+          "anchor_to": "center"
+        }
+      },
+      {
+        "song_scroll@common.scrolling_panel": {
+          "size": ["100% - 8px", "100% - 16px"],
+          "offset": [0, 8],
+          "$show_background": false,
+          "anchor_from": "top_left",
+          "anchor_to": "top_left",
+          "$scrolling_content": "music_plus_instrument_library.song_list"
+        }
+      }
+    ]
+  },
+  "song_list": {
+    "type": "stack_grid",
+    "anchor_from": "top_middle",
+    "anchor_to": "top_middle",
+    "size": ["100%", "default"],
+    "orientation": "vertical",
+    "item_count": 20,
+    "collection_name": "music_plus_instrument_items",
+    "bindings": [
+      {
+        "binding_condition": "always_when_visible",
+        "binding_name": "#music_plus_instrument_item_count",
+        "binding_name_override": "#StackGridItemsCount"
+      }
+    ],
+    "property_bag": {"#music_plus_instrument_item_count": 20},
+    "controls": [
+      {"song_item@music_plus_instrument_library.song_item": {}}
+    ]
+  },
+  "song_item@common.toggle": {
+    "size": ["100%", 24],
+    "$toggle_grid_collection_name": "music_plus_instrument_items",
+    "$item_collection_name": "music_plus_instrument_items",
+    "$radio_toggle_group": true,
+    "$toggle_name": "#music_plus_instrument_select",
+    "$toggle_group_default_selected": -1,
+    "$unchecked_control": "music_plus_instrument_library.song_unchecked_state",
+    "$checked_control": "music_plus_instrument_library.song_checked_state",
+    "$unchecked_hover_control": "music_plus_instrument_library.song_hover_state",
+    "$checked_hover_control": "music_plus_instrument_library.song_checked_state",
+    "$unchecked_locked_control": "music_plus_instrument_library.song_unchecked_state",
+    "$checked_locked_control": "music_plus_instrument_library.song_checked_state",
+    "$unchecked_locked_hover_control": "music_plus_instrument_library.song_hover_state",
+    "$checked_locked_hover_control": "music_plus_instrument_library.song_checked_state"
+  },
+  "song_unchecked_state@music_plus_instrument_library.song_item_state": {
+    "$state_color": [0.18, 0.18, 0.22],
+    "$state_alpha": 0.7
+  },
+  "song_hover_state@music_plus_instrument_library.song_item_state": {
+    "$state_color": [0.25, 0.3, 0.45],
+    "$state_alpha": 1.0
+  },
+  "song_checked_state@music_plus_instrument_library.song_item_state": {
+    "$state_color": [0.25, 0.35, 0.55],
+    "$state_alpha": 1.0
+  },
+  "song_item_state": {
+    "type": "image",
+    "texture": "textures/ui/White",
+    "size": ["100%", "100%"],
+    "color": "$state_color",
+    "alpha": "$state_alpha",
+    "controls": [
+      {
+        "song_title": {
+          "type": "label",
+          "text": "#music_plus_instrument_title",
+          "color": [0.9, 0.9, 0.9],
+          "size": ["100% - 60px", "default"],
+          "offset": [8, 0],
+          "anchor_from": "left_middle",
+          "anchor_to": "left_middle",
+          "text_alignment": "left",
+          "layer": 2,
+          "bindings": [
+            {
+              "binding_collection_name": "$item_collection_name",
+              "binding_name": "#music_plus_instrument_title",
+              "binding_type": "collection"
+            }
+          ]
+        }
+      },
+      {
+        "song_duration": {
+          "type": "label",
+          "text": "#music_plus_instrument_duration",
+          "color": [0.55, 0.55, 0.55],
+          "offset": [-8, 0],
+          "anchor_from": "right_middle",
+          "anchor_to": "right_middle",
+          "text_alignment": "right",
+          "layer": 2,
+          "bindings": [
+            {
+              "binding_collection_name": "$item_collection_name",
+              "binding_name": "#music_plus_instrument_duration",
+              "binding_type": "collection"
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

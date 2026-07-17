@@ -1,0 +1,54 @@
+{
+  "format_version": "1.16.0",
+  "minecraft:entity": {
+    "description": {
+      "identifier": "music_plus:seat",
+      "is_experimental": false,
+      "is_spawnable": false,
+      "is_summonable": false
+    },
+    "components": {
+      "minecraft:type_family": {
+        "family": ["music_plus"]
+      },
+      "minecraft:rideable": {
+        "seat_count": 1,
+        "family_types": ["player"],
+        "seats": {
+          "position": [0, 0.3125, 0]
+        }
+      },
+      "minecraft:breathable": {
+        "breathes_water": true
+      },
+      "minecraft:collision_box": {
+        "width": 0,
+        "height": 0
+      },
+      "minecraft:custom_hit_test": {
+        "hitboxes": [
+          {
+            "pivot": [0, 100, 0],
+            "width": 0,
+            "height": 0
+          }
+        ]
+      },
+      "minecraft:physics": {
+        "has_gravity": false,
+        "has_collision": false,
+        "push_towards_closest_space": false
+      },
+      "minecraft:damage_sensor": {
+        "triggers": {
+          "cause": "all",
+          "deals_damage": false
+        }
+      },
+      "minecraft:pushable": {
+        "is_pushable": false,
+        "is_pushable_by_piston": false
+      }
+    }
+  }
+}

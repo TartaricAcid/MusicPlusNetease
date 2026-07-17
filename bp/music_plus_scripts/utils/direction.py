@@ -28,6 +28,18 @@ def direction_to_aux(direction):
     return 0
 
 
+def aux_to_direction(aux):
+    if aux == 0:
+        return "north"
+    elif aux == 1:
+        return "east"
+    elif aux == 2:
+        return "south"
+    elif aux == 3:
+        return "west"
+    return "north"
+
+
 def direction_to_rot(direction):
     if direction == "north":
         return 0.0

@@ -1,0 +1,69 @@
+{
+  "namespace": "music_plus_instrument_hud",
+  "main@hud.hud_screen": {
+    "$screen_content": "music_plus_instrument_hud.base",
+    "button_mappings": []
+  },
+  "base": {
+    "type": "panel",
+    "layer": 200,
+    "bindings": [
+      {
+        "binding_name": "#hud_visible",
+        "binding_name_override": "#visible",
+        "binding_type": "global"
+      },
+      {
+        "binding_name": "#hud_alpha",
+        "binding_name_override": "#alpha",
+        "binding_type": "global"
+      },
+      {
+        "binding_name": "#hud_propagate_alpha",
+        "binding_name_override": "#propagateAlpha",
+        "binding_type": "global"
+      }
+    ],
+    "controls": [
+      {
+        "button@common.button": {
+          "anchor_from": "bottom_middle",
+          "anchor_to": "bottom_middle",
+          "offset": [0, -43],
+          "size": [64, 18],
+          "visible": false,
+          "button_mappings": [],
+          "controls": [
+            {
+              "default": {
+                "texture": "textures/ui/button_borderless_light",
+                "type": "image"
+              }
+            },
+            {
+              "hover": {
+                "texture": "textures/ui/button_borderless_light",
+                "type": "image"
+              }
+            },
+            {
+              "pressed": {
+                "texture": "textures/ui/button_borderless_lightpressed",
+                "type": "image"
+              }
+            },
+            {
+              "button_label": {
+                "type": "label",
+                "font_type": "default",
+                "text": "打开曲库",
+                "color": [0.3, 0.3, 0.3],
+                "layer": 1
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

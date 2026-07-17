@@ -7,6 +7,12 @@
     "sound": "wood"
   },
   "music_plus:music_plus_steinway": {
+    "client_entity": {
+      "identifier": "music_plus:piano",
+      "hand_model_use_client_entity": true,
+      "block_icon": "music_plus:steinway",
+      "destroyed_textures": "music_plus:steinway"
+    },
     "sound": "wood"
   },
   "music_plus:music_plus_harpsichord": {

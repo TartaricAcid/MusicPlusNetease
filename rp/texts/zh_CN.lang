@@ -16,3 +16,4 @@ tile.music_plus:music_plus_honkytonk.name=酒吧钢琴
 tile.music_plus:music_plus_rhodes.name=电钢琴
 tile.music_plus:music_plus_vibra.name=颤音琴
 item.music_plus:paper_tape.name=纸带
+action.hint.exit.music_plus:seat=按下 SHIFT 来脱离

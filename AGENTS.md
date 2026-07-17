@@ -54,7 +54,8 @@ rp/                                 # Resource pack
 
 ## 方块乐器注册表
 
-所有方块乐器在 `server/action/block_instrument.py` 的 `BLOCK_INSTRUMENT_REGISTRY` 中定义（以该文件为准）。
+所有方块乐器在 `server/store/instrument_registry.py` 的 `INSTRUMENT_REGISTRY` 中定义（以该文件为准）。
+坐下播放的乐器同时加入该文件的 `SEATED_INSTRUMENT_BLOCKS`；其余注册项默认使用纸带播放逻辑。
 
 每种乐器在以下位置 **必须保持同步**（漏改任何一处都会导致问题）：
 
@@ -66,7 +67,7 @@ rp/                                 # Resource pack
 | 采样文件   | `rp/sounds/music_plus/<name>/*.ogg`                               |
 | 采样映射   | `rp/sounds/sound_definitions.json` 中 `music_plus.<name>.*`       |
 | 语言名称   | `rp/texts/zh_CN.lang` 中 `tile.music_plus:music_plus_<name>.name` |
-| 脚本注册   | `BLOCK_INSTRUMENT_REGISTRY`                                       |
+| 脚本注册   | `INSTRUMENT_REGISTRY`                                             |
 
 物品 `music_plus:paper_tape` 的耦合文件：
 

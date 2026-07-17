@@ -22,6 +22,7 @@ class BlockObject(object):
         self.y = args.get("y", args.get("posY", 0))
         self.z = args.get("z", args.get("posZ", 0))
         self.dimension = args.get("dimension", args.get("dimensionId", 0))
+        self.aux = args.get("aux", 0)
 
         self.level_id = levelId
         self.factory = serverApi.GetEngineCompFactory()

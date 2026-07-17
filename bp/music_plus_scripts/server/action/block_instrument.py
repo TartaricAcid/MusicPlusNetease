@@ -5,17 +5,17 @@
 纸带右击方块乐器时，根据方块 ID 查找对应的乐器配置，
 读取 MIDI 数据并发送到客户端播放。
 
-新增方块乐器只需在 BLOCK_INSTRUMENT_REGISTRY 中注册即可。
+新增方块乐器只需在 server.store.instrument_registry 中注册即可。
 """
 
 import ast
 import base64
 
 from music_plus_scripts.QuModLibs.Server import *
-from music_plus_scripts.server.store.midi_store import get_midi
 from music_plus_scripts.server.object.block_object import BlockObject
 from music_plus_scripts.server.object.block_use_object import BlockUseObject
 from music_plus_scripts.server.object.item_use_block_object import ItemUseBlockObject
+from music_plus_scripts.server.store.midi_store import get_midi
 from music_plus_scripts.server.utils.item_utils import item_dict_is_empty
 from music_plus_scripts.utils.midi_payload import pack_midi_payload
 
@@ -36,104 +36,12 @@ DEFAULT_MIDI_BASE64 = (
 
 DEFAULT_MIDI_PAYLOAD = pack_midi_payload(base64.b64decode(DEFAULT_MIDI_BASE64))
 
-# ─── 方块乐器注册表 ──────────────────────────────────────────────────────────────
-# 全局映射：方块 ID → 乐器播放配置
-# 新增方块乐器时只需在此字典中添加一条记录。
-#
-# 每条记录的字段:
-#   sound_prefix   - 声音 ID 前缀，对应 sound_definitions.json 中的条目
-#   instrument_group - Program Change 可使用的乐器组
-#   enable_note_off - 是否响应 note_off 截断（弦/管乐器需要，打击/八音盒不需要）
-# ─────────────────────────────────────────────────────────────────────────────────
-
-BLOCK_INSTRUMENT_REGISTRY = {
-    "music_plus:music_plus_music_box": {
-        "sound_prefix": "music_plus.music_box",
-        "instrument_group": "music_box",
-        "enable_note_off": False,
-    },
-    "music_plus:music_plus_steinway": {
-        "sound_prefix": "music_plus.steinway",
-        "instrument_group": "piano",
-        "enable_note_off": True,
-    },
-    "music_plus:music_plus_harpsichord": {
-        "sound_prefix": "music_plus.harpsichord",
-        "instrument_group": "piano",
-        "enable_note_off": True,
-    },
-    "music_plus:music_plus_honkytonk": {
-        "sound_prefix": "music_plus.honkytonk",
-        "instrument_group": "piano",
-        "enable_note_off": True,
-    },
-    "music_plus:music_plus_rhodes": {
-        "sound_prefix": "music_plus.rhodes",
-        "instrument_group": "piano",
-        "enable_note_off": True,
-    },
-    "music_plus:music_plus_vibra": {
-        "sound_prefix": "music_plus.vibra",
-        "instrument_group": "music_box",
-        "enable_note_off": True,
-    },
-    "music_plus:music_plus_ce_guitar": {
-        "sound_prefix": "music_plus.ce_guitar",
-        "instrument_group": "guitar",
-        "enable_note_off": True,
-    },
-    "music_plus:music_plus_nylon_guitar": {
-        "sound_prefix": "music_plus.nylon_guitar",
-        "instrument_group": "guitar",
-        "enable_note_off": True,
-    },
-    "music_plus:music_plus_guzheng": {
-        "sound_prefix": "music_plus.guzheng",
-        "instrument_group": "guzheng",
-        "enable_note_off": True,
-    },
-    "music_plus:music_plus_violin_solo": {
-        "sound_prefix": "music_plus.violin_solo",
-        "instrument_group": "violin",
-        "enable_note_off": True,
-    },
-    "music_plus:music_plus_trumpet": {
-        "sound_prefix": "music_plus.trumpet",
-        "instrument_group": "brass",
-        "enable_note_off": True,
-    },
-    "music_plus:music_plus_flute": {
-        "sound_prefix": "music_plus.flute",
-        "instrument_group": "pipe",
-        "enable_note_off": True,
-    },
-    "music_plus:music_plus_bass": {
-        "sound_prefix": "music_plus.bass",
-        "instrument_group": "bass",
-        "enable_note_off": True,
-    },
-    "music_plus:music_plus_real_kit": {
-        "sound_prefix": "music_plus.real_kit",
-        "instrument_group": "drum_kit",
-        "enable_note_off": False,
-    },
-    "music_plus:music_plus_linn_kit": {
-        "sound_prefix": "music_plus.linn_kit",
-        "instrument_group": "drum_kit",
-        "enable_note_off": False,
-    },
-}
-
 factory = serverApi.GetEngineCompFactory()
 game = factory.CreateGame(levelId)
 
 
 def is_paper_tape(item_name):
     return item_name == PAPER_TAPE_ITEM
-
-
-def get_block_instrument(block_name):
-    return BLOCK_INSTRUMENT_REGISTRY.get(block_name)
 
 
 def handle_paper_tape_insert(args, instrument_config):
