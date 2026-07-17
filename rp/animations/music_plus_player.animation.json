@@ -4,13 +4,6 @@
     "animation.music_plus.player.piano_play": {
       "loop": true,
       "bones": {
-        "head": {
-          "rotation": [
-            5,
-            0,
-            0
-          ]
-        },
         "leftarm": {
           "rotation": [
             -25,

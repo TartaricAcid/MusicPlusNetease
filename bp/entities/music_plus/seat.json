@@ -15,7 +15,7 @@
         "seat_count": 1,
         "family_types": ["player"],
         "seats": {
-          "position": [0, 0.3125, 0]
+          "position": [0, 0.25, 0]
         }
       },
       "minecraft:breathable": {

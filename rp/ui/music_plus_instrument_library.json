@@ -79,8 +79,12 @@
           "anchor_from": "top_left",
           "anchor_to": "top_left",
           "controls": [
-            {"left@music_plus_instrument_library.left_panel": {}},
-            {"right@music_plus_instrument_library.right_panel": {}}
+            {
+              "left@music_plus_instrument_library.left_panel": {}
+            },
+            {
+              "right@music_plus_instrument_library.right_panel": {}
+            }
           ]
         }
       }
@@ -109,7 +113,24 @@
                 "text_alignment": "center"
               }
             },
-            {"gap_1": {"type": "panel", "size": ["100%", 8]}},
+            {
+              "gap_1": {
+                "type": "panel",
+                "size": ["100%", 4]
+              }
+            },
+            {
+              "stop@music_plus_midi_library.danger_button": {
+                "$button_text": "§l停止",
+                "$pressed_button_name": "#music_plus_instrument_stop"
+              }
+            },
+            {
+              "gap_stop": {
+                "type": "panel",
+                "size": ["100%", 8]
+              }
+            },
             {
               "selection": {
                 "type": "panel",
@@ -123,11 +144,23 @@
                       "size": ["100%", "100%c"],
                       "controls": [
                         {
+                          "play@music_plus_midi_library.action_button": {
+                            "$button_text": "§l播放",
+                            "$pressed_button_name": "#music_plus_instrument_play"
+                          }
+                        },
+                        {
+                          "gap_2": {
+                            "type": "panel",
+                            "size": ["100%", 8]
+                          }
+                        },
+                        {
                           "title": {
                             "type": "label",
                             "text": "",
                             "color": [0.9, 0.9, 0.9],
-                            "size": ["100%", 28],
+                            "size": ["100%", 10],
                             "text_alignment": "center"
                           }
                         },
@@ -136,22 +169,8 @@
                             "type": "label",
                             "text": "",
                             "color": [0.55, 0.55, 0.55],
-                            "size": ["100%", 16],
+                            "size": ["100%", 10],
                             "text_alignment": "center"
-                          }
-                        },
-                        {"gap_2": {"type": "panel", "size": ["100%", 12]}},
-                        {
-                          "play@music_plus_midi_library.action_button": {
-                            "$button_text": "§l播放",
-                            "$pressed_button_name": "#music_plus_instrument_play"
-                          }
-                        },
-                        {"gap_3": {"type": "panel", "size": ["100%", 4]}},
-                        {
-                          "stop@music_plus_midi_library.danger_button": {
-                            "$button_text": "§l停止",
-                            "$pressed_button_name": "#music_plus_instrument_stop"
                           }
                         }
                       ]
@@ -160,7 +179,12 @@
                 ]
               }
             },
-            {"gap_4": {"type": "panel", "size": ["100%", 10]}},
+            {
+              "gap_4": {
+                "type": "panel",
+                "size": ["100%", 10]
+              }
+            },
             {
               "notice": {
                 "type": "label",
@@ -217,9 +241,13 @@
         "binding_name_override": "#StackGridItemsCount"
       }
     ],
-    "property_bag": {"#music_plus_instrument_item_count": 20},
+    "property_bag": {
+      "#music_plus_instrument_item_count": 20
+    },
     "controls": [
-      {"song_item@music_plus_instrument_library.song_item": {}}
+      {
+        "song_item@music_plus_instrument_library.song_item": {}
+      }
     ]
   },
   "song_item@common.toggle": {

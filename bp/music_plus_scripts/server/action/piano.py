@@ -75,11 +75,11 @@ def remove_piano_seat(args):
 def _get_seat_pos(block_pos, face):
     x, y, z = block_pos
     if face == "north":
-        return x + 0.5, y, z + 3
+        return x + 0.5, y, z + 2.875
     if face == "south":
-        return x + 0.5, y, z - 2
+        return x + 0.5, y, z - 1.875
     if face == "west":
-        return x + 3, y, z + 0.5
+        return x + 2.875, y, z + 0.5
     if face == "east":
-        return x - 2, y, z + 0.5
+        return x - 1.875, y, z + 0.5
     return x, y, z

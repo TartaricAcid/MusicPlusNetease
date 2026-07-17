@@ -76,8 +76,10 @@ def handle_seat_start_riding(args):
 def handle_seat_stop_riding(args):
     ride_id = args["rideId"]
     player_id = args["id"]
-    if get_seated_instrument(ride_id) is not None:
+    instrument = get_seated_instrument(ride_id)
+    if instrument is not None:
         Call(player_id, "set_instrument_hud_visible", {"visible": False})
         Call("*", "stop_player_piano_animation", {"player_id": player_id})
+        Call("*", "stop_music_at_pos", {"pos": instrument["pos"]})
     if is_seat(ride_id):
         remove_seat(ride_id)
