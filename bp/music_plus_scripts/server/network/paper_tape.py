@@ -4,6 +4,7 @@ from music_plus_scripts.QuModLibs.Modules.Items.Server import BaseItemService
 from music_plus_scripts.QuModLibs.Server import *
 from music_plus_scripts.server.action.block_instrument import PAPER_TAPE_ITEM
 from music_plus_scripts.server.store.midi_store import get_midi, save_midi
+from music_plus_scripts.server.utils.item_utils import give_player_item_dict
 from music_plus_scripts.utils.midi_payload import get_midi_payload_md5
 
 MIDI_MD5_NBT_KEY = "midi_md5"
@@ -60,15 +61,24 @@ def burn_paper_tape_midi(player_id, args):
 
     duration = args.get("duration", 0.0)
     title = args.get("title", "")
-    target_item.setCustomTips("%name%\n" + "§7歌曲： %s\n时长： %s" % (title, duration))
-
-    target_item.setUserData({
+    burned_item = target_item.getDict()
+    burned_item["count"] = 1
+    burned_item["customTips"] = "%name%\n" + "§7歌曲： %s\n时长： %s" % (title, duration)
+    burned_item["userData"] = {
         MIDI_MD5_NBT_KEY: {
             "__type__": NBT_STRING,
             "__value__": midi_md5,
         }
-    })
+    }
 
-    BaseItemService.setPlayerInventoryData(player_id, inventory, 0)
+    if target_item.count == 1:
+        target_item.setCustomTips(burned_item["customTips"])
+        target_item.setUserData(burned_item["userData"])
+        BaseItemService.setPlayerInventoryData(player_id, inventory, 0)
+    else:
+        target_item.setCount(target_item.count - 1)
+        BaseItemService.setPlayerInventoryData(player_id, inventory, 0)
+        give_player_item_dict(player_id, burned_item)
+
     _set_player_notice(player_id, "已刻录到纸带")
     _finish_burn_request(player_id, request_id)

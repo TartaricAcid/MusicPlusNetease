@@ -6,7 +6,7 @@
       "identifier": "music_plus:paper_tape"
     },
     "components": {
-      "minecraft:max_stack_size": 1,
+      "minecraft:max_stack_size": 16,
       "netease:customtips": {
         "value": "§o§8写入 base64 midi 格式歌曲， 然后塞入音乐盒播放"
       }
