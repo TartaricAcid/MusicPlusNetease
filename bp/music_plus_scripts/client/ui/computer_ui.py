@@ -64,9 +64,6 @@ class ComputerUI(ScreenNodeWrapper):
         self._pending_duration = 0.0
         self._selected_md5 = None
 
-        # 提示信息
-        self._notice = ""
-
         # 右侧可用的 midi 列表
         self._song_keys = midi_store.list_midi_keys()
 
@@ -75,7 +72,9 @@ class ComputerUI(ScreenNodeWrapper):
         self._refresh_list()
 
     def _set_notice(self, text):
-        self._notice = text
+        notice_node = self.GetBaseUIControl(NOTICE_LABEL_PATH)
+        if notice_node is not None:
+            notice_node.asLabel().SetText(text)
 
     def _refresh_list(self):
         self._song_keys = midi_store.list_midi_keys()
@@ -103,11 +102,20 @@ class ComputerUI(ScreenNodeWrapper):
         if control is not None:
             control.asTextEditBox().SetEditText(text)
 
-    def _get_current_midi_payload(self):
+    def _get_current_midi_info(self):
         if self.mode == MODE_PASTE:
-            return self._pending_payload
+            return {
+                "midi": self._pending_payload,
+                "duration": _format_duration(self._pending_duration),
+                "title": self._get_title(),
+            }
         if self.mode == MODE_EDIT and self._selected_md5:
-            return midi_store.get_midi(self._selected_md5)
+            meta = midi_store.get_meta(self._selected_md5) or {}
+            return {
+                "midi": midi_store.get_midi(self._selected_md5),
+                "duration": _format_duration(meta.get("duration", 0.0)),
+                "title": meta.get("title", ""),
+            }
         return None
 
     def _enter_idle(self):
@@ -131,10 +139,6 @@ class ComputerUI(ScreenNodeWrapper):
         self._set_notice("编辑模式 \n {}".format(_format_duration(duration)))
         self._show_edit_section(True)
         self._refresh_list()
-
-    @view_binder.binding(view_binder.BF_BindString, "#music_plus_midi_notice")
-    def rb_body_result_item_name(self):
-        return self._notice
 
     @view_binder.binding(view_binder.BF_BindInt, "#music_plus_midi_item_count")
     def music_plus_midi_item_count(self):
@@ -237,11 +241,11 @@ class ComputerUI(ScreenNodeWrapper):
     @view_binder.binding(view_binder.BF_ButtonClickUp, '#music_plus_midi_burn')
     def burn(self, args):
         """将当前歌曲刻录到玩家背包中的第一张空白纸带。"""
-        midi_payload = self._get_current_midi_payload()
-        if midi_payload is None:
+        midi_info = self._get_current_midi_info()
+        if midi_info is None:
             self._set_notice("请先选择或粘贴一首歌曲")
             return
-        Call("burn_paper_tape_midi", {"midi": midi_payload})
+        Call("burn_paper_tape_midi", midi_info)
 
     @view_binder.binding(view_binder.BF_ButtonClickUp, '#music_plus_midi_delete')
     def delete(self, args):

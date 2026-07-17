@@ -20,11 +20,6 @@ def on_item_use_on_block(args):
     block_name = args["blockName"]
     item_name = item["newItemName"]
 
-    # 手持物品右击电脑方块 → 取消默认行为（GUI 由客户端侧直接打开）
-    if block_name == "music_plus:music_plus_computer" and can_use(args):
-        args["ret"] = True
-        return
-
     # 纸带右击方块乐器 → 塞入并播放曲目
     if is_paper_tape(item_name) and get_block_instrument(block_name) and can_use(args):
         instrument = get_block_instrument(block_name)

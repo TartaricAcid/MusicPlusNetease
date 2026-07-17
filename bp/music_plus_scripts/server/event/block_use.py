@@ -20,7 +20,7 @@ def on_block_use(args):
     block_name = args["blockName"]
     player_id = args["playerId"]
 
-    # 空手右击电脑方块 -> 通知客户端打开 MIDI 音乐库 GUI
+    # 右击电脑方块 -> 通知客户端打开 MIDI 音乐库 GUI
     if block_name == COMPUTER_BLOCK and can_use(args):
         Call(player_id, "open_computer_ui", {})
         args["cancel"] = True

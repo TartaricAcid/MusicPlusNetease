@@ -121,16 +121,10 @@
             {
               "notice_label": {
                 "type": "label",
-                "text": "#music_plus_midi_notice",
+                "text": "",
                 "color": [1, 0, 0],
                 "size": ["100%", 20],
-                "text_alignment": "center",
-                "bindings": [
-                  {
-                    "binding_condition": "always_when_visible",
-                    "binding_name": "#music_plus_midi_notice"
-                  }
-                ]
+                "text_alignment": "center"
               }
             },
             {

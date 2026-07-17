@@ -18,9 +18,9 @@ MUSIC_PLUS_MOD.Client("client.client")
 # 客户端网络
 MUSIC_PLUS_MOD.Client("client.network.sound")
 MUSIC_PLUS_MOD.Client("client.network.player")
+MUSIC_PLUS_MOD.Client("client.network.computer")
 # 事件注册
 MUSIC_PLUS_MOD.Client("client.event.tick")
 MUSIC_PLUS_MOD.Client("client.event.item_use")
-# 电脑方块
-MUSIC_PLUS_MOD.Client("client.action.computer")
+# UI 注册
 MUSIC_PLUS_MOD.Client("client.ui.computer_ui")
