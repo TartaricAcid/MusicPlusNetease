@@ -5,6 +5,7 @@ import io
 
 from music_plus_scripts.QuModLibs.Client import *
 from music_plus_scripts.QuModLibs.UI import ScreenNodeWrapper
+from music_plus_scripts.client.network.computer import request_paper_tape_burn
 from music_plus_scripts.client.store import midi_store
 from music_plus_scripts.mido import MidiFile
 from music_plus_scripts.utils.midi_payload import pack_midi_payload
@@ -245,7 +246,7 @@ class ComputerUI(ScreenNodeWrapper):
         if midi_info is None:
             self._set_notice("请先选择或粘贴一首歌曲")
             return
-        Call("burn_paper_tape_midi", midi_info)
+        request_paper_tape_burn(midi_info)
 
     @view_binder.binding(view_binder.BF_ButtonClickUp, '#music_plus_midi_delete')
     def delete(self, args):

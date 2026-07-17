@@ -3,7 +3,8 @@
 from music_plus_scripts.QuModLibs.Modules.Items.Server import BaseItemService
 from music_plus_scripts.QuModLibs.Server import *
 from music_plus_scripts.server.action.block_instrument import PAPER_TAPE_ITEM
-from music_plus_scripts.server.store.midi_store import save_midi
+from music_plus_scripts.server.store.midi_store import get_midi, save_midi
+from music_plus_scripts.utils.midi_payload import get_midi_payload_md5
 
 MIDI_MD5_NBT_KEY = "midi_md5"
 NBT_STRING = 8
@@ -13,15 +14,15 @@ def _set_player_notice(player_id, text):
     Call(player_id, "set_computer_ui_notice", {"text": text})
 
 
+def _finish_burn_request(player_id, request_id):
+    Call(player_id, "finish_paper_tape_burn", {"request_id": request_id})
+
+
 @AllowCall
 @InjectRPCPlayerId
 def burn_paper_tape_midi(player_id, args):
-    midi_data = args.get("midi")
-    if midi_data is None:
-        _set_player_notice(player_id, "没有可刻录的 MIDI 数据")
-        return
-
-    midi_md5 = save_midi(midi_data)
+    request_id = args["request_id"]
+    midi_md5 = args["midi_md5"]
     inventory = BaseItemService.getPlayerInventoryData(player_id, True, 0)
 
     target_item = None
@@ -37,7 +38,25 @@ def burn_paper_tape_midi(player_id, args):
 
     if target_item is None:
         _set_player_notice(player_id, "背包里没有空白纸带")
+        _finish_burn_request(player_id, request_id)
         return
+
+    midi_data = get_midi(midi_md5)
+    if midi_data is None:
+        midi_data = args.get("midi")
+        if midi_data is None:
+            Call(player_id, "request_paper_tape_midi_payload", {
+                "request_id": request_id,
+                "midi_md5": midi_md5,
+            })
+            return
+
+        actual_md5 = get_midi_payload_md5(midi_data)
+        if actual_md5 != midi_md5:
+            _set_player_notice(player_id, "MIDI 数据校验失败")
+            _finish_burn_request(player_id, request_id)
+            return
+        save_midi(midi_data)
 
     duration = args.get("duration", 0.0)
     title = args.get("title", "")
@@ -52,3 +71,4 @@ def burn_paper_tape_midi(player_id, args):
 
     BaseItemService.setPlayerInventoryData(player_id, inventory, 0)
     _set_player_notice(player_id, "已刻录到纸带")
+    _finish_burn_request(player_id, request_id)
