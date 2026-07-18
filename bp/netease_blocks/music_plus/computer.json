@@ -25,6 +25,16 @@
       "minecraft:destructible_by_mining": {
         "seconds_to_destroy": 0.2
       },
+      "netease:aabb": {
+        "clip": {
+          "min": [0.0625, 0, 0.0625],
+          "max": [0.9375, 1.125, 0.9375]
+        },
+        "collision": {
+          "min": [0.0625, 0, 0.0625],
+          "max": [0.9375, 1.125, 0.9375]
+        }
+      },
       "netease:connection": {
         "blocks": []
       }
