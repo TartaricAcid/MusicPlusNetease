@@ -21,11 +21,11 @@ import time
 from music_plus_scripts.QuModLibs.Client import *
 from music_plus_scripts.client.music.gm_program_map import resolve_program_sound_prefix
 from music_plus_scripts.client.music.instruments import get_instrument
-from music_plus_scripts.client.music.piano_animation import (
-    on_piano_animation_tick,
-    start_piano_animation,
-    stop_piano_animation,
-    update_piano_notes,
+from music_plus_scripts.client.music.performance_animation import (
+    on_performance_animation_tick,
+    start_performance_animation,
+    stop_performance_animation,
+    update_performance_notes,
 )
 from music_plus_scripts.mido.midi_decoder import NOTE_ON, NOTE_OFF, SUSTAIN
 
@@ -58,7 +58,8 @@ NOTE_PARTICLE_LIFETIME = 1.0  # 音符粒子存续时间，最长 1 秒
 #     "notes": [[t, type, ch, d1, d2, program], ...], 按时间排序的事件列表
 #     "ptr": int,                        当前播放指针
 #     "start_time": float,               播放开始的 time.time()
-#     "pos": (x, y, z),                  播放位置
+#     "playback_key": str,               播放实例 Key
+#     "anchor": dict,                    方块或实体播放锚点
 #     "sound_prefix": str,               声音 ID 前缀
 #     "instrument_group": str,           Program Change 可用乐器组
 #     "particle_range": tuple,           粒子相对默认位置的三轴偏移范围
@@ -80,11 +81,13 @@ _particle_sys = _factory.CreateParticleSystem(levelId)
 
 def start_playback(
         notes,
-        pos,
+        playback_key,
+        anchor,
         sound_prefix,
         instrument_group,
         enable_note_off=True,
         performer_id=None,
+        animation_profile=None,
         particle_range=None,
         start_time=None
 ):
@@ -92,16 +95,24 @@ def start_playback(
 
     Args:
         notes: 已解码后的事件列表 [[time, type, channel, midi_note, velocity, program], ...]
-        pos: (x, y, z) 播放位置
+        playback_key: 播放实例 Key
+        anchor: 方块或实体播放锚点
         sound_prefix: 声音 ID 前缀，如 "music_plus.music_box"
         instrument_group: Program Change 可使用的乐器组
         enable_note_off: 是否响应 note_off / sustain_pedal 中断（默认 True）。
             对八音盒等自然衰减乐器可设为 False，音符会持续播放直到自然结束。
         performer_id: 演奏此乐器的玩家
+        animation_profile: 演奏动画
         particle_range: 可选的 ((x1,x2),(y1,y2),(z1,z2))，默认在方块中心固定生成。
         start_time: 可选的统一播放起点，用于让同批播放对齐。
     """
     if not notes:
+        return
+
+    if anchor.get("dimension") != _game.GetCurrentDimension():
+        return
+    pos = _resolve_anchor_pos(anchor)
+    if pos is None:
         return
 
     # 距离检查：超过 64 格不播放
@@ -117,11 +128,13 @@ def start_playback(
         "notes": notes,
         "ptr": 0,
         "start_time": start_time if start_time is not None else time.time(),
-        "pos": tuple(pos),
+        "playback_key": playback_key,
+        "anchor": anchor,
         "sound_prefix": sound_prefix,
         "instrument_group": instrument_group,
         "enable_note_off": enable_note_off,
         "performer_id": performer_id,
+        "animation_profile": animation_profile,
         "particle_range": tuple(particle_range) if particle_range else None,
         "animation_stopped": False,
         "active_notes": {},
@@ -129,16 +142,18 @@ def start_playback(
         "sustained_notes": {},
     }
     _active_sessions.append(session)
-    start_piano_animation(performer_id)
+    start_performance_animation(performer_id, animation_profile)
 
 
 def queue_playback(
         notes,
-        pos,
+        playback_key,
+        anchor,
         sound_prefix,
         instrument_group,
         enable_note_off=True,
         performer_id=None,
+        animation_profile=None,
         particle_range=None,
         batch_key=None
 ):
@@ -152,7 +167,7 @@ def queue_playback(
 
     now = time.time()
     if batch_key is None:
-        batch_key = ("single", now, tuple(pos))
+        batch_key = ("single", now, playback_key)
 
     batch = _pending_batches.get(batch_key)
     if batch is None:
@@ -164,24 +179,25 @@ def queue_playback(
 
     batch["items"].append({
         "notes": notes,
-        "pos": tuple(pos),
+        "playback_key": playback_key,
+        "anchor": anchor,
         "sound_prefix": sound_prefix,
         "instrument_group": instrument_group,
         "enable_note_off": enable_note_off,
         "performer_id": performer_id,
+        "animation_profile": animation_profile,
         "particle_range": particle_range,
     })
 
 
-def cancel_queued_playback_at_pos(pos):
-    """取消指定位置尚未进入播放会话的排队请求。
+def cancel_queued_playback(playback_key):
+    """取消指定播放实例尚未进入播放会话的排队请求。
 
-    这里只清理 _pending_batches 中等待合批的请求；已经开始播放的会话需要用 stop_at_pos 停止。
+    这里只清理 _pending_batches 中等待合批的请求；已经开始播放的会话需要用 stop_playback 停止。
     """
-    pos = tuple(pos)
     empty_keys = []
     for batch_key, batch in _pending_batches.items():
-        batch["items"] = [item for item in batch["items"] if item["pos"] != pos]
+        batch["items"] = [item for item in batch["items"] if item["playback_key"] != playback_key]
         if not batch["items"]:
             empty_keys.append(batch_key)
     for batch_key in empty_keys:
@@ -197,22 +213,14 @@ def stop_all():
     _active_sessions[:] = []
 
 
-def stop_at_pos(pos):
+def stop_playback(playback_key):
     to_remove = []
     for session in _active_sessions:
-        if session["pos"] == pos:
+        if session["playback_key"] == playback_key:
             _stop_session_sounds(session)
             to_remove.append(session)
     for s in to_remove:
         _active_sessions.remove(s)
-
-
-def stop_player_animation(player_id):
-    for session in _active_sessions:
-        if session.get("performer_id") != player_id:
-            continue
-        _stop_session_animation(session)
-        session["performer_id"] = None
 
 
 def _stop_session_sounds(session):
@@ -227,7 +235,7 @@ def _stop_session_sounds(session):
 def on_music_tick():
     # 先检查是否有排队的播放请求需要合批处理
     _drain_pending_playbacks()
-    on_piano_animation_tick()
+    on_performance_animation_tick()
 
     # 没有音频时，直接返回
     if not _active_sessions:
@@ -245,7 +253,8 @@ def on_music_tick():
         out_of_range = []
 
         for session in _active_sessions:
-            if _distance_sq(player_pos, session["pos"]) > MAX_LISTEN_DISTANCE * MAX_LISTEN_DISTANCE:
+            pos = _resolve_anchor_pos(session["anchor"])
+            if pos is None or _distance_sq(player_pos, pos) > MAX_LISTEN_DISTANCE * MAX_LISTEN_DISTANCE:
                 _stop_session_sounds(session)
                 out_of_range.append(session)
 
@@ -255,10 +264,24 @@ def on_music_tick():
     # 正常更新剩下音频
     finished = []
     for session in _active_sessions:
+        # 维度不同，中断音频
+        if session["anchor"].get("dimension") != _game.GetCurrentDimension():
+            _stop_session_sounds(session)
+            finished.append(session)
+            continue
+
+        # 所处位置不在（如果是实体那么则是实体丢失），中断
         now = (time.time() - session["start_time"]) * PLAYBACK_SPEED
         notes = session["notes"]
         ptr = session["ptr"]
-        pos = session["pos"]
+        pos = _resolve_anchor_pos(session["anchor"])
+        if pos is None:
+            _stop_session_sounds(session)
+            finished.append(session)
+            continue
+
+        entity_id = session["anchor"].get("entity_id") if session["anchor"].get("type") == "entity" else None
+        entity_offset = session["anchor"].get("offset", (0, 0, 0))
         prefix = session["sound_prefix"]
         instrument_group = session["instrument_group"]
         active_notes = session["active_notes"]
@@ -292,7 +315,10 @@ def on_music_tick():
                     old = active_notes.pop(key, None) or sustained_notes.pop(key, None)
                     if old:
                         _audio.StopCustomMusicById(old, NOTE_OFF_FADE_OUT)
-                music_id = _play_note(midi_note, vel, pos, prefix, instrument_group, program, particle_range)
+                music_id = _play_note(
+                    midi_note, vel, pos, entity_id, entity_offset,
+                    prefix, instrument_group, program, particle_range
+                )
                 if music_id and note_off_enabled:
                     active_notes[key] = music_id
                 if music_id:
@@ -324,7 +350,9 @@ def on_music_tick():
             ptr += 1
 
         session["ptr"] = ptr
-        update_piano_notes(session["performer_id"], played_notes)
+        update_performance_notes(
+            session["performer_id"], session["animation_profile"], played_notes
+        )
 
         # 所有事件处理完毕
         if ptr >= len(notes):
@@ -342,7 +370,10 @@ def on_music_tick():
         _active_sessions.remove(s)
 
 
-def _play_note(midi_note, velocity, pos, sound_prefix, instrument_group, program, particle_range):
+def _play_note(
+        midi_note, velocity, pos, entity_id, entity_offset,
+        sound_prefix, instrument_group, program, particle_range
+):
     resolved_prefix = resolve_program_sound_prefix(sound_prefix, instrument_group, program)
     if resolved_prefix is None:
         return None
@@ -357,10 +388,11 @@ def _play_note(midi_note, velocity, pos, sound_prefix, instrument_group, program
     volume = NOTE_VOLUME * velocity
 
     # 播放单个音符
-    music_id = _audio.PlayCustomMusic(name, pos, volume, pitch, False, None, )
+    audio_pos = tuple(entity_offset) if entity_id else pos
+    music_id = _audio.PlayCustomMusic(name, audio_pos, volume, pitch, False, entity_id)
 
     # 粒子效果
-    particle_pos = _get_particle_pos(pos, particle_range)
+    particle_pos = _get_particle_pos(pos, particle_range, entity_id is not None)
     particle_id = _particle_sys.Create(NOTE_PARTICLE, particle_pos)
     if _particle_sys.EmitManually(particle_id):
         _game.AddTimer(NOTE_PARTICLE_LIFETIME, _remove_particle, particle_id)
@@ -368,12 +400,12 @@ def _play_note(midi_note, velocity, pos, sound_prefix, instrument_group, program
     return music_id
 
 
-def _get_particle_pos(pos, particle_range):
+def _get_particle_pos(pos, particle_range, is_entity=False):
     x, y, z = pos
 
-    particle_x = x + 0.5
-    particle_y = y + 1.0
-    particle_z = z + 0.5
+    particle_x = x if is_entity else x + 0.5
+    particle_y = y + 0.5 if is_entity else y + 1.0
+    particle_z = z if is_entity else z + 0.5
 
     if particle_range:
         x_range, y_range, z_range = particle_range
@@ -401,11 +433,13 @@ def _drain_pending_playbacks():
         for item in batch["items"]:
             start_playback(
                 item["notes"],
-                item["pos"],
+                item["playback_key"],
+                item["anchor"],
                 item["sound_prefix"],
                 item["instrument_group"],
                 item["enable_note_off"],
                 item["performer_id"],
+                item["animation_profile"],
                 item["particle_range"],
                 start_time,
             )
@@ -420,7 +454,7 @@ def _stop_session_animation(session):
     if session.get("animation_stopped"):
         return
     session["animation_stopped"] = True
-    stop_piano_animation(session.get("performer_id"))
+    stop_performance_animation(session.get("performer_id"))
 
 
 def _midi_to_sound(midi_note, sound_prefix):
@@ -460,7 +494,13 @@ def _enforce_limit(new_pos):
             break
 
         # 找出最远的音频
-        farthest = max(_active_sessions, key=lambda s: _distance_sq(new_pos, s["pos"]))
+        farthest = max(
+            _active_sessions,
+            key=lambda s: _distance_sq(
+                new_pos,
+                _resolve_anchor_pos(s["anchor"]) or new_pos
+            )
+        )
 
         _stop_session_sounds(farthest)
 
@@ -474,3 +514,9 @@ def _distance_sq(a, b):
     dy = a[1] - b[1]
     dz = a[2] - b[2]
     return dx * dx + dy * dy + dz * dz
+
+
+def _resolve_anchor_pos(anchor):
+    if anchor.get("type") == "entity":
+        return _factory.CreatePos(anchor["entity_id"]).GetPos()
+    return tuple(anchor["pos"])

@@ -4,7 +4,7 @@ import traceback
 
 from music_plus_scripts.QuModLibs.Modules.Thread.Client import RUN_IN_MAIN_THREAD
 from music_plus_scripts.QuModLibs.Modules.Thread.Util import QThreadPool
-from music_plus_scripts.client.music.midi_player import cancel_queued_playback_at_pos, queue_playback, stop_at_pos
+from music_plus_scripts.client.music.midi_player import cancel_queued_playback, queue_playback, stop_playback
 from music_plus_scripts.mido.midi_decoder import decode_midi_payload
 from music_plus_scripts.utils.midi_payload import get_midi_payload_md5
 
@@ -14,8 +14,9 @@ _DECODE_POOL = QThreadPool(maxThreadCount=1, daemon=True).start()
 # 全局播放请求递增版本号
 # 用于丢弃异步解码完成后，过期播放请求
 _PLAY_REQUEST_VERSION = 0
-# 方块 pos -> REQUEST_VERSION 映射表
-_PLAY_REQUEST_VERSIONS_BY_POS = {}
+
+# playback_key -> REQUEST_VERSION 映射表
+_PLAY_REQUEST_VERSIONS_BY_KEY = {}
 
 # 最多缓存数量
 _MAX_DECODE_CACHE = 8
@@ -31,24 +32,27 @@ _DECODE_WAITERS = {}
 
 def play_midi_music_data(
         midi_payload,
-        pos,
+        playback_key,
+        anchor,
         sound_prefix,
         instrument_group,
         enable_note_off=True,
         midi_md5=None,
         performer_id=None,
+        animation_profile=None,
         particle_range=None
 ):
     # 构建解码请求
-    pos = tuple(pos)
-    request_version = _next_play_request_version(pos)
+    request_version = _next_play_request_version(playback_key)
     cache_key = _get_cache_key(midi_payload, midi_md5)
     request = {
-        "pos": pos,
+        "playback_key": playback_key,
+        "anchor": anchor,
         "sound_prefix": sound_prefix,
         "instrument_group": instrument_group,
         "enable_note_off": enable_note_off,
         "performer_id": performer_id,
+        "animation_profile": animation_profile,
         "particle_range": particle_range,
         "version": request_version,
     }
@@ -90,31 +94,32 @@ def play_midi_music_data(
     _DECODE_POOL.addTask(decode_task)
 
 
-def stop_midi_music_at_pos(pos):
-    pos = tuple(pos)
-    _next_play_request_version(pos)
-    cancel_queued_playback_at_pos(pos)
-    stop_at_pos(pos)
+def stop_midi_music(playback_key):
+    _next_play_request_version(playback_key)
+    cancel_queued_playback(playback_key)
+    stop_playback(playback_key)
 
 
-def _next_play_request_version(pos):
+def _next_play_request_version(playback_key):
     global _PLAY_REQUEST_VERSION
     _PLAY_REQUEST_VERSION += 1
-    _PLAY_REQUEST_VERSIONS_BY_POS[pos] = _PLAY_REQUEST_VERSION
+    _PLAY_REQUEST_VERSIONS_BY_KEY[playback_key] = _PLAY_REQUEST_VERSION
     return _PLAY_REQUEST_VERSION
 
 
 def _queue_if_latest(notes, cache_key, request):
-    if _PLAY_REQUEST_VERSIONS_BY_POS.get(request["pos"]) != request["version"]:
+    if _PLAY_REQUEST_VERSIONS_BY_KEY.get(request["playback_key"]) != request["version"]:
         return
 
     queue_playback(
         notes,
-        request["pos"],
+        request["playback_key"],
+        request["anchor"],
         request["sound_prefix"],
         request["instrument_group"],
         request["enable_note_off"],
         request["performer_id"],
+        request["animation_profile"],
         request["particle_range"],
         batch_key=cache_key
     )

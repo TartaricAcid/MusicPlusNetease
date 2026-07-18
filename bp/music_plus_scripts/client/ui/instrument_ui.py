@@ -77,13 +77,18 @@ class InstrumentUI(ScreenNodeWrapper):
                 except Exception:
                     analysis = None
 
-        instrument_summary = format_instrument_summary(analysis, "steinway")
+        from music_plus_scripts.client.action.instrument_context import get_instrument_target_id
+        instrument_summary = format_instrument_summary(analysis, get_instrument_target_id())
         self._set_label(ANALYSIS_LABEL_PATH, instrument_summary)
 
         selection = self.GetBaseUIControl(SELECTION_PATH)
         if selection is not None:
             selection.SetVisible(True)
         self._set_notice("")
+
+    def refresh_instrument_analysis(self):
+        if self._selected_md5:
+            self._on_song_select(self._selected_md5)
 
     @view_binder.binding(view_binder.BF_BindInt, "#music_plus_instrument_item_count")
     def music_plus_instrument_item_count(self):

@@ -11,6 +11,7 @@ MUSIC_PLUS_MOD.Server("server.event.block_use")
 MUSIC_PLUS_MOD.Server("server.event.block_remove")
 MUSIC_PLUS_MOD.Server("server.event.redstone")
 MUSIC_PLUS_MOD.Server("server.event.entity")
+MUSIC_PLUS_MOD.Server("server.event.player")
 # 服务端网络
 MUSIC_PLUS_MOD.Server("server.network.paper_tape")
 MUSIC_PLUS_MOD.Server("server.network.instrument")

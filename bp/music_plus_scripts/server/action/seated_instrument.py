@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from music_plus_scripts.QuModLibs.Server import *
+from music_plus_scripts.server.action.instrument_playback import build_block_playback
 
 factory = serverApi.GetEngineCompFactory()
 block_info = factory.CreateBlockInfo(levelId)
@@ -29,4 +30,5 @@ def get_seated_instrument(seat_id):
     result = instrument_config.copy()
     result["pos"] = (x, y, z)
     result["dimension"] = dimension
+    result.update(build_block_playback(result["pos"], dimension))
     return result

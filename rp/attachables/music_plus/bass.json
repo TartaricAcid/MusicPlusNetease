@@ -1,0 +1,34 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:attachable": {
+    "description": {
+      "identifier": "music_plus:music_plus_bass",
+      "materials": {
+        "default": "entity_alphatest",
+        "enchanted": "entity_alphatest_glint"
+      },
+      "textures": {
+        "default": "textures/music_plus/entity/bass",
+        "enchanted": "textures/misc/enchanted_item_glint"
+      },
+      "geometry": {
+        "default": "geometry.music_plus_bass"
+      },
+      "animations": {
+        "holder_third_person": "animation.music_plus.bass.holder_third_person",
+        "holder_first_person": "animation.music_plus.bass.holder_first_person"
+      },
+      "scripts": {
+        "animate": [
+          {
+            "holder_third_person": "!c.is_first_person"
+          },
+          {
+            "holder_first_person": "c.is_first_person"
+          }
+        ]
+      },
+      "render_controllers": ["controller.render.item_default"]
+    }
+  }
+}

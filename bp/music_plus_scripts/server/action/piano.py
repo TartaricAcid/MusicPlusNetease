@@ -59,9 +59,11 @@ def handle_piano_use(args):
 
 
 def remove_piano_seat(args):
+    from music_plus_scripts.server.action.instrument_playback import build_block_playback, stop_instrument_playback
+
     block = BlockObject(args)
-    x, y, z = block.get_pos()
-    Call("*", "stop_music_at_pos", {"pos": (x, y, z)})
+    playback = build_block_playback(block.get_pos(), block.get_dimension())
+    stop_instrument_playback(playback["playback_key"])
     seat_id = get_block_seat_id(block.get_dimension(), block.get_pos())
     if seat_id is None:
         return

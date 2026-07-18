@@ -3,20 +3,21 @@
 import time
 
 from music_plus_scripts.QuModLibs.Client import *
+from music_plus_scripts.client.action.handheld_instrument import handle_handheld_instrument_try_use, HANDHELD_INSTRUMENT_TARGETS
 
 CACHE_TIME = -1
 
 
-@Listen(Events.ClientItemUseOnEvent)
-def on_item_use_on(args):
-    if args.get("ret"):
+@Listen(Events.ClientItemTryUseEvent)
+def on_item_try_use(args):
+    if args["cancel"]:
         return
 
-    block_name = args["blockName"]
     item_dict = args["itemDict"]
     item_name = item_dict["newItemName"]
 
-    pass
+    if item_name in HANDHELD_INSTRUMENT_TARGETS and _can_use(args):
+        handle_handheld_instrument_try_use(args)
 
 
 def _can_use(args, cool_time=0.2):

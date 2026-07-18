@@ -67,13 +67,12 @@ def handle_seat_tick(args):
 
 
 def handle_seat_stop_riding(args):
+    from music_plus_scripts.server.action.instrument_playback import stop_instrument_playback
     ride_id = args["rideId"]
-    player_id = args["id"]
-
     instrument = get_seated_instrument(ride_id)
+
     if instrument is not None:
-        Call("*", "stop_player_piano_animation", {"player_id": player_id})
-        Call("*", "stop_music_at_pos", {"pos": instrument["pos"]})
+        stop_instrument_playback(instrument["playback_key"])
         remove_seat(ride_id)
         return
 

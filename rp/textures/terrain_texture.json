@@ -35,9 +35,6 @@
     "music_plus:flute": {
       "textures": "textures/music_plus/block/music_box"
     },
-    "music_plus:bass": {
-      "textures": "textures/music_plus/block/music_box"
-    },
     "music_plus:real_kit": {
       "textures": "textures/music_plus/block/music_box"
     },

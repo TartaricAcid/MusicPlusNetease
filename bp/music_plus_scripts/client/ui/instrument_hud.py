@@ -7,6 +7,7 @@ from music_plus_scripts.client.network.instrument import open_instrument_ui
 BUTTON_PATH = "/variables_button_mappings_and_controls/safezone_screen_matrix/inner_matrix/safezone_screen_panel/root_screen_panel/button"
 
 camera = clientApi.GetEngineCompFactory().CreateCamera(levelId)
+_instrument_camera_departed = False
 
 
 @ScreenNodeWrapper.autoRegister("music_plus_instrument_hud.main")
@@ -19,12 +20,15 @@ class InstrumentHud(ScreenNodeWrapper):
         self.setButtonClickHandler(BUTTON_PATH, open_instrument_ui)
 
 
-def set_instrument_hud_visible(visible):
-    # 准备弹奏时，分离镜头，让玩家可以观察自己
-    if visible:
+def set_instrument_hud_visible(visible, depart_camera=False):
+    global _instrument_camera_departed
+    if visible and depart_camera and not _instrument_camera_departed:
         camera.DepartCamera()
-    else:
+        _instrument_camera_departed = True
+
+    elif _instrument_camera_departed and (not visible or not depart_camera):
         camera.UnDepartCamera()
+        _instrument_camera_departed = False
 
     # 显示按钮
     ui_node = InstrumentHud.getUiNode()

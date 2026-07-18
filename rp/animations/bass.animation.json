@@ -1,0 +1,25 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.music_plus.bass.holder_third_person": {
+			"loop": true,
+			"bones": {
+				"bone": {
+					"rotation": [-176.45388, -178.756, -109.17498],
+					"position": [-9, 12, -4],
+					"scale": 0.375
+				}
+			}
+		},
+		"animation.music_plus.bass.holder_first_person": {
+			"loop": true,
+			"bones": {
+				"bone": {
+					"rotation": [9.47382, -159.66802, 70.0118],
+					"position": [-7.66213, 20.80719, 5.47297],
+					"scale": 0.25
+				}
+			}
+		}
+	}
+}

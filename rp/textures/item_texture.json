@@ -4,6 +4,9 @@
   "texture_data": {
     "music_plus:paper_tape": {
       "textures": "textures/music_plus/item/paper_tape"
+    },
+    "music_plus:bass": {
+      "textures": "textures/music_plus/item/bass"
     }
   }
 }

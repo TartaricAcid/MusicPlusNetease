@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from music_plus_scripts.QuModLibs.Client import *
-from music_plus_scripts.client.music.piano_animation import handle_remove_player_aoi
+from music_plus_scripts.client.music.performance_animation import handle_remove_player_aoi
 
 
 @Listen(Events.RemovePlayerAOIClientEvent)

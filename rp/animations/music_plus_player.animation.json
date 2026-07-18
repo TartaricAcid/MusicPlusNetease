@@ -1,21 +1,22 @@
 {
   "format_version": "1.8.0",
   "animations": {
-    "animation.music_plus.player.piano_play": {
+    "animation.music_plus.player.instrument_play": {
       "loop": true,
+      "override_previous_animation": true,
       "bones": {
         "leftarm": {
           "rotation": [
-            -25,
-            "query.mod.music_plus_piano_left_y",
-            0
+            "query.mod.music_plus_perform_left_x",
+            "query.mod.music_plus_perform_left_y",
+            "query.mod.music_plus_perform_left_z"
           ]
         },
         "rightarm": {
           "rotation": [
-            -25,
-            "query.mod.music_plus_piano_right_y",
-            0
+            "query.mod.music_plus_perform_right_x",
+            "query.mod.music_plus_perform_right_y",
+            "query.mod.music_plus_perform_right_z"
           ]
         }
       }

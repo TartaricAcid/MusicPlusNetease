@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from music_plus_scripts.QuModLibs.Server import *
-from music_plus_scripts.server.action.seated_instrument import get_seated_instrument
+from music_plus_scripts.server.action.handheld_instrument import get_player_instrument
+from music_plus_scripts.server.action.instrument_playback import play_instrument_playback, stop_instrument_playback
 from music_plus_scripts.server.store.midi_store import get_midi, save_midi
 from music_plus_scripts.utils.midi_payload import get_midi_payload_md5
-
-factory = serverApi.GetEngineCompFactory()
 
 
 def _finish_play(player_id, request_id, text):
@@ -15,22 +14,13 @@ def _finish_play(player_id, request_id, text):
     })
 
 
-def _get_player_instrument(player_id):
-    ride_comp = factory.CreateRide(player_id)
-    if not ride_comp.IsEntityRiding():
-        return None
-
-    seat_id = ride_comp.GetEntityRider()
-    return get_seated_instrument(seat_id)
-
-
 @AllowCall
 @InjectRPCPlayerId
 def play_instrument_midi(player_id, args):
     request_id = args["request_id"]
-    instrument = _get_player_instrument(player_id)
+    instrument = get_player_instrument(player_id)
     if instrument is None:
-        _finish_play(player_id, request_id, "请先坐到乐器前")
+        _finish_play(player_id, request_id, "当前没有可演奏的乐器")
         return
 
     midi_md5 = args["midi_md5"]
@@ -48,25 +38,15 @@ def play_instrument_midi(player_id, args):
             return
         save_midi(midi_payload)
 
-    Call("*", "stop_music_at_pos", {"pos": instrument["pos"]})
-    Call("*", "play_midi_music", {
-        "midi": midi_payload,
-        "midi_md5": midi_md5,
-        "performer_id": player_id,
-        "pos": instrument["pos"],
-        "sound_prefix": instrument["sound_prefix"],
-        "instrument_group": instrument["instrument_group"],
-        "enable_note_off": instrument["enable_note_off"],
-        "particle_range": instrument.get("particle_range"),
-    })
+    play_instrument_playback(midi_payload, midi_md5, instrument, player_id)
     _finish_play(player_id, request_id, "正在播放")
 
 
 @AllowCall
 @InjectRPCPlayerId
 def stop_instrument_midi(player_id, args):
-    instrument = _get_player_instrument(player_id)
+    instrument = get_player_instrument(player_id)
     if instrument is None:
         return
-    Call("*", "stop_music_at_pos", {"pos": instrument["pos"]})
+    stop_instrument_playback(instrument["playback_key"])
     Call(player_id, "set_instrument_ui_notice", {"text": "已停止播放"})

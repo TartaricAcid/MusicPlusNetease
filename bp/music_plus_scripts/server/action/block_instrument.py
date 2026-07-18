@@ -149,20 +149,17 @@ def _get_midi_from_tape(item_dict):
 
 
 def _play_midi_sound(instrument_config, tape_item, use_obj):
+    from music_plus_scripts.server.action.instrument_playback import build_block_playback, play_instrument_playback
+
     midi_payload, midi_md5 = _get_midi_from_tape(tape_item)
     if midi_payload:
-        Call("*", "play_midi_music", {
-            "midi": midi_payload,
-            "midi_md5": midi_md5,
-            "pos": use_obj.get_pos(),
-            "sound_prefix": instrument_config["sound_prefix"],
-            "instrument_group": instrument_config["instrument_group"],
-            "enable_note_off": instrument_config["enable_note_off"],
-            "particle_range": instrument_config.get("particle_range"),
-        })
+        instrument = instrument_config.copy()
+        instrument.update(build_block_playback(use_obj.get_pos(), use_obj.get_dimension()))
+        play_instrument_playback(midi_payload, midi_md5, instrument)
 
 
 def _stop_midi_sound(block):
-    Call("*", "stop_music_at_pos", {
-        "pos": block.get_pos()
-    })
+    from music_plus_scripts.server.action.instrument_playback import build_block_playback, stop_instrument_playback
+
+    playback = build_block_playback(block.get_pos(), block.get_dimension())
+    stop_instrument_playback(playback["playback_key"])

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""服务端方块乐器播放配置注册表。"""
+"""服务端乐器播放配置注册表。"""
 
 PIANO_BLOCK = "music_plus:music_plus_steinway"
 
@@ -14,16 +14,18 @@ PIANO_BLOCK = "music_plus:music_plus_steinway"
 #   enable_note_off - 是否响应 note_off 截断（弦/管乐器需要，打击/八音盒不需要）
 #   particle_range  - 可选粒子三轴偏移范围 ((x1,x2),(y1,y2),(z1,z2))，缺省为固定点
 # ─────────────────────────────────────────────────────────────────────────────────
-INSTRUMENT_REGISTRY = {
+BLOCK_INSTRUMENT_REGISTRY = {
     "music_plus:music_plus_music_box": {
         "sound_prefix": "music_plus.music_box",
         "instrument_group": "music_box",
         "enable_note_off": False,
     },
     PIANO_BLOCK: {
+        "target_id": "steinway",
         "sound_prefix": "music_plus.steinway",
         "instrument_group": "piano",
         "enable_note_off": True,
+        "animation_profile": "piano",
         "particle_range": ((-1.0, 1.0), (0.0, 0.5), (-1.0, 1.0)),
     },
     "music_plus:music_plus_harpsichord": {
@@ -76,11 +78,6 @@ INSTRUMENT_REGISTRY = {
         "instrument_group": "pipe",
         "enable_note_off": True,
     },
-    "music_plus:music_plus_bass": {
-        "sound_prefix": "music_plus.bass",
-        "instrument_group": "bass",
-        "enable_note_off": True,
-    },
     "music_plus:music_plus_real_kit": {
         "sound_prefix": "music_plus.real_kit",
         "instrument_group": "drum_kit",
@@ -93,11 +90,25 @@ INSTRUMENT_REGISTRY = {
     },
 }
 
+ITEM_INSTRUMENT_REGISTRY = {
+    "music_plus:music_plus_bass": {
+        "target_id": "bass",
+        "sound_prefix": "music_plus.bass",
+        "instrument_group": "bass",
+        "enable_note_off": True,
+        "animation_profile": "bass",
+    },
+}
+
 SEATED_INSTRUMENT_BLOCKS = frozenset((PIANO_BLOCK,))
 
 
 def get_instrument_config(block_name):
-    return INSTRUMENT_REGISTRY.get(block_name)
+    return BLOCK_INSTRUMENT_REGISTRY.get(block_name)
+
+
+def get_handheld_instrument_config(item_name):
+    return ITEM_INSTRUMENT_REGISTRY.get(item_name)
 
 
 def get_paper_tape_instrument_config(block_name):

@@ -8,7 +8,10 @@ _NEXT_PLAY_REQUEST_ID = 0
 
 
 def open_instrument_ui():
+    from music_plus_scripts.client.action.instrument_context import get_instrument_target_id
     from music_plus_scripts.client.ui.instrument_ui import InstrumentUI
+    if get_instrument_target_id() is None:
+        return
     if InstrumentUI.getUiNode() is None:
         InstrumentUI.pushScreen()
 
@@ -58,3 +61,9 @@ def set_instrument_ui_notice(args):
     notice_node = ui_node.GetBaseUIControl(NOTICE_LABEL_PATH)
     if notice_node is not None:
         notice_node.asLabel().SetText(args["text"])
+
+
+@AllowCall
+def set_instrument_context(args):
+    from music_plus_scripts.client.action.instrument_context import set_instrument_context as set_context
+    set_context(args["target_id"], args["mode"])

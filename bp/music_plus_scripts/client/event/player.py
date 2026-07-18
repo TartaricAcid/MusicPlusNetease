@@ -3,8 +3,12 @@
 import time
 
 from music_plus_scripts.QuModLibs.Client import *
+from music_plus_scripts.client.action.instrument_context import (
+    INSTRUMENT_MODE_HANDHELD,
+    INSTRUMENT_MODE_SEATED,
+    set_instrument_context,
+)
 from music_plus_scripts.client.network.instrument import open_instrument_ui
-from music_plus_scripts.client.ui.instrument_hud import set_instrument_hud_visible
 
 SEAT_ENTITY = "music_plus:seat"
 
@@ -14,6 +18,7 @@ _STOP_RIDING_COOLDOWN = {}
 factory = clientApi.GetEngineCompFactory()
 player_comp = factory.CreatePlayer(playerId)
 ride_comp = factory.CreateRide(playerId)
+item_comp = factory.CreateItem(playerId)
 
 
 def is_music_plus_seat(entity_id):
@@ -51,7 +56,10 @@ def on_start_riding(args):
     # 如果骑乘的是乐器座椅
     victim_id = args["victimId"]
     is_seat = is_music_plus_seat(victim_id)
-    set_instrument_hud_visible(is_seat)
+    if is_seat:
+        set_instrument_context("steinway", INSTRUMENT_MODE_SEATED)
+    else:
+        set_instrument_context(None)
 
 
 @Listen(Events.EntityStopRidingEvent)
@@ -65,7 +73,7 @@ def on_stop_riding(args):
     if stop_riding_on_cooldown(ride_id):
         return
 
-    set_instrument_hud_visible(False)
+    set_instrument_context(None)
 
 
 @Listen(Events.ClientPlayerInventoryOpenEvent)
@@ -79,3 +87,17 @@ def on_inventory_open(args):
 
     args["cancel"] = True
     open_instrument_ui()
+
+
+@Listen(Events.LoadClientAddonScriptsAfter)
+def on_scripts_loaded(args):
+    if player_comp.isRiding() and is_music_plus_seat(ride_comp.GetEntityRider()):
+        set_instrument_context("steinway", INSTRUMENT_MODE_SEATED)
+        return
+
+    item_dict = item_comp.GetCarriedItem()
+    item_name = item_dict["newItemName"] if item_dict else None
+    if item_name == "music_plus:music_plus_bass":
+        set_instrument_context("bass", INSTRUMENT_MODE_HANDHELD)
+    else:
+        set_instrument_context(None)

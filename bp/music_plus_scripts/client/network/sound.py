@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from music_plus_scripts.QuModLibs.Client import *
-from music_plus_scripts.client.music.midi_playback_controller import play_midi_music_data, stop_midi_music_at_pos
-from music_plus_scripts.client.music.midi_player import stop_player_animation
+from music_plus_scripts.client.music.midi_playback_controller import play_midi_music_data, stop_midi_music as stop_playback
 
 factory = clientApi.GetEngineCompFactory()
 level_id = clientApi.GetLevelId()
@@ -15,7 +14,8 @@ def play_midi_music(args):
 
     Args 字典:
         midi: MIDI payload 字典
-        pos: (x, y, z) 音乐盒方块位置
+        playback_key: 播放实例身份
+        anchor: 方块或实体播放锚点
         sound_prefix: 声音 ID 前缀，如 "music_plus.music_box"
         instrument_group: Program Change 可使用的乐器组
         enable_note_off: 是否响应 note_off / sustain_pedal 中断（默认 True）
@@ -23,24 +23,21 @@ def play_midi_music(args):
     """
     play_midi_music_data(
         args["midi"],
-        args.get("pos", (0, 0, 0)),
+        args["playback_key"],
+        args["anchor"],
         args.get("sound_prefix", "music_plus.music_box"),
         args.get("instrument_group", "music_box"),
         args.get("enable_note_off", True),
         args.get("midi_md5"),
         args.get("performer_id"),
+        args.get("animation_profile"),
         args.get("particle_range"),
     )
 
 
 @AllowCall
-def stop_music_at_pos(args):
-    stop_midi_music_at_pos(args.get("pos", (0, 0, 0)))
-
-
-@AllowCall
-def stop_player_piano_animation(args):
-    stop_player_animation(args["player_id"])
+def stop_midi_music(args):
+    stop_playback(args["playback_key"])
 
 
 @AllowCall
