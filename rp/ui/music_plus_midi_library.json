@@ -123,7 +123,7 @@
                 "type": "label",
                 "text": "",
                 "color": [1, 0, 0],
-                "size": ["100%", 20],
+                "size": ["100%", 46],
                 "text_alignment": "center"
               }
             },

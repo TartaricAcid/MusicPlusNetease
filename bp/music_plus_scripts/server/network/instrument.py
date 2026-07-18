@@ -57,6 +57,7 @@ def play_instrument_midi(player_id, args):
         "sound_prefix": instrument["sound_prefix"],
         "instrument_group": instrument["instrument_group"],
         "enable_note_off": instrument["enable_note_off"],
+        "particle_range": instrument.get("particle_range"),
     })
     _finish_play(player_id, request_id, "正在播放")
 

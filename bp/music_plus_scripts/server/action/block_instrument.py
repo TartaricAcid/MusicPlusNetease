@@ -158,6 +158,7 @@ def _play_midi_sound(instrument_config, tape_item, use_obj):
             "sound_prefix": instrument_config["sound_prefix"],
             "instrument_group": instrument_config["instrument_group"],
             "enable_note_off": instrument_config["enable_note_off"],
+            "particle_range": instrument_config.get("particle_range"),
         })
 
 

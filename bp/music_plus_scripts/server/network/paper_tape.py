@@ -61,9 +61,14 @@ def burn_paper_tape_midi(player_id, args):
 
     duration = args.get("duration", 0.0)
     title = args.get("title", "")
+    analysis_summary = args.get("analysis_summary", "")
     burned_item = target_item.getDict()
     burned_item["count"] = 1
+
     burned_item["customTips"] = "%name%\n" + "§7歌曲： %s\n时长： %s" % (title, duration)
+    if analysis_summary:
+        burned_item["customTips"] += "\n§7%s" % analysis_summary
+
     burned_item["userData"] = {
         MIDI_MD5_NBT_KEY: {
             "__type__": NBT_STRING,

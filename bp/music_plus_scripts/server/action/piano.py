@@ -65,10 +65,6 @@ def remove_piano_seat(args):
     seat_id = get_block_seat_id(block.get_dimension(), block.get_pos())
     if seat_id is None:
         return
-    ride_comp = factory.CreateRide(seat_id)
-    for ride in ride_comp.GetRiders():
-        player_id = ride["entityId"]
-        Call(player_id, "set_instrument_hud_visible", {"visible": False})
     remove_seat(seat_id)
 
 

@@ -19,10 +19,7 @@ class InstrumentHud(ScreenNodeWrapper):
         self.setButtonClickHandler(BUTTON_PATH, open_instrument_ui)
 
 
-@AllowCall
-def set_instrument_hud_visible(args):
-    visible = args["visible"]
-
+def set_instrument_hud_visible(visible):
     # 准备弹奏时，分离镜头，让玩家可以观察自己
     if visible:
         camera.DepartCamera()
@@ -31,7 +28,7 @@ def set_instrument_hud_visible(args):
 
     # 显示按钮
     ui_node = InstrumentHud.getUiNode()
-    if ui_node is None:
+    if ui_node is None and visible:
         ui_node = InstrumentHud.createUI()
     if ui_node is not None:
         ui_node.GetBaseUIControl(BUTTON_PATH).SetVisible(visible)

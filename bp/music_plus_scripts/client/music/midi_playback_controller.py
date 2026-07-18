@@ -36,7 +36,8 @@ def play_midi_music_data(
         instrument_group,
         enable_note_off=True,
         midi_md5=None,
-        performer_id=None
+        performer_id=None,
+        particle_range=None
 ):
     # 构建解码请求
     pos = tuple(pos)
@@ -48,6 +49,7 @@ def play_midi_music_data(
         "instrument_group": instrument_group,
         "enable_note_off": enable_note_off,
         "performer_id": performer_id,
+        "particle_range": particle_range,
         "version": request_version,
     }
 
@@ -113,6 +115,7 @@ def _queue_if_latest(notes, cache_key, request):
         request["instrument_group"],
         request["enable_note_off"],
         request["performer_id"],
+        request["particle_range"],
         batch_key=cache_key
     )
 

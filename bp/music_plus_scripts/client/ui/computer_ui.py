@@ -5,10 +5,11 @@ import io
 
 from music_plus_scripts.QuModLibs.Client import *
 from music_plus_scripts.QuModLibs.UI import ScreenNodeWrapper
+from music_plus_scripts.client.music.midi_analyzer import ANALYSIS_VERSION, analyze_midi_payload, format_analysis_summary
 from music_plus_scripts.client.network.computer import request_paper_tape_burn
 from music_plus_scripts.client.store import midi_store
 from music_plus_scripts.mido import MidiFile
-from music_plus_scripts.utils.midi_payload import pack_midi_payload
+from music_plus_scripts.utils.midi_payload import get_midi_payload_md5, pack_midi_payload
 
 # 根路径
 BASE_SCREEN_PATH = "/variables_button_mappings_and_controls/safezone_screen_matrix/inner_matrix/safezone_screen_panel/root_screen_panel"
@@ -54,6 +55,15 @@ def _format_duration(seconds):
     return "{}:{:02d}".format(m, s)
 
 
+def _extract_midi_title(midi_file):
+    """读取第一个非空 track_name，作为歌曲名称默认值。"""
+    for track in midi_file.tracks:
+        title = track.name.strip().replace("\r", " ").replace("\n", " ")
+        if title:
+            return title[:50]
+    return ""
+
+
 @ScreenNodeWrapper.autoRegister("music_plus_midi_library.main")
 class ComputerUI(ScreenNodeWrapper):
     def __init__(self, namespace, name, param):
@@ -63,6 +73,7 @@ class ComputerUI(ScreenNodeWrapper):
         # 暂存的 midi 信息
         self._pending_payload = None
         self._pending_duration = 0.0
+        self._pending_analysis = None
         self._selected_md5 = None
 
         # 右侧可用的 midi 列表
@@ -109,6 +120,7 @@ class ComputerUI(ScreenNodeWrapper):
                 "midi": self._pending_payload,
                 "duration": _format_duration(self._pending_duration),
                 "title": self._get_title(),
+                "analysis_summary": format_analysis_summary(self._pending_analysis),
             }
         if self.mode == MODE_EDIT and self._selected_md5:
             meta = midi_store.get_meta(self._selected_md5) or {}
@@ -116,6 +128,7 @@ class ComputerUI(ScreenNodeWrapper):
                 "midi": midi_store.get_midi(self._selected_md5),
                 "duration": _format_duration(meta.get("duration", 0.0)),
                 "title": meta.get("title", ""),
+                "analysis_summary": format_analysis_summary(meta.get("analysis")),
             }
         return None
 
@@ -124,6 +137,7 @@ class ComputerUI(ScreenNodeWrapper):
         self.mode = MODE_IDLE
         self._pending_payload = None
         self._pending_duration = 0.0
+        self._pending_analysis = None
         self._selected_md5 = None
         self._show_edit_section(False)
         self._refresh_list()
@@ -132,12 +146,29 @@ class ComputerUI(ScreenNodeWrapper):
         """点击右侧列表中某首曲目，在左侧显示其元信息供编辑。"""
         self._pending_payload = None
         self._pending_duration = 0.0
+        self._pending_analysis = None
         self.mode = MODE_EDIT
         self._selected_md5 = md5_key
+
         meta = midi_store.get_meta(md5_key) or {}
         self._set_title(meta.get("title", ""))
         duration = meta.get("duration", 0.0)
-        self._set_notice("编辑模式 \n {}".format(_format_duration(duration)))
+
+        analysis = meta.get("analysis")
+        if analysis is None or analysis.get("version") != ANALYSIS_VERSION:
+            midi_payload = midi_store.get_midi(md5_key)
+            if midi_payload is not None:
+                try:
+                    analysis = analyze_midi_payload(midi_payload)
+                    midi_store.update_meta(md5_key, analysis=analysis)
+                except Exception:
+                    analysis = None
+
+        self._set_notice("编辑模式 | {}\n{}".format(
+            _format_duration(duration),
+            format_analysis_summary(analysis, separator="\n"),
+        ))
+
         self._show_edit_section(True)
         self._refresh_list()
 
@@ -200,14 +231,32 @@ class ComputerUI(ScreenNodeWrapper):
         duration = float(midi_file.length)
         payload = pack_midi_payload(midi_bytes)
 
+        # 重复歌曲不粘贴
+        midi_md5 = get_midi_payload_md5(payload)
+        if midi_store.has_midi(midi_md5):
+            meta = midi_store.get_meta(midi_md5) or {}
+            title = meta.get("title", "") or "未命名"
+            self._set_notice("曲库中已存在：\n{}".format(title))
+            return
+
+        try:
+            analysis = analyze_midi_payload(payload)
+        except Exception:
+            self._set_notice("MIDI 乐器信息分析失败")
+            return
+
         self.mode = MODE_PASTE
 
         self._pending_payload = payload
         self._pending_duration = duration
+        self._pending_analysis = analysis
         self._selected_md5 = None
-        self._set_title("")
+        self._set_title(_extract_midi_title(midi_file))
 
-        self._set_notice("已识别 MIDI ({}) \n 请填写名称后保存或刻录".format(_format_duration(duration)))
+        self._set_notice("已识别 MIDI ({})\n{}".format(
+            _format_duration(duration),
+            format_analysis_summary(analysis, separator="\n"),
+        ))
 
         self._show_edit_section(True)
         self._refresh_list()
@@ -227,6 +276,7 @@ class ComputerUI(ScreenNodeWrapper):
                 self._pending_payload,
                 title=title,
                 duration=self._pending_duration,
+                analysis=self._pending_analysis,
             )
             self._set_notice("已保存: \n" + title)
             self._enter_idle()
@@ -254,11 +304,13 @@ class ComputerUI(ScreenNodeWrapper):
         if self.mode == MODE_PASTE:
             self._enter_idle()
             return
+
         if self.mode == MODE_EDIT and self._selected_md5:
             meta = midi_store.get_meta(self._selected_md5)
             name = (meta.get("title", "") if meta else "") or "未命名"
             midi_store.remove_midi(self._selected_md5)
             self._set_notice("已删除: \n" + name)
             self._enter_idle()
+
         elif self.mode == MODE_EDIT:
             self._set_notice("请先选择一首歌曲")

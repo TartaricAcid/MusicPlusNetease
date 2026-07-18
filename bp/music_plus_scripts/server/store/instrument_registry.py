@@ -12,6 +12,7 @@ PIANO_BLOCK = "music_plus:music_plus_steinway"
 #   sound_prefix   - 声音 ID 前缀，对应 sound_definitions.json 中的条目
 #   instrument_group - Program Change 可使用的乐器组
 #   enable_note_off - 是否响应 note_off 截断（弦/管乐器需要，打击/八音盒不需要）
+#   particle_range  - 可选粒子三轴偏移范围 ((x1,x2),(y1,y2),(z1,z2))，缺省为固定点
 # ─────────────────────────────────────────────────────────────────────────────────
 INSTRUMENT_REGISTRY = {
     "music_plus:music_plus_music_box": {
@@ -23,6 +24,7 @@ INSTRUMENT_REGISTRY = {
         "sound_prefix": "music_plus.steinway",
         "instrument_group": "piano",
         "enable_note_off": True,
+        "particle_range": ((-1.0, 1.0), (0.0, 0.5), (-1.0, 1.0)),
     },
     "music_plus:music_plus_harpsichord": {
         "sound_prefix": "music_plus.harpsichord",

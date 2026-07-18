@@ -15,6 +15,7 @@
 """
 
 import math
+import random
 import time
 
 from music_plus_scripts.QuModLibs.Client import *
@@ -60,6 +61,7 @@ NOTE_PARTICLE_LIFETIME = 1.0  # 音符粒子存续时间，最长 1 秒
 #     "pos": (x, y, z),                  播放位置
 #     "sound_prefix": str,               声音 ID 前缀
 #     "instrument_group": str,           Program Change 可用乐器组
+#     "particle_range": tuple,           粒子相对默认位置的三轴偏移范围
 #     "active_notes": {},                活跃音符 {(channel, note): musicId}
 #     "pedal_state": {},                 踏板状态 {channel: bool}
 #     "sustained_notes": {},             踏板延音中的音符 {(channel, note): musicId}
@@ -76,7 +78,16 @@ _audio = _factory.CreateCustomAudio(levelId)
 _particle_sys = _factory.CreateParticleSystem(levelId)
 
 
-def start_playback(notes, pos, sound_prefix, instrument_group, enable_note_off=True, performer_id=None, start_time=None):
+def start_playback(
+        notes,
+        pos,
+        sound_prefix,
+        instrument_group,
+        enable_note_off=True,
+        performer_id=None,
+        particle_range=None,
+        start_time=None
+):
     """开始播放一组音符。
 
     Args:
@@ -87,6 +98,7 @@ def start_playback(notes, pos, sound_prefix, instrument_group, enable_note_off=T
         enable_note_off: 是否响应 note_off / sustain_pedal 中断（默认 True）。
             对八音盒等自然衰减乐器可设为 False，音符会持续播放直到自然结束。
         performer_id: 演奏此乐器的玩家
+        particle_range: 可选的 ((x1,x2),(y1,y2),(z1,z2))，默认在方块中心固定生成。
         start_time: 可选的统一播放起点，用于让同批播放对齐。
     """
     if not notes:
@@ -110,6 +122,7 @@ def start_playback(notes, pos, sound_prefix, instrument_group, enable_note_off=T
         "instrument_group": instrument_group,
         "enable_note_off": enable_note_off,
         "performer_id": performer_id,
+        "particle_range": tuple(particle_range) if particle_range else None,
         "animation_stopped": False,
         "active_notes": {},
         "pedal_state": {},
@@ -119,7 +132,16 @@ def start_playback(notes, pos, sound_prefix, instrument_group, enable_note_off=T
     start_piano_animation(performer_id)
 
 
-def queue_playback(notes, pos, sound_prefix, instrument_group, enable_note_off=True, performer_id=None, batch_key=None):
+def queue_playback(
+        notes,
+        pos,
+        sound_prefix,
+        instrument_group,
+        enable_note_off=True,
+        performer_id=None,
+        particle_range=None,
+        batch_key=None
+):
     """把后台线程解码完成的 MIDI 播放请求交给 tick 主线程处理。
 
     解码完成时间可能有先后，这里先按 batch_key 暂存一小段时间，
@@ -147,6 +169,7 @@ def queue_playback(notes, pos, sound_prefix, instrument_group, enable_note_off=T
         "instrument_group": instrument_group,
         "enable_note_off": enable_note_off,
         "performer_id": performer_id,
+        "particle_range": particle_range,
     })
 
 
@@ -242,6 +265,7 @@ def on_music_tick():
         pedal_state = session["pedal_state"]
         sustained_notes = session["sustained_notes"]
         note_off_enabled = session["enable_note_off"]
+        particle_range = session["particle_range"]
         played_notes = []
 
         # 处理所有已到达时间点的事件
@@ -268,7 +292,7 @@ def on_music_tick():
                     old = active_notes.pop(key, None) or sustained_notes.pop(key, None)
                     if old:
                         _audio.StopCustomMusicById(old, NOTE_OFF_FADE_OUT)
-                music_id = _play_note(midi_note, vel, pos, prefix, instrument_group, program)
+                music_id = _play_note(midi_note, vel, pos, prefix, instrument_group, program, particle_range)
                 if music_id and note_off_enabled:
                     active_notes[key] = music_id
                 if music_id:
@@ -318,7 +342,7 @@ def on_music_tick():
         _active_sessions.remove(s)
 
 
-def _play_note(midi_note, velocity, pos, sound_prefix, instrument_group, program):
+def _play_note(midi_note, velocity, pos, sound_prefix, instrument_group, program, particle_range):
     resolved_prefix = resolve_program_sound_prefix(sound_prefix, instrument_group, program)
     if resolved_prefix is None:
         return None
@@ -336,12 +360,28 @@ def _play_note(midi_note, velocity, pos, sound_prefix, instrument_group, program
     music_id = _audio.PlayCustomMusic(name, pos, volume, pitch, False, None, )
 
     # 粒子效果
-    x, y, z = pos
-    particle_id = _particle_sys.Create(NOTE_PARTICLE, (x + 0.5, y + 1, z + 0.5))
+    particle_pos = _get_particle_pos(pos, particle_range)
+    particle_id = _particle_sys.Create(NOTE_PARTICLE, particle_pos)
     if _particle_sys.EmitManually(particle_id):
         _game.AddTimer(NOTE_PARTICLE_LIFETIME, _remove_particle, particle_id)
 
     return music_id
+
+
+def _get_particle_pos(pos, particle_range):
+    x, y, z = pos
+
+    particle_x = x + 0.5
+    particle_y = y + 1.0
+    particle_z = z + 0.5
+
+    if particle_range:
+        x_range, y_range, z_range = particle_range
+        particle_x += random.uniform(x_range[0], x_range[1])
+        particle_y += random.uniform(y_range[0], y_range[1])
+        particle_z += random.uniform(z_range[0], z_range[1])
+
+    return particle_x, particle_y, particle_z
 
 
 def _drain_pending_playbacks():
@@ -366,6 +406,7 @@ def _drain_pending_playbacks():
                 item["instrument_group"],
                 item["enable_note_off"],
                 item["performer_id"],
+                item["particle_range"],
                 start_time,
             )
 

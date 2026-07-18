@@ -24,6 +24,7 @@ def request_paper_tape_burn(midi_info):
         "midi_md5": midi_md5,
         "duration": midi_info.get("duration", 0.0),
         "title": midi_info.get("title", ""),
+        "analysis_summary": midi_info.get("analysis_summary", ""),
     })
 
 

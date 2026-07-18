@@ -6,7 +6,7 @@
 
 数据结构:
     songs = { md5_str: midi_payload }
-    meta  = { md5_str: { "title": str, "duration": float } }
+    meta  = { md5_str: { "title": str, "duration": float, "analysis": dict } }
 """
 
 from music_plus_scripts.QuModLibs.Modules.DataStore.Client import ClientAutoStoreCls
@@ -23,7 +23,7 @@ class ClientMidiStore(ClientAutoStoreCls):
     meta = {}
 
 
-def save_midi(midi_payload, title="", duration=0.0):
+def save_midi(midi_payload, title="", duration=0.0, analysis=None):
     """存入一条 MIDI 及其元信息，返回 MD5 key。已存在则跳过。"""
     midi_md5 = get_midi_payload_md5(midi_payload)
     if midi_md5 not in ClientMidiStore.songs:
@@ -31,6 +31,7 @@ def save_midi(midi_payload, title="", duration=0.0):
         ClientMidiStore.meta[midi_md5] = {
             "title": title,
             "duration": duration,
+            "analysis": analysis,
         }
         ClientMidiStore.mSignNeedUpdate()
     return midi_md5
@@ -50,13 +51,15 @@ def get_meta(midi_md5):
     return ClientMidiStore.meta.get(midi_md5)
 
 
-def update_meta(midi_md5, title=None):
+def update_meta(midi_md5, title=None, analysis=None):
     """更新指定 MIDI 的元信息（仅更新非 None 的字段）。"""
     info = ClientMidiStore.meta.get(midi_md5)
     if info is None:
         return False
     if title is not None:
         info["title"] = title
+    if analysis is not None:
+        info["analysis"] = analysis
     ClientMidiStore.mSignNeedUpdate()
     return True
 

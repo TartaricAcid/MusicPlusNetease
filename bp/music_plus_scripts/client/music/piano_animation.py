@@ -36,7 +36,7 @@ def _ensure_player_animation(player_id):
 
     render_comp = _factory.CreateActorRender(player_id)
     render_comp.AddPlayerAnimation(ANIMATION_KEY, ANIMATION_NAME)
-    render_comp.AddPlayerScriptAnimate(ANIMATION_KEY, PLAYING_QUERY)
+    render_comp.AddPlayerScriptAnimate(ANIMATION_KEY, PLAYING_QUERY + "&& !variable.is_first_person")
     render_comp.RebuildPlayerRender()
     _registered_players.add(player_id)
 

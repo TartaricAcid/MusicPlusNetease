@@ -172,6 +172,21 @@
                             "size": ["100%", 10],
                             "text_alignment": "center"
                           }
+                        },
+                        {
+                          "gap_analysis": {
+                            "type": "panel",
+                            "size": ["100%", 6]
+                          }
+                        },
+                        {
+                          "analysis": {
+                            "type": "label",
+                            "text": "",
+                            "color": [0.75, 0.75, 0.75],
+                            "size": ["100%", 42],
+                            "text_alignment": "center"
+                          }
                         }
                       ]
                     }

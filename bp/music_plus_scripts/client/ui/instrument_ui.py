@@ -2,6 +2,11 @@
 
 from music_plus_scripts.QuModLibs.Client import *
 from music_plus_scripts.QuModLibs.UI import ScreenNodeWrapper
+from music_plus_scripts.client.music.midi_analyzer import (
+    ANALYSIS_VERSION,
+    analyze_midi_payload,
+    format_instrument_summary,
+)
 from music_plus_scripts.client.network.instrument import request_instrument_play, request_instrument_stop
 from music_plus_scripts.client.store import midi_store
 
@@ -11,6 +16,7 @@ LEFT_INNER_PATH = BODY_PATH + "/left/left_inner"
 SELECTION_PATH = LEFT_INNER_PATH + "/selection"
 TITLE_LABEL_PATH = SELECTION_PATH + "/selection_inner/title"
 DURATION_LABEL_PATH = SELECTION_PATH + "/selection_inner/duration"
+ANALYSIS_LABEL_PATH = SELECTION_PATH + "/selection_inner/analysis"
 NOTICE_LABEL_PATH = LEFT_INNER_PATH + "/notice"
 RIGHT_PATH = BODY_PATH + "/right"
 EMPTY_HINT_PATH = RIGHT_PATH + "/empty_hint"
@@ -60,6 +66,20 @@ class InstrumentUI(ScreenNodeWrapper):
         meta = midi_store.get_meta(midi_md5) or {}
         self._set_label(TITLE_LABEL_PATH, meta.get("title", "") or "未命名")
         self._set_label(DURATION_LABEL_PATH, _format_duration(meta.get("duration", 0.0)))
+
+        analysis = meta.get("analysis")
+        if analysis is None or analysis.get("version") != ANALYSIS_VERSION:
+            midi_payload = midi_store.get_midi(midi_md5)
+            if midi_payload is not None:
+                try:
+                    analysis = analyze_midi_payload(midi_payload)
+                    midi_store.update_meta(midi_md5, analysis=analysis)
+                except Exception:
+                    analysis = None
+
+        instrument_summary = format_instrument_summary(analysis, "steinway")
+        self._set_label(ANALYSIS_LABEL_PATH, instrument_summary)
+
         selection = self.GetBaseUIControl(SELECTION_PATH)
         if selection is not None:
             selection.SetVisible(True)
