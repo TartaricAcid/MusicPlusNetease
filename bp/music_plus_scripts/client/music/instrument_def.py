@@ -29,7 +29,21 @@ class InstrumentDef(object):
         return self.lowest_note <= midi_note <= self.highest_note
 
     def resolve(self, midi_note):
-        """返回 MIDI 音符对应的 (声音文件名, pitch 偏移半音数)。"""
+        """返回 MIDI 音符对应的 (声音文件名, pitch 偏移半音数)。
+
+        音域内没有精确采样时，使用最近的已有采样，并按两者的
+        MIDI 音符差额追加变调，避免因为采样点稀疏而直接跳过音符。
+        """
         if not self.in_range(midi_note):
             return None
-        return self.note_map.get(midi_note)
+
+        resolved = self.note_map.get(midi_note)
+        if resolved is not None:
+            return resolved
+
+        if not self.note_map:
+            return None
+
+        nearest_note = min(self.note_map, key=lambda note: abs(note - midi_note))
+        sound_name, semitone = self.note_map[nearest_note]
+        return sound_name, semitone + midi_note - nearest_note
