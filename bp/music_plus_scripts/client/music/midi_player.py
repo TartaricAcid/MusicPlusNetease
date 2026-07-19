@@ -462,6 +462,7 @@ def _midi_to_sound(midi_note, sound_prefix):
 
     根据乐器定义检查音域范围：
     - 若已注册乐器且音符超出可播放范围，返回 None（跳过该音符）。
+    - 音域内没有精确采样时，由 InstrumentDef 使用最近采样变调。
     - 若乐器未注册（不太可能）直接返回 None
     """
     instrument = get_instrument(sound_prefix)
@@ -471,7 +472,7 @@ def _midi_to_sound(midi_note, sound_prefix):
 
     resolved = instrument.resolve(midi_note)
     if resolved is None:
-        # 超出该乐器音域或未映射，跳过
+        # 超出该乐器音域，或乐器没有任何采样，跳过
         return None
 
     sound_name, semitone = resolved
