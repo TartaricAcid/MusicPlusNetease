@@ -1,0 +1,19 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:client_entity": {
+    "description": {
+      "identifier": "music_plus:guzheng",
+      "geometry": {
+        "default": "geometry.music_plus_guzheng"
+      },
+      "materials": {
+        "default": "entity_alphatest"
+      },
+      "render_controllers": ["controller.render.default"],
+      "textures": {
+        "default": "textures/music_plus/entity/guzheng"
+      },
+      "enable_attachables": false
+    }
+  }
+}

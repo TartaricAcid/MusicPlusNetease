@@ -4,8 +4,11 @@ import time
 
 from music_plus_scripts.QuModLibs.Server import *
 from music_plus_scripts.server.action.block_instrument import handle_paper_tape_takeout
-from music_plus_scripts.server.action.piano import handle_piano_use
-from music_plus_scripts.server.store.instrument_registry import PIANO_BLOCK, get_paper_tape_instrument_config
+from music_plus_scripts.server.action.seated_instrument import handle_seated_instrument_use
+from music_plus_scripts.server.store.instrument_registry import (
+    get_paper_tape_instrument_config,
+    get_seated_instrument_config,
+)
 
 COMPUTER_BLOCK = "music_plus:music_plus_computer"
 
@@ -28,9 +31,10 @@ def on_block_use(args):
         args["cancel"] = True
         return
 
-    # 空手右击钢琴 -> 坐到钢琴前
-    if block_name == PIANO_BLOCK and can_use(args):
-        if handle_piano_use(args):
+    # 空手右击坐式乐器 -> 坐到乐器前
+    instrument_config = get_seated_instrument_config(block_name)
+    if instrument_config and can_use(args):
+        if handle_seated_instrument_use(args, instrument_config):
             args["cancel"] = True
         return
 

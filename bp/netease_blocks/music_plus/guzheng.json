@@ -1,27 +1,34 @@
 {
-  "format_version": "1.20.80",
+  "format_version": "1.10.0",
   "minecraft:block": {
     "description": {
       "identifier": "music_plus:music_plus_guzheng",
-      "menu_category": {
-        "category": "music_plus_main"
-      },
-      "traits": {
-        "minecraft:placement_direction": {
-          "enabled_states": ["minecraft:cardinal_direction"],
-          "y_rotation_offset": 180
-        }
-      }
+      "category": "music_plus_main",
+      "register_to_creative_menu": true
     },
     "components": {
-      "minecraft:geometry": "geometry.music_plus_music_box",
-      "minecraft:material_instances": {
-        "*": {
-          "texture": "music_plus:guzheng",
-          "render_method": "alpha_test"
-        }
+      "minecraft:block_light_absorption": {
+        "value": 0
       },
-      "minecraft:light_dampening": 0,
+      "minecraft:block_light_emission": {
+        "emission": 0
+      },
+      "minecraft:destructible_by_mining": {
+        "seconds_to_destroy": 1.5
+      },
+      "minecraft:destructible_by_explosion": false,
+      "netease:face_directional": {
+        "type": "direction"
+      },
+      "netease:render_layer": {
+        "value": "alpha"
+      },
+      "netease:solid": {
+        "value": false
+      },
+      "netease:tier": {
+        "digger": "hatchet"
+      },
       "netease:listen_block_remove": {
         "value": true
       },
@@ -32,16 +39,13 @@
       },
       "netease:aabb": {
         "clip": {
-          "min": [0, 0, 0],
-          "max": [1, 0.5, 1]
+          "min": [-1, 0, -1],
+          "max": [2, 1.25, 2]
         },
         "collision": {
-          "min": [0, 0, 0],
-          "max": [1, 0.5, 1]
+          "min": [-1, 0, -1],
+          "max": [2, 1.25, 2]
         }
-      },
-      "minecraft:destructible_by_mining": {
-        "seconds_to_destroy": 0.2
       },
       "netease:connection": {
         "blocks": []
@@ -52,37 +56,6 @@
       "netease:redstone": {
         "type": "consumer"
       }
-    },
-    "permutations": [
-      {
-        "condition": "q.block_state('minecraft:cardinal_direction') == 'north'",
-        "components": {
-          "minecraft:transformation": {
-            "rotation": [0, 0, 0]
-          }
-        }
-      }, {
-        "condition": "q.block_state('minecraft:cardinal_direction') == 'south'",
-        "components": {
-          "minecraft:transformation": {
-            "rotation": [0, 180, 0]
-          }
-        }
-      }, {
-        "condition": "q.block_state('minecraft:cardinal_direction') == 'west'",
-        "components": {
-          "minecraft:transformation": {
-            "rotation": [0, 90, 0]
-          }
-        }
-      }, {
-        "condition": "q.block_state('minecraft:cardinal_direction') == 'east'",
-        "components": {
-          "minecraft:transformation": {
-            "rotation": [0, -90, 0]
-          }
-        }
-      }
-    ]
+    }
   }
 }
