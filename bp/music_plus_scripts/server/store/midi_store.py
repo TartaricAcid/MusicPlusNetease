@@ -7,6 +7,7 @@
 """
 
 from music_plus_scripts.QuModLibs.Modules.DataStore.Server import ServerAutoStoreCls
+from music_plus_scripts.utils.default_midis import get_default_midi
 from music_plus_scripts.utils.midi_payload import get_midi_payload_md5
 
 
@@ -31,4 +32,7 @@ def get_midi(midi_md5):
     """按 MD5 key 取一条 MIDI payload，不存在返回 None。"""
     if not midi_md5:
         return None
+    default_midi = get_default_midi(midi_md5)
+    if default_midi is not None:
+        return default_midi
     return ServerMidiStore.songs.get(midi_md5)

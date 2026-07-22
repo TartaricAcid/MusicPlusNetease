@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from music_plus_scripts.QuModLibs.Client import *
+from music_plus_scripts.utils.default_midis import is_default_midi
 from music_plus_scripts.utils.midi_payload import get_midi_payload_md5
 
 _PENDING_PLAY_REQUESTS = {}
@@ -20,8 +21,11 @@ def request_instrument_play(midi_payload):
     global _NEXT_PLAY_REQUEST_ID
     _NEXT_PLAY_REQUEST_ID += 1
     request_id = str(_NEXT_PLAY_REQUEST_ID)
+
     midi_md5 = get_midi_payload_md5(midi_payload)
-    _PENDING_PLAY_REQUESTS[request_id] = midi_payload
+    if not is_default_midi(midi_md5):
+        _PENDING_PLAY_REQUESTS[request_id] = midi_payload
+
     Call("play_instrument_midi", {
         "request_id": request_id,
         "midi_md5": midi_md5,

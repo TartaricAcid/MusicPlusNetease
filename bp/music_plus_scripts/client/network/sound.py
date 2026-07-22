@@ -2,6 +2,7 @@
 
 from music_plus_scripts.QuModLibs.Client import *
 from music_plus_scripts.client.music.midi_playback_controller import play_midi_music_data, stop_midi_music as stop_playback
+from music_plus_scripts.utils.default_midis import get_default_midi
 
 factory = clientApi.GetEngineCompFactory()
 level_id = clientApi.GetLevelId()
@@ -21,8 +22,13 @@ def play_midi_music(args):
         enable_note_off: 是否响应 note_off / sustain_pedal 中断（默认 True）
         particle_range: 可选的粒子局部三轴偏移范围，方块锚点会随朝向旋转
     """
+    midi_payload = args.get("midi")
+    if midi_payload is None:
+        midi_payload = get_default_midi(args.get("midi_md5"))
+    if midi_payload is None:
+        return
     play_midi_music_data(
-        args["midi"],
+        midi_payload,
         args["playback_key"],
         args["anchor"],
         args.get("sound_prefix", "music_plus.music_box"),

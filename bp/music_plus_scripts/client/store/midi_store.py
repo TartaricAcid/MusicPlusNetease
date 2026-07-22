@@ -10,6 +10,12 @@
 """
 
 from music_plus_scripts.QuModLibs.Modules.DataStore.Client import ClientAutoStoreCls
+from music_plus_scripts.utils.default_midis import (
+    DEFAULT_MIDI_KEYS,
+    get_default_midi,
+    get_default_midi_meta,
+    is_default_midi,
+)
 from music_plus_scripts.utils.midi_payload import get_midi_payload_md5
 
 
@@ -41,6 +47,9 @@ def get_midi(midi_md5):
     """按 MD5 key 取一条 MIDI payload，不存在返回 None。"""
     if not midi_md5:
         return None
+    default_midi = get_default_midi(midi_md5)
+    if default_midi is not None:
+        return default_midi
     return ClientMidiStore.songs.get(midi_md5)
 
 
@@ -48,11 +57,16 @@ def get_meta(midi_md5):
     """按 MD5 key 取元信息 dict，不存在返回 None。"""
     if not midi_md5:
         return None
+    default_meta = get_default_midi_meta(midi_md5)
+    if default_meta is not None:
+        return default_meta
     return ClientMidiStore.meta.get(midi_md5)
 
 
 def update_meta(midi_md5, title=None, analysis=None):
     """更新指定 MIDI 的元信息（仅更新非 None 的字段）。"""
+    if is_default_midi(midi_md5):
+        return title is None
     info = ClientMidiStore.meta.get(midi_md5)
     if info is None:
         return False
@@ -66,6 +80,8 @@ def update_meta(midi_md5, title=None, analysis=None):
 
 def remove_midi(midi_md5):
     """按 MD5 key 删除一条 MIDI 及其元信息，返回是否成功。"""
+    if is_default_midi(midi_md5):
+        return False
     if midi_md5 and midi_md5 in ClientMidiStore.songs:
         del ClientMidiStore.songs[midi_md5]
         ClientMidiStore.meta.pop(midi_md5, None)
@@ -76,14 +92,15 @@ def remove_midi(midi_md5):
 
 def has_midi(midi_md5):
     """检查库中是否已存在指定 MD5 的 MIDI。"""
-    return bool(midi_md5) and midi_md5 in ClientMidiStore.songs
+    return is_default_midi(midi_md5) or bool(midi_md5) and midi_md5 in ClientMidiStore.songs
 
 
 def list_midi_keys():
     """返回所有已存储 MIDI 的 MD5 key 列表。"""
-    return list(ClientMidiStore.songs.keys())
+    user_keys = [key for key in ClientMidiStore.songs.keys() if not is_default_midi(key)]
+    return list(DEFAULT_MIDI_KEYS) + user_keys
 
 
 def get_song_count():
     """返回库中已存储的 MIDI 数量。"""
-    return len(ClientMidiStore.songs)
+    return len(list_midi_keys())

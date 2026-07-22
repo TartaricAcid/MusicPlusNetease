@@ -9,7 +9,7 @@
 """
 
 import ast
-import base64
+import random
 
 from music_plus_scripts.QuModLibs.Server import *
 from music_plus_scripts.server.object.block_object import BlockObject
@@ -17,24 +17,12 @@ from music_plus_scripts.server.object.block_use_object import BlockUseObject
 from music_plus_scripts.server.object.item_use_block_object import ItemUseBlockObject
 from music_plus_scripts.server.store.midi_store import get_midi
 from music_plus_scripts.server.utils.item_utils import item_dict_is_empty
-from music_plus_scripts.utils.midi_payload import pack_midi_payload
+from music_plus_scripts.utils.default_midis import DEFAULT_MIDI_KEYS, get_default_midi
 
 PAPER_TAPE_ITEM = "music_plus:paper_tape"
 PAPER_TAPE_DATA_KEY = "music_plus:paper_tape"
 REDSTONE_PLAYING_DATA_KEY = "music_plus:redstone_playing"
 MIDI_MD5_NBT_KEY = "midi_md5"
-
-# 默认测试曲目的 base64 MIDI（纸带无自定义数据时使用）
-DEFAULT_MIDI_BASE64 = (
-    "TVRoZAAAAAYAAQACAYBNVHJrAAAAQwD/AQljcmVhdG9yOiAA/wEeTGlseVBvbmQgMi4yNC4xICAgICAgICAgICAgICAgAP9YBAQCGAgA/"
-    "1EDD0JA4wD/LwBNVHJrAAABfAD/AwVcbmV3OgD/WQIAAACQQ1qBQJBDAACQSFqBQJBIAACQTFqDAJBMAACQTFqBQJBMAACQTFqBQJBMAA"
-    "CQTFqDAJBMAACQSlqBQJBKAACQTFqBQJBMAACQSlqBQJBKAACQSFqBQJBIAACQSFqGAJBIAACQQ1qBQJBDAACQSFqBQJBIAACQTFqDAJBM"
-    "AACQSFqBQJBIAACQTFqBQJBMAACQT1qDAJBPAACQTVqBQJBNAACQTFqBQJBMAACQSlqJAJBKAACQT1qBQJBPAACQTVqBQJBNAACQTFqDAJB"
-    "MAACQTFqBQJBMAACQSlqBQJBKAACQSFqDAJBIAACQSlqBQJBKAACQTFqBQJBMAACQT1qBQJBPAACQTVqBQJBNAACQTVqGAJBNAACQRVqBQJB"
-    "FAACQRFqBQJBEAACQQ1qDAJBDAACQR1qBQJBHAACQSFqBQJBIAACQSlqDAJBKAACQTFqBQJBMAACQSlqBQJBKAACQSFqJAJBIAIMA/y8A"
-)
-
-DEFAULT_MIDI_PAYLOAD = pack_midi_payload(base64.b64decode(DEFAULT_MIDI_BASE64))
 
 factory = serverApi.GetEngineCompFactory()
 game = factory.CreateGame(levelId)
@@ -138,14 +126,16 @@ def _get_midi_from_tape(item_dict):
     """从纸带 userData 中读取 MIDI 索引，并从服务端存档回查 MIDI 数据。"""
     custom_data = item_dict.get("userData") or {}
     if MIDI_MD5_NBT_KEY not in custom_data:
-        return DEFAULT_MIDI_PAYLOAD, None
+        if not DEFAULT_MIDI_KEYS:
+            return None, None
+        midi_md5 = random.choice(DEFAULT_MIDI_KEYS)
+        return get_default_midi(midi_md5), midi_md5
 
     midi_md5 = custom_data[MIDI_MD5_NBT_KEY]["__value__"]
     midi_payload = get_midi(midi_md5)
     if midi_payload is None:
-        return DEFAULT_MIDI_PAYLOAD, None
-    else:
-        return midi_payload, midi_md5
+        return None, midi_md5
+    return midi_payload, midi_md5
 
 
 def _play_midi_sound(instrument_config, tape_item, use_obj):

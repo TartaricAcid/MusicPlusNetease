@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from music_plus_scripts.QuModLibs.Server import *
+from music_plus_scripts.utils.default_midis import is_default_midi
 
 
 def build_block_playback(pos, dimension, direction=None):
@@ -41,8 +42,7 @@ def stop_entity_instrument_playback(entity_id):
 
 def play_instrument_playback(midi_payload, midi_md5, instrument, performer_id=None):
     stop_instrument_playback(instrument["playback_key"])
-    Call("*", "play_midi_music", {
-        "midi": midi_payload,
+    args = {
         "midi_md5": midi_md5,
         "playback_key": instrument["playback_key"],
         "anchor": instrument["anchor"],
@@ -52,4 +52,7 @@ def play_instrument_playback(midi_payload, midi_md5, instrument, performer_id=No
         "instrument_group": instrument["instrument_group"],
         "enable_note_off": instrument["enable_note_off"],
         "particle_range": instrument.get("particle_range"),
-    })
+    }
+    if not is_default_midi(midi_md5):
+        args["midi"] = midi_payload
+    Call("*", "play_midi_music", args)

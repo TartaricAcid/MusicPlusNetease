@@ -9,6 +9,7 @@ from music_plus_scripts.client.music.midi_analyzer import ANALYSIS_VERSION, anal
 from music_plus_scripts.client.network.computer import request_paper_tape_burn
 from music_plus_scripts.client.store import midi_store
 from music_plus_scripts.mido import MidiFile
+from music_plus_scripts.utils.default_midis import is_default_midi
 from music_plus_scripts.utils.midi_payload import get_midi_payload_md5, pack_midi_payload
 
 # 根路径
@@ -27,6 +28,8 @@ PASTE_BTN_PATH = LEFT_INNER_PATH + "/paste_btn"
 EDIT_SECTION_PATH = LEFT_INNER_PATH + "/edit_section"
 EDIT_INNER_PATH = EDIT_SECTION_PATH + "/edit_inner"
 TITLE_EDIT_PATH = EDIT_INNER_PATH + "/title_edit"
+SAVE_BTN_PATH = EDIT_INNER_PATH + "/save_btn"
+DELETE_BTN_PATH = EDIT_INNER_PATH + "/delete_btn"
 
 # 右侧
 RIGHT_PATH = BODY_PATH + "/right"
@@ -103,6 +106,12 @@ class ComputerUI(ScreenNodeWrapper):
         if control is not None:
             control.SetVisible(visible)
 
+    def _set_read_only(self, read_only):
+        for path in (TITLE_EDIT_PATH, SAVE_BTN_PATH, DELETE_BTN_PATH):
+            control = self.GetBaseUIControl(path)
+            if control is not None:
+                control.SetVisible(not read_only)
+
     def _get_title(self):
         control = self.GetBaseUIControl(TITLE_EDIT_PATH)
         if control is None:
@@ -139,6 +148,7 @@ class ComputerUI(ScreenNodeWrapper):
         self._pending_duration = 0.0
         self._pending_analysis = None
         self._selected_md5 = None
+        self._set_read_only(False)
         self._show_edit_section(False)
         self._refresh_list()
 
@@ -149,6 +159,7 @@ class ComputerUI(ScreenNodeWrapper):
         self._pending_analysis = None
         self.mode = MODE_EDIT
         self._selected_md5 = md5_key
+        self._set_read_only(is_default_midi(md5_key))
 
         meta = midi_store.get_meta(md5_key) or {}
         self._set_title(meta.get("title", ""))
@@ -168,6 +179,11 @@ class ComputerUI(ScreenNodeWrapper):
             _format_duration(duration),
             format_analysis_summary(analysis, separator="\n"),
         ))
+        if is_default_midi(md5_key):
+            self._set_notice("默认曲目（只读） | {}\n{}".format(
+                _format_duration(duration),
+                format_analysis_summary(analysis, separator="\n"),
+            ))
 
         self._show_edit_section(True)
         self._refresh_list()
@@ -246,6 +262,7 @@ class ComputerUI(ScreenNodeWrapper):
             return
 
         self.mode = MODE_PASTE
+        self._set_read_only(False)
 
         self._pending_payload = payload
         self._pending_duration = duration
@@ -285,6 +302,9 @@ class ComputerUI(ScreenNodeWrapper):
             if not self._selected_md5:
                 self._set_notice("请先选择一首歌曲")
                 return
+            if is_default_midi(self._selected_md5):
+                self._set_notice("默认曲目不能修改歌曲名")
+                return
             midi_store.update_meta(self._selected_md5, title=title)
             self._set_notice("已更新: \n" + title)
             self._enter_idle()
@@ -306,6 +326,9 @@ class ComputerUI(ScreenNodeWrapper):
             return
 
         if self.mode == MODE_EDIT and self._selected_md5:
+            if is_default_midi(self._selected_md5):
+                self._set_notice("默认曲目不能删除")
+                return
             meta = midi_store.get_meta(self._selected_md5)
             name = (meta.get("title", "") if meta else "") or "未命名"
             midi_store.remove_midi(self._selected_md5)
