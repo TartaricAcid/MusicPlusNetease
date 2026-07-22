@@ -31,7 +31,7 @@ from music_plus_scripts.mido.midi_decoder import NOTE_ON, NOTE_OFF, SUSTAIN
 
 # ─── 播放配置 ───────────────────────────────────────────────
 MAX_CONCURRENT = 16  # 最多同时播放的会话数
-NOTE_VOLUME = 1.0  # 默认音量
+NOTE_VOLUME = 4.5  # 默认音量，大于 1 表明是拓展音频的播放范围
 PLAYBACK_SPEED = 1.0  # 播放速度倍率 (1.0=原速, 2.0=两倍速, 0.5=半速)
 NOTE_OFF_FADE_OUT = 0.2  # note_off 淡出时间（秒）
 
