@@ -70,7 +70,13 @@
     },
     "sound": "wood"
   },
-  "music_plus:multiblock_part": {
+  "music_plus:multiblock_part_tall": {
+    "sound": "wood"
+  },
+  "music_plus:multiblock_part_full": {
+    "sound": "wood"
+  },
+  "music_plus:multiblock_part_half": {
     "sound": "wood"
   }
 }

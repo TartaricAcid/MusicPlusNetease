@@ -8,9 +8,10 @@ from music_plus_scripts.utils.multiblock import (
     CORE_BLOCK_KEY,
     CORE_POS_KEY,
     MEMBER_INDEX_KEY,
-    MULTIBLOCK_PART_BLOCK,
+    MULTIBLOCK_PART_BLOCKS,
     STRUCTURE_VERSION_KEY,
     get_all_multiblock_configs,
+    get_core_member_index,
     get_member_positions,
     get_multiblock_by_core,
     get_placement_origin,
@@ -52,13 +53,17 @@ def place_multiblock_instrument(args, config):
 
     try:
         for index, pos in enumerate(positions):
+            part_block = config["members"][index][1]
             if pos == core_pos:
                 block = {
                     "name": config["core_block"],
                     "aux": direction_to_aux(direction),
                 }
             else:
-                block = {"name": MULTIBLOCK_PART_BLOCK}
+                block = {
+                    "name": part_block,
+                    "aux": direction_to_aux(direction),
+                }
 
             block_info.SetBlockNew(pos, block, 0, use.get_dimension(), False, False)
             if pos != core_pos:
@@ -83,11 +88,11 @@ def place_multiblock_instrument(args, config):
 
 
 def resolve_multiblock(block_name, pos, dimension, aux=None):
-    if block_name == MULTIBLOCK_PART_BLOCK:
-        context = _resolve_part_from_data(pos, dimension)
+    if block_name in MULTIBLOCK_PART_BLOCKS:
+        context = _resolve_part_from_data(block_name, pos, dimension)
         if context is not None:
             return context
-        return _resolve_part_from_surroundings(pos, dimension)
+        return _resolve_part_from_surroundings(block_name, pos, dimension)
 
     config = get_multiblock_by_core(block_name)
     if config is None:
@@ -106,7 +111,7 @@ def resolve_multiblock(block_name, pos, dimension, aux=None):
         direction,
         aux,
         pos,
-        config["members"].index((0, 0, 0))
+        get_core_member_index(config["members"])
     )
 
 
@@ -121,15 +126,16 @@ def destroy_multiblock(context, dimension, player_id=None, drop_item=False):
         from music_plus_scripts.server.action.seated_instrument import remove_seated_instrument_at
 
         remove_seated_instrument_at(core_pos, dimension)
-        positions = get_member_positions(core_pos, context["direction"], context["config"]["members"])
-        for pos in positions:
+        members = context["config"]["members"]
+        positions = get_member_positions(core_pos, context["direction"], members)
+        for index, pos in enumerate(positions):
             block = block_info.GetBlockNew(pos, dimension)
             if block is None:
                 continue
             if pos == core_pos:
                 if block["name"] != context["config"]["core_block"]:
                     continue
-            elif block["name"] != MULTIBLOCK_PART_BLOCK:
+            elif block["name"] != members[index][1]:
                 continue
             block_info.SetBlockNew(pos, {"name": "minecraft:air"}, 0, dimension, False, False)
 
@@ -175,13 +181,13 @@ def handle_multiblock_destroyed(args):
 
 def handle_multiblock_remove(args):
     block_name = args["fullName"]
-    if block_name != MULTIBLOCK_PART_BLOCK and get_multiblock_by_core(block_name) is None:
+    if block_name not in MULTIBLOCK_PART_BLOCKS and get_multiblock_by_core(block_name) is None:
         return False
 
     pos = args["x"], args["y"], args["z"]
     if _pending_destroy_key(args["dimension"], pos) in _PENDING_DESTROYS:
         return True
-    if block_name != MULTIBLOCK_PART_BLOCK:
+    if block_name not in MULTIBLOCK_PART_BLOCKS:
         structure_key = _structure_key(args["dimension"], pos)
         if structure_key in _MUTATING_STRUCTURES:
             return True
@@ -204,7 +210,7 @@ def _build_context(config, core_pos, direction, aux, clicked_pos, member_index):
     }
 
 
-def _resolve_part_from_data(pos, dimension):
+def _resolve_part_from_data(block_name, pos, dimension):
     be_data = block_entity_data.GetBlockEntityData(dimension, pos)
     if be_data is None:
         return None
@@ -222,6 +228,8 @@ def _resolve_part_from_data(pos, dimension):
         return None
     if not 0 <= member_index < len(config["members"]):
         return None
+    if config["members"][member_index][1] != block_name:
+        return None
 
     core = block_info.GetBlockNew(core_pos, dimension)
     if core is None or core["name"] != core_block:
@@ -235,11 +243,14 @@ def _resolve_part_from_data(pos, dimension):
     return _build_context(config, core_pos, direction, aux, pos, member_index)
 
 
-def _resolve_part_from_surroundings(pos, dimension):
+def _resolve_part_from_surroundings(block_name, pos, dimension):
     for config in get_all_multiblock_configs():
         for direction in ("north", "east", "south", "west"):
-            for member_index, offset in enumerate(config["members"]):
+            for member_index, member in enumerate(config["members"]):
+                offset, part_block = member
                 if offset == (0, 0, 0):
+                    continue
+                if part_block != block_name:
                     continue
                 dx, dy, dz = rotate_offset(offset, direction)
                 core_pos = pos[0] - dx, pos[1] - dy, pos[2] - dz

@@ -2,7 +2,7 @@
   "format_version": "1.20.80",
   "minecraft:block": {
     "description": {
-      "identifier": "music_plus:multiblock_part",
+      "identifier": "music_plus:multiblock_part_half",
       "menu_category": {
         "category": "none"
       }
@@ -20,6 +20,9 @@
       },
       "minecraft:destructible_by_explosion": false,
       "minecraft:loot": "loot_tables/music_plus/empty.json",
+      "netease:face_directional": {
+        "type": "direction"
+      },
       "netease:solid": {
         "value": false
       },
@@ -36,12 +39,12 @@
       },
       "netease:aabb": {
         "clip": {
-          "min": [0, 0, 0],
-          "max": [1, 1.25, 1]
+          "min": [0, 0, 0.5],
+          "max": [1, 1, 1]
         },
         "collision": {
-          "min": [0, 0, 0],
-          "max": [1, 1.25, 1]
+          "min": [0, 0, 0.5],
+          "max": [1, 1, 1]
         }
       }
     }

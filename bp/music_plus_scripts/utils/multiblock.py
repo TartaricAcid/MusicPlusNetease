@@ -2,7 +2,18 @@
 
 """多方块乐器的共享结构定义与坐标计算。"""
 
-MULTIBLOCK_PART_BLOCK = "music_plus:multiblock_part"
+MULTIBLOCK_PART_TALL_BLOCK = "music_plus:multiblock_part_tall"
+MULTIBLOCK_PART_FULL_BLOCK = "music_plus:multiblock_part_full"
+MULTIBLOCK_PART_HALF_BLOCK = "music_plus:multiblock_part_half"
+
+MULTIBLOCK_PART_BLOCKS = frozenset((
+    MULTIBLOCK_PART_TALL_BLOCK,
+    MULTIBLOCK_PART_FULL_BLOCK,
+    MULTIBLOCK_PART_HALF_BLOCK,
+))
+
+# 成员格式为 (本地坐标偏移, 辅助方块 ID)，核心位置的辅助方块 ID 为 None。
+# 竖半砖的基准 AABB 位于本地南侧，并随放置方向的 aux 旋转。
 
 CORE_POS_KEY = "music_plus:multiblock_core"
 CORE_BLOCK_KEY = "music_plus:multiblock_core_block"
@@ -10,22 +21,37 @@ MEMBER_INDEX_KEY = "music_plus:multiblock_member"
 STRUCTURE_VERSION_KEY = "music_plus:multiblock_version"
 
 MEMBERS_TRIANGLE = (
-    (-1, 0, -2), (0, 0, -2),
-    (-1, 0, -1), (0, 0, -1),
-    (-1, 0, 0), (0, 0, 0), (1, 0, 0),
-    (-1, 0, 1), (0, 0, 1), (1, 0, 1),
-    (0, 0, 2),
+    ((-1, 0, -2), MULTIBLOCK_PART_TALL_BLOCK),
+    ((0, 0, -2), MULTIBLOCK_PART_TALL_BLOCK),
+    ((-1, 0, -1), MULTIBLOCK_PART_TALL_BLOCK),
+    ((0, 0, -1), MULTIBLOCK_PART_TALL_BLOCK),
+    ((-1, 0, 0), MULTIBLOCK_PART_TALL_BLOCK),
+    ((0, 0, 0), None),
+    ((1, 0, 0), MULTIBLOCK_PART_TALL_BLOCK),
+    ((-1, 0, 1), MULTIBLOCK_PART_TALL_BLOCK),
+    ((0, 0, 1), MULTIBLOCK_PART_TALL_BLOCK),
+    ((1, 0, 1), MULTIBLOCK_PART_TALL_BLOCK),
+    ((-1, 0, 2), MULTIBLOCK_PART_HALF_BLOCK),
+    ((0, 0, 2), MULTIBLOCK_PART_HALF_BLOCK),
+    ((1, 0, 2), MULTIBLOCK_PART_HALF_BLOCK),
 )
 
 HONKYTONK_MEMBERS = (
-    (-1, 0, 1), (0, 0, 1), (1, 0, 1),
-    (-1, 0, 0), (0, 0, 0), (1, 0, 0),
-    (-1, 1, 0), (0, 1, 0), (1, 1, 0),
+    ((-1, 0, 1), MULTIBLOCK_PART_HALF_BLOCK),
+    ((0, 0, 1), MULTIBLOCK_PART_HALF_BLOCK),
+    ((1, 0, 1), MULTIBLOCK_PART_HALF_BLOCK),
+    ((-1, 0, 0), MULTIBLOCK_PART_FULL_BLOCK),
+    ((0, 0, 0), None),
+    ((1, 0, 0), MULTIBLOCK_PART_FULL_BLOCK),
+    ((-1, 1, 0), MULTIBLOCK_PART_FULL_BLOCK),
+    ((0, 1, 0), MULTIBLOCK_PART_FULL_BLOCK),
+    ((1, 1, 0), MULTIBLOCK_PART_FULL_BLOCK),
 )
 
 MEMBERS_3X1 = (
-    (-1, 0, 0), (0, 0, 0), (1, 0, 0),
-    (0, 0, 1),
+    ((-1, 0, 0), MULTIBLOCK_PART_TALL_BLOCK),
+    ((0, 0, 0), None),
+    ((1, 0, 0), MULTIBLOCK_PART_TALL_BLOCK)
 )
 
 MULTIBLOCK_REGISTRY = {
@@ -100,10 +126,17 @@ def rotate_offset(offset, direction):
 
 def get_member_positions(core_pos, direction, members):
     positions = []
-    for offset in members:
+    for offset, _part_block in members:
         dx, dy, dz = rotate_offset(offset, direction)
         positions.append((core_pos[0] + dx, core_pos[1] + dy, core_pos[2] + dz))
     return positions
+
+
+def get_core_member_index(members):
+    for index, member in enumerate(members):
+        if member[0] == (0, 0, 0):
+            return index
+    raise ValueError("Multiblock members must contain the core offset")
 
 
 def direction_from_yaw(yaw):
