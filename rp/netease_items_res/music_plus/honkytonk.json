@@ -1,0 +1,11 @@
+{
+  "format_version": "1.10",
+  "minecraft:item": {
+    "components": {
+      "minecraft:icon": "music_plus:honkytonk"
+    },
+    "description": {
+      "identifier": "music_plus:honkytonk"
+    }
+  }
+}

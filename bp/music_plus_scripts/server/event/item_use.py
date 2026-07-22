@@ -4,7 +4,9 @@ import time
 
 from music_plus_scripts.QuModLibs.Server import *
 from music_plus_scripts.server.action.block_instrument import is_paper_tape, handle_paper_tape_insert
+from music_plus_scripts.server.action.multiblock import place_multiblock_instrument
 from music_plus_scripts.server.store.instrument_registry import get_paper_tape_instrument_config
+from music_plus_scripts.utils.multiblock import get_multiblock_by_item
 
 factory = serverApi.GetEngineCompFactory()
 game = factory.CreateGame(levelId)
@@ -20,6 +22,15 @@ def on_item_use_on_block(args):
     item = args["itemDict"]
     block_name = args["blockName"]
     item_name = item["newItemName"]
+
+    multiblock_config = get_multiblock_by_item(item_name)
+    if multiblock_config:
+        if can_use(args):
+            place_multiblock_instrument(args, multiblock_config)
+            from music_plus_scripts.server.event.block_use import record_cooldown as record_block_use_cooldown
+            record_block_use_cooldown(args["entityId"])
+        args["ret"] = True
+        return
 
     # 纸带右击方块乐器 → 塞入并播放曲目
     instrument = get_paper_tape_instrument_config(block_name)

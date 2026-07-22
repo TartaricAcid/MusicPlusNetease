@@ -7,6 +7,21 @@
     },
     "music_plus:bass": {
       "textures": "textures/music_plus/item/bass"
+    },
+    "music_plus:steinway": {
+      "textures": "textures/music_plus/item/piano"
+    },
+    "music_plus:harpsichord": {
+      "textures": "textures/music_plus/item/harpsichord"
+    },
+    "music_plus:honkytonk": {
+      "textures": "textures/music_plus/item/honkytonk"
+    },
+    "music_plus:vibra": {
+      "textures": "textures/music_plus/item/vibra"
+    },
+    "music_plus:guzheng": {
+      "textures": "textures/music_plus/item/guzheng"
     }
   }
 }

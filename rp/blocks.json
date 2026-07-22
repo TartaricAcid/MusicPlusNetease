@@ -69,5 +69,8 @@
       "block_icon": "music_plus:vibra"
     },
     "sound": "wood"
+  },
+  "music_plus:multiblock_part": {
+    "sound": "wood"
   }
 }

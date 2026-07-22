@@ -1,0 +1,10 @@
+{
+  "format_version": "1.10",
+  "minecraft:item": {
+    "description": {
+      "category": "music_plus_main",
+      "identifier": "music_plus:guzheng"
+    },
+    "components": {}
+  }
+}

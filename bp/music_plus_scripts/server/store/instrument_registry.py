@@ -52,7 +52,7 @@ BLOCK_INSTRUMENT_REGISTRY = {
         "enable_note_off": True,
         "animation_profile": "piano",
         "particle_range": ((-1.0, 1.0), (0.0, 0.5), (-1.0, 1.0)),
-        "seat_offset": (0.0, 0.125, 1.0625),
+        "seat_offset": (0.0, 0.125, 1.5),
     },
     "music_plus:music_plus_rhodes": {
         "sound_prefix": "music_plus.rhodes",
@@ -66,7 +66,7 @@ BLOCK_INSTRUMENT_REGISTRY = {
         "enable_note_off": True,
         "animation_profile": "piano",
         "particle_range": ((-1.0, 1.0), (0.0, 0.5), (-1.0, 1.0)),
-        "seat_offset": (0.0, 0.25, 0.5),
+        "seat_offset": (0.0, 0.25, 0.875),
     },
     "music_plus:music_plus_ce_guitar": {
         "sound_prefix": "music_plus.ce_guitar",
@@ -85,7 +85,7 @@ BLOCK_INSTRUMENT_REGISTRY = {
         "enable_note_off": True,
         "animation_profile": "piano",
         "particle_range": ((-1.0, 1.0), (0.0, 0.5), (-1.0, 1.0)),
-        "seat_offset": (0.0, 0.25, 0.5),
+        "seat_offset": (0.0, 0.25, 0.875),
     },
     "music_plus:music_plus_violin_solo": {
         "sound_prefix": "music_plus.violin_solo",

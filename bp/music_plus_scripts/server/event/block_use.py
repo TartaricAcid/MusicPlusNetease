@@ -4,6 +4,7 @@ import time
 
 from music_plus_scripts.QuModLibs.Server import *
 from music_plus_scripts.server.action.block_instrument import handle_paper_tape_takeout
+from music_plus_scripts.server.action.multiblock import resolve_multiblock
 from music_plus_scripts.server.action.seated_instrument import handle_seated_instrument_use
 from music_plus_scripts.server.store.instrument_registry import (
     get_paper_tape_instrument_config,
@@ -24,6 +25,23 @@ def on_block_use(args):
 
     block_name = args["blockName"]
     player_id = args["playerId"]
+
+    multiblock = resolve_multiblock(
+        block_name,
+        (args["x"], args["y"], args["z"]),
+        args["dimensionId"],
+        args["aux"],
+    )
+    if multiblock and can_use(args):
+        instrument_config = get_seated_instrument_config(multiblock["core_block"])
+        if instrument_config and handle_seated_instrument_use(
+            args,
+            instrument_config,
+            multiblock["core_pos"],
+            multiblock["core_aux"],
+        ):
+            args["cancel"] = True
+        return
 
     # 右击电脑方块 -> 通知客户端打开 MIDI 音乐库 GUI
     if block_name == COMPUTER_BLOCK and can_use(args):

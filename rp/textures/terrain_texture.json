@@ -49,6 +49,9 @@
     },
     "music_plus:vibra": {
       "textures": "textures/music_plus/item/vibra"
+    },
+    "music_plus:empty": {
+      "textures": "textures/music_plus/block/music_box"
     }
   }
 }

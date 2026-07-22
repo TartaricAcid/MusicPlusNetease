@@ -1,0 +1,127 @@
+# -*- coding: utf-8 -*-
+
+"""多方块乐器的共享结构定义与坐标计算。"""
+
+MULTIBLOCK_PART_BLOCK = "music_plus:multiblock_part"
+
+CORE_POS_KEY = "music_plus:multiblock_core"
+CORE_BLOCK_KEY = "music_plus:multiblock_core_block"
+MEMBER_INDEX_KEY = "music_plus:multiblock_member"
+STRUCTURE_VERSION_KEY = "music_plus:multiblock_version"
+
+MEMBERS_TRIANGLE = (
+    (-1, 0, -2), (0, 0, -2),
+    (-1, 0, -1), (0, 0, -1),
+    (-1, 0, 0), (0, 0, 0), (1, 0, 0),
+    (-1, 0, 1), (0, 0, 1), (1, 0, 1),
+    (0, 0, 2),
+)
+
+HONKYTONK_MEMBERS = (
+    (-1, 0, 1), (0, 0, 1), (1, 0, 1),
+    (-1, 0, 0), (0, 0, 0), (1, 0, 0),
+    (-1, 1, 0), (0, 1, 0), (1, 1, 0),
+)
+
+MEMBERS_3X1 = (
+    (-1, 0, 0), (0, 0, 0), (1, 0, 0),
+    (0, 0, 1),
+)
+
+MULTIBLOCK_REGISTRY = {
+    "music_plus:steinway": {
+        "core_block": "music_plus:music_plus_steinway",
+        "members": MEMBERS_TRIANGLE,
+        "version": 1,
+    },
+    "music_plus:harpsichord": {
+        "core_block": "music_plus:music_plus_harpsichord",
+        "members": MEMBERS_TRIANGLE,
+        "version": 1,
+    },
+    "music_plus:honkytonk": {
+        "core_block": "music_plus:music_plus_honkytonk",
+        "members": HONKYTONK_MEMBERS,
+        "version": 1,
+    },
+    "music_plus:vibra": {
+        "core_block": "music_plus:music_plus_vibra",
+        "members": MEMBERS_3X1,
+        "version": 1,
+    },
+    "music_plus:guzheng": {
+        "core_block": "music_plus:music_plus_guzheng",
+        "members": MEMBERS_3X1,
+        "version": 1,
+    },
+}
+
+MULTIBLOCK_BY_CORE = dict(
+    (config["core_block"], dict(config, item_name=item_name))
+    for item_name, config in MULTIBLOCK_REGISTRY.items()
+)
+
+
+def get_multiblock_by_item(item_name):
+    config = MULTIBLOCK_REGISTRY.get(item_name)
+    if config is None:
+        return None
+    result = config.copy()
+    result["item_name"] = item_name
+    return result
+
+
+def get_multiblock_by_core(core_block):
+    return MULTIBLOCK_BY_CORE.get(core_block)
+
+
+def get_all_multiblock_configs():
+    return MULTIBLOCK_BY_CORE.values()
+
+
+def get_placement_origin(clicked_pos, clicked_block_name):
+    from music_plus_scripts.utils.blocks import REPLACEABLE
+
+    if clicked_block_name in REPLACEABLE:
+        return clicked_pos
+    return clicked_pos[0], clicked_pos[1] + 1, clicked_pos[2]
+
+
+def rotate_offset(offset, direction):
+    x, y, z = offset
+    if direction == "east":
+        return -z, y, x
+    if direction == "south":
+        return -x, y, -z
+    if direction == "west":
+        return z, y, -x
+    return x, y, z
+
+
+def get_member_positions(core_pos, direction, members):
+    positions = []
+    for offset in members:
+        dx, dy, dz = rotate_offset(offset, direction)
+        positions.append((core_pos[0] + dx, core_pos[1] + dy, core_pos[2] + dz))
+    return positions
+
+
+def direction_from_yaw(yaw):
+    yaw %= 360
+    if 45 <= yaw < 135:
+        return "east"
+    if 135 <= yaw < 225:
+        return "south"
+    if 225 <= yaw < 315:
+        return "west"
+    return "north"
+
+
+def opposite_direction(direction):
+    if direction == "north":
+        return "south"
+    if direction == "south":
+        return "north"
+    if direction == "west":
+        return "east"
+    return "west"

@@ -10,7 +10,7 @@ factory = serverApi.GetEngineCompFactory()
 block_info = factory.CreateBlockInfo(levelId)
 
 
-def handle_seated_instrument_use(args, instrument_config):
+def handle_seated_instrument_use(args, instrument_config, block_pos=None, block_aux=None):
     from music_plus_scripts.server.action.seat import (
         SEAT_ENTITY,
         configure_seat,
@@ -23,8 +23,11 @@ def handle_seated_instrument_use(args, instrument_config):
     if not use_obj.get_item().is_empty():
         return False
 
-    face = aux_to_direction(use_obj.aux)
-    block_pos = use_obj.get_pos()
+    if block_pos is None:
+        block_pos = use_obj.get_pos()
+    if block_aux is None:
+        block_aux = use_obj.aux
+    face = aux_to_direction(block_aux)
     dimension = use_obj.get_dimension()
     seat_id = get_block_seat_id(dimension, block_pos)
 
@@ -59,13 +62,17 @@ def handle_seated_instrument_use(args, instrument_config):
 
 
 def remove_seated_instrument_seat(args):
+    block = BlockObject(args)
+    remove_seated_instrument_at(block.get_pos(), block.get_dimension())
+
+
+def remove_seated_instrument_at(block_pos, dimension):
     from music_plus_scripts.server.action.instrument_playback import stop_instrument_playback
     from music_plus_scripts.server.action.seat import get_block_seat_id, remove_seat
 
-    block = BlockObject(args)
-    playback = build_block_playback(block.get_pos(), block.get_dimension())
+    playback = build_block_playback(block_pos, dimension)
     stop_instrument_playback(playback["playback_key"])
-    seat_id = get_block_seat_id(block.get_dimension(), block.get_pos())
+    seat_id = get_block_seat_id(dimension, block_pos)
     if seat_id is not None:
         remove_seat(seat_id)
 
