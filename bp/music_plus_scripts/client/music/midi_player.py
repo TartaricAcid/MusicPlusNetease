@@ -28,6 +28,7 @@ from music_plus_scripts.client.music.performance_animation import (
     update_performance_notes,
 )
 from music_plus_scripts.mido.midi_decoder import NOTE_ON, NOTE_OFF, SUSTAIN
+from music_plus_scripts.utils.multiblock import rotate_offset
 
 # ─── 播放配置 ───────────────────────────────────────────────
 MAX_CONCURRENT = 16  # 最多同时播放的会话数
@@ -62,7 +63,7 @@ NOTE_PARTICLE_LIFETIME = 1.0  # 音符粒子存续时间，最长 1 秒
 #     "anchor": dict,                    方块或实体播放锚点
 #     "sound_prefix": str,               声音 ID 前缀
 #     "instrument_group": str,           Program Change 可用乐器组
-#     "particle_range": tuple,           粒子相对默认位置的三轴偏移范围
+#     "particle_range": tuple,           粒子相对默认位置的局部三轴偏移范围
 #     "active_notes": {},                活跃音符 {(channel, note): musicId}
 #     "pedal_state": {},                 踏板状态 {channel: bool}
 #     "sustained_notes": {},             踏板延音中的音符 {(channel, note): musicId}
@@ -103,7 +104,7 @@ def start_playback(
             对八音盒等自然衰减乐器可设为 False，音符会持续播放直到自然结束。
         performer_id: 演奏此乐器的玩家
         animation_profile: 演奏动画
-        particle_range: 可选的 ((x1,x2),(y1,y2),(z1,z2))，默认在方块中心固定生成。
+        particle_range: 可选的局部坐标范围 ((x1,x2),(y1,y2),(z1,z2))，默认在方块中心固定生成。
         start_time: 可选的统一播放起点，用于让同批播放对齐。
     """
     if not notes:
@@ -315,10 +316,13 @@ def on_music_tick():
                     old = active_notes.pop(key, None) or sustained_notes.pop(key, None)
                     if old:
                         _audio.StopCustomMusicById(old, NOTE_OFF_FADE_OUT)
+
                 music_id = _play_note(
                     midi_note, vel, pos, entity_id, entity_offset,
-                    prefix, instrument_group, program, particle_range
+                    prefix, instrument_group, program, particle_range,
+                    session["anchor"].get("direction"),
                 )
+
                 if music_id and note_off_enabled:
                     active_notes[key] = music_id
                 if music_id:
@@ -372,7 +376,7 @@ def on_music_tick():
 
 def _play_note(
         midi_note, velocity, pos, entity_id, entity_offset,
-        sound_prefix, instrument_group, program, particle_range
+        sound_prefix, instrument_group, program, particle_range, block_direction
 ):
     resolved_prefix = resolve_program_sound_prefix(sound_prefix, instrument_group, program)
     if resolved_prefix is None:
@@ -392,7 +396,12 @@ def _play_note(
     music_id = _audio.PlayCustomMusic(name, audio_pos, volume, pitch, False, entity_id)
 
     # 粒子效果
-    particle_pos = _get_particle_pos(pos, particle_range, entity_id is not None)
+    particle_pos = _get_particle_pos(
+        pos,
+        particle_range,
+        entity_id is not None,
+        block_direction,
+    )
     particle_id = _particle_sys.Create(NOTE_PARTICLE, particle_pos)
     if _particle_sys.EmitManually(particle_id):
         _game.AddTimer(NOTE_PARTICLE_LIFETIME, _remove_particle, particle_id)
@@ -400,7 +409,7 @@ def _play_note(
     return music_id
 
 
-def _get_particle_pos(pos, particle_range, is_entity=False):
+def _get_particle_pos(pos, particle_range, is_entity=False, block_direction=None):
     x, y, z = pos
 
     particle_x = x if is_entity else x + 0.5
@@ -409,9 +418,15 @@ def _get_particle_pos(pos, particle_range, is_entity=False):
 
     if particle_range:
         x_range, y_range, z_range = particle_range
-        particle_x += random.uniform(x_range[0], x_range[1])
+
+        local_x = random.uniform(x_range[0], x_range[1])
+        local_z = random.uniform(z_range[0], z_range[1])
+
+        offset_x, _offset_y, offset_z = rotate_offset((local_x, 0, local_z), block_direction)
+
+        particle_x += offset_x
         particle_y += random.uniform(y_range[0], y_range[1])
-        particle_z += random.uniform(z_range[0], z_range[1])
+        particle_z += offset_z
 
     return particle_x, particle_y, particle_z
 

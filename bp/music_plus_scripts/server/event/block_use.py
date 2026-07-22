@@ -35,10 +35,11 @@ def on_block_use(args):
     if multiblock and can_use(args):
         instrument_config = get_seated_instrument_config(multiblock["core_block"])
         if instrument_config and handle_seated_instrument_use(
-            args,
-            instrument_config,
-            multiblock["core_pos"],
-            multiblock["core_aux"],
+                args,
+                instrument_config,
+                multiblock["core_pos"],
+                multiblock["core_aux"],
+                multiblock["core_block"],
         ):
             args["cancel"] = True
         return
@@ -52,7 +53,7 @@ def on_block_use(args):
     # 空手右击坐式乐器 -> 坐到乐器前
     instrument_config = get_seated_instrument_config(block_name)
     if instrument_config and can_use(args):
-        if handle_seated_instrument_use(args, instrument_config):
+        if handle_seated_instrument_use(args, instrument_config, instrument_block=block_name):
             args["cancel"] = True
         return
 

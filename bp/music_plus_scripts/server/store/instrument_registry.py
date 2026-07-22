@@ -18,7 +18,7 @@ GUZHENG_BLOCK = "music_plus:music_plus_guzheng"
 #   instrument_group - Program Change 可使用的乐器组
 #   enable_note_off - 是否响应 note_off 截断（弦/管乐器需要，打击/八音盒不需要）
 #   animation_profile - 可选的演奏动画配置
-#   particle_range  - 可选粒子三轴偏移范围 ((x1,x2),(y1,y2),(z1,z2))，缺省为固定点
+#   particle_range  - 可选粒子局部三轴偏移范围 ((x1,x2),(y1,y2),(z1,z2))，随方块朝向旋转
 #   seat_offset     - 可选座位局部偏移 (横向, 高度, 前向)，相对方块中心并随方块旋转
 # ─────────────────────────────────────────────────────────────────────────────────
 BLOCK_INSTRUMENT_REGISTRY = {
@@ -51,7 +51,7 @@ BLOCK_INSTRUMENT_REGISTRY = {
         "instrument_group": "piano",
         "enable_note_off": True,
         "animation_profile": "piano",
-        "particle_range": ((-1.0, 1.0), (0.0, 0.5), (-1.0, 1.0)),
+        "particle_range": ((-1, 1), (0.0, 0.5), (0.625, 0.875)),
         "seat_offset": (0.0, 0.125, 1.5),
     },
     "music_plus:music_plus_rhodes": {
@@ -65,7 +65,7 @@ BLOCK_INSTRUMENT_REGISTRY = {
         "instrument_group": "music_box",
         "enable_note_off": True,
         "animation_profile": "piano",
-        "particle_range": ((-1.0, 1.0), (0.0, 0.5), (-1.0, 1.0)),
+        "particle_range": ((-1, 1), (0.25, 0.75), (0, 0)),
         "seat_offset": (0.0, 0.25, 0.875),
     },
     "music_plus:music_plus_ce_guitar": {
@@ -84,7 +84,7 @@ BLOCK_INSTRUMENT_REGISTRY = {
         "instrument_group": "guzheng",
         "enable_note_off": True,
         "animation_profile": "piano",
-        "particle_range": ((-1.0, 1.0), (0.0, 0.5), (-1.0, 1.0)),
+        "particle_range": ((-1.25, 1.25), (0.25, 0.75), (0, 0)),
         "seat_offset": (0.0, 0.25, 0.875),
     },
     "music_plus:music_plus_violin_solo": {
@@ -120,6 +120,7 @@ ITEM_INSTRUMENT_REGISTRY = {
         "sound_prefix": "music_plus.bass",
         "instrument_group": "bass",
         "enable_note_off": True,
+        "particle_range": ((-0.25, 0.25), (-0.125, 0.25), (-0.25, 0.25)),
         "animation_profile": "bass",
     },
 }

@@ -35,15 +35,18 @@ def _get_handheld_instrument(player_id, item_dict=None):
     return result
 
 
-def get_player_instrument(player_id):
-    handheld = _get_handheld_instrument(player_id)
-    if handheld is not None:
-        return handheld
-
+def _get_seated_player_instrument(player_id):
     ride_comp = factory.CreateRide(player_id)
     if not ride_comp.IsEntityRiding():
         return None
     return get_seated_instrument(ride_comp.GetEntityRider())
+
+
+def get_player_instrument(player_id):
+    seated = _get_seated_player_instrument(player_id)
+    if seated is not None:
+        return seated
+    return _get_handheld_instrument(player_id)
 
 
 def handle_carried_item_changed(args):
@@ -51,6 +54,9 @@ def handle_carried_item_changed(args):
     old_instrument = _get_handheld_instrument(player_id, args["oldItemDict"])
     if old_instrument is not None:
         stop_instrument_playback(old_instrument["playback_key"])
+
+    if _get_seated_player_instrument(player_id) is not None:
+        return
 
     new_instrument = _get_handheld_instrument(player_id, args["newItemDict"])
     Call(player_id, "set_instrument_context", {

@@ -11,6 +11,8 @@ from music_plus_scripts.client.action.instrument_context import (
 from music_plus_scripts.client.network.instrument import open_instrument_ui
 
 SEAT_ENTITY = "music_plus:seat"
+SEAT_INSTRUMENT_TARGET_ATTR = "music_plus:seat_instrument_target"
+SEAT_VIEW_YAW_ATTR = "music_plus:seat_view_yaw"
 
 # 脱离骑乘的事件居然会一口气触发 50 次，故还需要做个冷却判断
 _STOP_RIDING_COOLDOWN = {}
@@ -25,6 +27,14 @@ def is_music_plus_seat(entity_id):
     if not entity_id:
         return False
     return factory.CreateEngineType(entity_id).GetEngineTypeStr() == SEAT_ENTITY
+
+
+def get_seat_instrument_target(entity_id):
+    return factory.CreateModAttr(entity_id).GetAttr(SEAT_INSTRUMENT_TARGET_ATTR)
+
+
+def get_seat_view_yaw(entity_id):
+    return factory.CreateModAttr(entity_id).GetAttr(SEAT_VIEW_YAW_ATTR)
 
 
 def stop_riding_on_cooldown(ride_id):
@@ -57,7 +67,11 @@ def on_start_riding(args):
     victim_id = args["victimId"]
     is_seat = is_music_plus_seat(victim_id)
     if is_seat:
-        set_instrument_context("steinway", INSTRUMENT_MODE_SEATED)
+        set_instrument_context(
+            get_seat_instrument_target(victim_id),
+            INSTRUMENT_MODE_SEATED,
+            get_seat_view_yaw(victim_id),
+        )
     else:
         set_instrument_context(None)
 
@@ -76,13 +90,13 @@ def on_stop_riding(args):
     set_instrument_context(None)
 
 
-@Listen(Events.ClientPlayerInventoryOpenEvent)
-def on_inventory_open(args):
+@Listen(Events.RightClickBeforeClientEvent)
+def on_right_click(args):
     if not player_comp.isRiding():
         return
 
-    victim_id = ride_comp.GetEntityRider()
-    if not is_music_plus_seat(victim_id):
+    seat_id = ride_comp.GetEntityRider()
+    if not is_music_plus_seat(seat_id):
         return
 
     args["cancel"] = True
@@ -91,8 +105,13 @@ def on_inventory_open(args):
 
 @Listen(Events.LoadClientAddonScriptsAfter)
 def on_scripts_loaded(args):
-    if player_comp.isRiding() and is_music_plus_seat(ride_comp.GetEntityRider()):
-        set_instrument_context("steinway", INSTRUMENT_MODE_SEATED)
+    seat_id = ride_comp.GetEntityRider()
+    if player_comp.isRiding() and is_music_plus_seat(seat_id):
+        set_instrument_context(
+            get_seat_instrument_target(seat_id),
+            INSTRUMENT_MODE_SEATED,
+            get_seat_view_yaw(seat_id),
+        )
         return
 
     item_dict = item_comp.GetCarriedItem()

@@ -150,11 +150,17 @@ def _get_midi_from_tape(item_dict):
 
 def _play_midi_sound(instrument_config, tape_item, use_obj):
     from music_plus_scripts.server.action.instrument_playback import build_block_playback, play_instrument_playback
+    from music_plus_scripts.utils.direction import aux_to_direction
 
     midi_payload, midi_md5 = _get_midi_from_tape(tape_item)
     if midi_payload:
+        block_aux = use_obj.get_offset_block().get("aux", use_obj.aux)
         instrument = instrument_config.copy()
-        instrument.update(build_block_playback(use_obj.get_pos(), use_obj.get_dimension()))
+        instrument.update(build_block_playback(
+            use_obj.get_pos(),
+            use_obj.get_dimension(),
+            aux_to_direction(block_aux),
+        ))
         play_instrument_playback(midi_payload, midi_md5, instrument)
 
 

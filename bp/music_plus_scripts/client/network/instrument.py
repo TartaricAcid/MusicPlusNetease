@@ -66,4 +66,4 @@ def set_instrument_ui_notice(args):
 @AllowCall
 def set_instrument_context(args):
     from music_plus_scripts.client.action.instrument_context import set_instrument_context as set_context
-    set_context(args["target_id"], args["mode"])
+    set_context(args["target_id"], args["mode"], args.get("view_yaw"))

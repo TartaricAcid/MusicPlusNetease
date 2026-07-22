@@ -3,15 +3,18 @@
 from music_plus_scripts.QuModLibs.Server import *
 
 
-def build_block_playback(pos, dimension):
+def build_block_playback(pos, dimension, direction=None):
     x, y, z = pos
+    anchor = {
+        "type": "block",
+        "pos": tuple(pos),
+        "dimension": dimension,
+    }
+    if direction is not None:
+        anchor["direction"] = direction
     return {
         "playback_key": "block:{}:{}:{}:{}".format(dimension, x, y, z),
-        "anchor": {
-            "type": "block",
-            "pos": tuple(pos),
-            "dimension": dimension,
-        },
+        "anchor": anchor,
     }
 
 
