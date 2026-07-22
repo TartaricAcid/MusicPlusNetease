@@ -36,7 +36,7 @@ HARPSICHORD = InstrumentDef(
     sound_prefix="music_plus.harpsichord",
     lowest_note=24,
     highest_note=119,
-    note_map=octave_up(c_octave_a_sample(range(2, 8), 36, 107)),
+    note_map=c_octave_a_sample(range(2, 8), 36, 107),
 )
 
 HONKYTONK = InstrumentDef(
