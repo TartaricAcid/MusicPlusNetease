@@ -116,7 +116,7 @@ BASS = InstrumentDef(
     sound_prefix="music_plus.bass",
     lowest_note=24,
     highest_note=119,
-    note_map=c_octave_a_sample(range(3, 6), 48, 83),
+    note_map=octave_up(c_octave_a_sample(range(3, 6), 48, 83)),
 )
 
 REAL_KIT = InstrumentDef(
