@@ -8,6 +8,9 @@
     "music_plus:music_box": {
       "textures": "textures/music_plus/block/music_box"
     },
+    "music_plus:synthesizer_player": {
+      "textures": "textures/music_plus/block/music_box"
+    },
     "music_plus:piano": {
       "textures": "textures/music_plus/item/piano"
     },

@@ -244,6 +244,7 @@ INSTRUMENT_GROUPS = {
         "music_plus.real_kit",
         "music_plus.linn_kit",
     },
+    "all": set(PROGRAM_TO_INSTRUMENT.values()),
 }
 
 
@@ -265,3 +266,16 @@ def resolve_program_sound_prefix(default_sound_prefix, instrument_group, program
         return None
 
     return mapped_sound_prefix
+
+
+def resolve_note_sound_prefix(
+        default_sound_prefix,
+        instrument_group,
+        program,
+        channel,
+        percussion_sound_prefix=None
+):
+    """根据播放分类、Program Change 和通道选择最终音色。"""
+    if instrument_group == "all" and channel == 9:
+        return percussion_sound_prefix or "music_plus.real_kit"
+    return resolve_program_sound_prefix(default_sound_prefix, instrument_group, program)

@@ -19,7 +19,8 @@ def play_midi_music(args):
         anchor: 方块或实体播放锚点
         sound_prefix: 声音 ID 前缀，如 "music_plus.music_box"
         instrument_group: Program Change 可使用的乐器组
-        enable_note_off: 是否响应 note_off / sustain_pedal 中断（默认 True）
+        percussion_sound_prefix: all 分类使用的鼓组音色
+        enable_note_off: 是否允许音色响应 note_off / sustain_pedal 中断（默认 True）
         particle_range: 可选的粒子局部三轴偏移范围，方块锚点会随朝向旋转
     """
     midi_payload = args.get("midi")
@@ -33,6 +34,7 @@ def play_midi_music(args):
         args["anchor"],
         args.get("sound_prefix", "music_plus.music_box"),
         args.get("instrument_group", "music_box"),
+        args.get("percussion_sound_prefix"),
         args.get("enable_note_off", True),
         args.get("midi_md5"),
         args.get("performer_id"),

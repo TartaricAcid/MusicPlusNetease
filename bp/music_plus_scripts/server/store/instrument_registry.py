@@ -16,12 +16,20 @@ GUZHENG_BLOCK = "music_plus:music_plus_guzheng"
 #   target_id      - MIDI 分析和乐器 UI 使用的目标标识
 #   sound_prefix   - 声音 ID 前缀，对应 sound_definitions.json 中的条目
 #   instrument_group - Program Change 可使用的乐器组
-#   enable_note_off - 是否响应 note_off 截断（弦/管乐器需要，打击/八音盒不需要）
+#   percussion_sound_prefix - all 分类使用的鼓组声音 ID 前缀
+#   enable_note_off - 是否允许客户端音色响应 note_off 截断
 #   animation_profile - 可选的演奏动画配置
 #   particle_range  - 可选粒子局部三轴偏移范围 ((x1,x2),(y1,y2),(z1,z2))，随方块朝向旋转
 #   seat_offset     - 可选座位局部偏移 (横向, 高度, 前向)，相对方块中心并随方块旋转
 # ─────────────────────────────────────────────────────────────────────────────────
 BLOCK_INSTRUMENT_REGISTRY = {
+    "music_plus:music_plus_synthesizer_player": {
+        "target_id": "synthesizer_player",
+        "sound_prefix": "music_plus.piano",
+        "instrument_group": "all",
+        "percussion_sound_prefix": "music_plus.real_kit",
+        "enable_note_off": True,
+    },
     "music_plus:music_plus_music_box": {
         "sound_prefix": "music_plus.music_box",
         "instrument_group": "music_box",

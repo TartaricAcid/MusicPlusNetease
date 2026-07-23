@@ -15,14 +15,16 @@ class InstrumentDef(object):
         lowest_note: 可播放的最低 MIDI 音符号（含）
         highest_note: 可播放的最高 MIDI 音符号（含）
         note_map: MIDI 音符号到 (声音文件名, pitch 偏移半音数) 的映射
+        enable_note_off: 此音色是否响应 Note Off 和延音踏板释放
     """
 
-    def __init__(self, name, sound_prefix, lowest_note, highest_note, note_map):
+    def __init__(self, name, sound_prefix, lowest_note, highest_note, note_map, enable_note_off=True):
         self.name = name
         self.sound_prefix = sound_prefix
         self.lowest_note = lowest_note
         self.highest_note = highest_note
         self.note_map = note_map
+        self.enable_note_off = enable_note_off
 
         # 音域内没有精确采样时，使用最近的已有采样，并按两者的
         # MIDI 音符差额追加变调，避免因为采样点稀疏而直接跳过音符。

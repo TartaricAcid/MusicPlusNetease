@@ -50,6 +50,7 @@ def play_instrument_playback(midi_payload, midi_md5, instrument, performer_id=No
         "animation_profile": instrument.get("animation_profile"),
         "sound_prefix": instrument["sound_prefix"],
         "instrument_group": instrument["instrument_group"],
+        "percussion_sound_prefix": instrument.get("percussion_sound_prefix"),
         "enable_note_off": instrument["enable_note_off"],
         "particle_range": instrument.get("particle_range"),
     }

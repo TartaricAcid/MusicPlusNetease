@@ -2,15 +2,16 @@
 
 """按实际播放规则分析 MIDI 在各类方块乐器上的可播放音符数。"""
 
-from music_plus_scripts.client.music.gm_program_map import resolve_program_sound_prefix
+from music_plus_scripts.client.music.gm_program_map import resolve_note_sound_prefix
 from music_plus_scripts.client.music.instruments import get_instrument
 from music_plus_scripts.mido.midi_decoder import NOTE_ON, decode_midi_payload
 
 GM_PERCUSSION_CHANNEL = 9
-ANALYSIS_VERSION = 1
+ANALYSIS_VERSION = 2
 
 # (标识, 显示名, 分类标识, 分类显示名, 默认声音前缀, Program 乐器组)
 INSTRUMENT_TARGETS = (
+    ("synthesizer_player", "合成播放器", "all", "全乐器", "music_plus.piano", "all", "music_plus.real_kit"),
     ("music_box", "八音盒", "music_box", "八音盒类", "music_plus.music_box", "music_box"),
     ("vibra", "颤音琴", "music_box", "八音盒类", "music_plus.vibra", "music_box"),
     ("piano", "钢琴", "piano", "钢琴类", "music_plus.piano", "piano"),
@@ -42,8 +43,9 @@ def analyze_midi_payload(midi_payload):
     instruments = {}
     groups = {}
     for target in INSTRUMENT_TARGETS:
-        target_id, label, group_id, group_label, default_prefix, instrument_group = target
-        result = _analyze_target(note_events, default_prefix, instrument_group)
+        target_id, label, group_id, group_label, default_prefix, instrument_group = target[:6]
+        percussion_prefix = target[6] if len(target) > 6 else None
+        result = _analyze_target(note_events, default_prefix, instrument_group, percussion_prefix)
         result["label"] = label
         result["group"] = group_id
         instruments[target_id] = result
@@ -115,21 +117,28 @@ def format_instrument_summary(analysis, target_id):
     return text
 
 
-def _analyze_target(note_events, default_prefix, instrument_group):
+def _analyze_target(note_events, default_prefix, instrument_group, percussion_prefix=None):
     playable = 0
     channel_skipped = 0
     program_skipped = 0
     range_skipped = 0
     is_drum_group = instrument_group == "drum_kit"
+    is_all_group = instrument_group == "all"
 
     for event in note_events:
         channel = event[2]
-        if (channel == GM_PERCUSSION_CHANNEL) != is_drum_group:
+        if not is_all_group and (channel == GM_PERCUSSION_CHANNEL) != is_drum_group:
             channel_skipped += 1
             continue
 
         program = event[5] if len(event) > 5 else 0
-        resolved_prefix = resolve_program_sound_prefix(default_prefix, instrument_group, program)
+        resolved_prefix = resolve_note_sound_prefix(
+            default_prefix,
+            instrument_group,
+            program,
+            channel,
+            percussion_prefix,
+        )
         if resolved_prefix is None:
             program_skipped += 1
             continue

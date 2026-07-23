@@ -19,7 +19,7 @@ import random
 import time
 
 from music_plus_scripts.QuModLibs.Client import *
-from music_plus_scripts.client.music.gm_program_map import resolve_program_sound_prefix
+from music_plus_scripts.client.music.gm_program_map import resolve_note_sound_prefix
 from music_plus_scripts.client.music.instruments import get_instrument
 from music_plus_scripts.client.music.performance_animation import (
     on_performance_animation_tick,
@@ -86,6 +86,7 @@ def start_playback(
         anchor,
         sound_prefix,
         instrument_group,
+        percussion_sound_prefix=None,
         enable_note_off=True,
         performer_id=None,
         animation_profile=None,
@@ -100,8 +101,9 @@ def start_playback(
         anchor: 方块或实体播放锚点
         sound_prefix: 声音 ID 前缀，如 "music_plus.music_box"
         instrument_group: Program Change 可使用的乐器组
-        enable_note_off: 是否响应 note_off / sustain_pedal 中断（默认 True）。
-            对八音盒等自然衰减乐器可设为 False，音符会持续播放直到自然结束。
+        percussion_sound_prefix: all 分类使用的鼓组音色
+        enable_note_off: 是否允许音色响应 note_off / sustain_pedal 中断（默认 True）。
+            最终仍由 InstrumentDef.enable_note_off 决定具体音色是否响应。
         performer_id: 演奏此乐器的玩家
         animation_profile: 演奏动画
         particle_range: 可选的局部坐标范围 ((x1,x2),(y1,y2),(z1,z2))，默认在方块中心固定生成。
@@ -133,6 +135,7 @@ def start_playback(
         "anchor": anchor,
         "sound_prefix": sound_prefix,
         "instrument_group": instrument_group,
+        "percussion_sound_prefix": percussion_sound_prefix,
         "enable_note_off": enable_note_off,
         "performer_id": performer_id,
         "animation_profile": animation_profile,
@@ -152,6 +155,7 @@ def queue_playback(
         anchor,
         sound_prefix,
         instrument_group,
+        percussion_sound_prefix=None,
         enable_note_off=True,
         performer_id=None,
         animation_profile=None,
@@ -184,6 +188,7 @@ def queue_playback(
         "anchor": anchor,
         "sound_prefix": sound_prefix,
         "instrument_group": instrument_group,
+        "percussion_sound_prefix": percussion_sound_prefix,
         "enable_note_off": enable_note_off,
         "performer_id": performer_id,
         "animation_profile": animation_profile,
@@ -285,6 +290,7 @@ def on_music_tick():
         entity_offset = session["anchor"].get("offset", (0, 0, 0))
         prefix = session["sound_prefix"]
         instrument_group = session["instrument_group"]
+        percussion_prefix = session["percussion_sound_prefix"]
         active_notes = session["active_notes"]
         pedal_state = session["pedal_state"]
         sustained_notes = session["sustained_notes"]
@@ -302,7 +308,8 @@ def on_music_tick():
             # 鼓组仅处理 Channel 10，跳过旋律通道。
             is_percussion_ch = (channel == GM_PERCUSSION_CHANNEL)
             is_drum_group = (instrument_group == "drum_kit")
-            if is_percussion_ch != is_drum_group:
+            is_all_group = (instrument_group == "all")
+            if not is_all_group and is_percussion_ch != is_drum_group:
                 ptr += 1
                 continue
 
@@ -311,19 +318,34 @@ def on_music_tick():
                 midi_note, vel = event[3], event[4]
                 program = event[5] if len(event) > 5 else 0
                 key = (channel, midi_note)
+                resolved_prefix = resolve_note_sound_prefix(
+                    prefix,
+                    instrument_group,
+                    program,
+                    channel,
+                    percussion_prefix,
+                )
+                if resolved_prefix is None:
+                    ptr += 1
+                    continue
                 if note_off_enabled:
                     # 重击同音：先停掉旧的（无论在 active 还是 sustained 中）
                     old = active_notes.pop(key, None) or sustained_notes.pop(key, None)
                     if old:
                         _audio.StopCustomMusicById(old, NOTE_OFF_FADE_OUT)
 
-                music_id = _play_note(
+                play_result = _play_note(
                     midi_note, vel, pos, entity_id, entity_offset,
-                    prefix, instrument_group, program, particle_range,
+                    resolved_prefix, particle_range,
                     session["anchor"].get("direction"),
                 )
 
-                if music_id and note_off_enabled:
+                if play_result:
+                    music_id, instrument_note_off = play_result
+                else:
+                    music_id, instrument_note_off = None, False
+
+                if music_id and note_off_enabled and instrument_note_off:
                     active_notes[key] = music_id
                 if music_id:
                     played_notes.append((midi_note, vel))
@@ -376,12 +398,8 @@ def on_music_tick():
 
 def _play_note(
         midi_note, velocity, pos, entity_id, entity_offset,
-        sound_prefix, instrument_group, program, particle_range, block_direction
+        resolved_prefix, particle_range, block_direction
 ):
-    resolved_prefix = resolve_program_sound_prefix(sound_prefix, instrument_group, program)
-    if resolved_prefix is None:
-        return None
-
     sound = _midi_to_sound(midi_note, resolved_prefix)
     if sound is None:
         # 超出乐器音域，跳过此音符
@@ -406,7 +424,8 @@ def _play_note(
     if _particle_sys.EmitManually(particle_id):
         _game.AddTimer(NOTE_PARTICLE_LIFETIME, _remove_particle, particle_id)
 
-    return music_id
+    instrument = get_instrument(resolved_prefix)
+    return music_id, instrument.enable_note_off
 
 
 def _get_particle_pos(pos, particle_range, is_entity=False, block_direction=None):
@@ -452,6 +471,7 @@ def _drain_pending_playbacks():
                 item["anchor"],
                 item["sound_prefix"],
                 item["instrument_group"],
+                item["percussion_sound_prefix"],
                 item["enable_note_off"],
                 item["performer_id"],
                 item["animation_profile"],

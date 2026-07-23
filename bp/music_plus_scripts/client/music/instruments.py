@@ -21,6 +21,7 @@ MUSIC_BOX = InstrumentDef(
         "f5", "f5s", "g5", "g5s", "a5", "a5s", "b5", "c6",
         "c6s", "d6", "d6s", "e6", "f6", "f6s", "g6", "g6s",
     )),
+    enable_note_off=False,
 )
 
 PIANO = InstrumentDef(
@@ -301,6 +302,7 @@ REAL_KIT = InstrumentDef(
     lowest_note=35,
     highest_note=51,
     note_map=percussion("real", True),
+    enable_note_off=False,
 )
 
 LINN_KIT = InstrumentDef(
@@ -309,6 +311,7 @@ LINN_KIT = InstrumentDef(
     lowest_note=35,
     highest_note=51,
     note_map=percussion("linn", False),
+    enable_note_off=False,
 )
 
 _REGISTRY = {
