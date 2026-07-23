@@ -22,6 +22,9 @@
       "minecraft:nameable": {},
       "minecraft:persistent": {},
       "minecraft:physics": {},
+      "minecraft:loot": {
+        "table": "loot_tables/music_plus/entity/musician.json"
+      },
       "minecraft:interact": {
         "interactions": [
           {

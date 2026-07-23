@@ -3,6 +3,8 @@
 import time
 
 from music_plus_scripts.QuModLibs.Server import *
+from music_plus_scripts.server.action.handheld_instrument import get_entity_instrument
+from music_plus_scripts.server.action.instrument_playback import stop_instrument_playback
 from music_plus_scripts.server.action.musician import (
     MUSICIAN_ENTITY,
     handle_attack,
@@ -32,6 +34,17 @@ def on_player_attack(args):
     entity_type = factory.CreateEngineType(args["victimId"]).GetEngineTypeStr()
     if entity_type == MUSICIAN_ENTITY:
         handle_attack(args)
+
+
+@Listen(Events.EntityDieLoottableServerEvent)
+def on_entity_die_loot(args):
+    entity_id = args["dieEntityId"]
+    entity_type = factory.CreateEngineType(entity_id).GetEngineTypeStr()
+    if entity_type != MUSICIAN_ENTITY:
+        return
+    instrument = get_entity_instrument(entity_id)
+    if instrument is not None:
+        stop_instrument_playback(instrument["playback_key"])
 
 
 @Listen(Events.EntityStopRidingEvent)

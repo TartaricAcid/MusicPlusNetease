@@ -39,7 +39,12 @@ def handle_seated_instrument_use(
 
     if seat_id is not None and is_seat(seat_id):
         ride_comp = factory.CreateRide(seat_id)
-        if len(ride_comp.GetRiders()) > 0:
+        riders = ride_comp.GetRiders()
+        if len(riders) > 0:
+            from music_plus_scripts.server.action.instrument_controller import open_performer_instrument_ui
+            if open_performer_instrument_ui(use_obj.get_player_id(), riders[0]):
+                use_obj.swing_hand()
+                return True
             return False
 
     # 否则必须空手才能坐上去
@@ -47,7 +52,8 @@ def handle_seated_instrument_use(
         return False
 
     if seat_id is not None and is_seat(seat_id):
-        _seat_player(use_obj.get_player_id(), seat_id, instrument_config, view_yaw)
+        seat_performer(use_obj.get_player_id(), seat_id, view_yaw)
+        _set_player_seated_context(use_obj.get_player_id(), instrument_config, view_yaw)
         use_obj.swing_hand()
         return True
 
@@ -76,7 +82,8 @@ def handle_seated_instrument_use(
     )
     set_block_seat_id(dimension, block_pos, seat_id)
 
-    _seat_player(use_obj.get_player_id(), seat_id, instrument_config, view_yaw)
+    seat_performer(use_obj.get_player_id(), seat_id, view_yaw)
+    _set_player_seated_context(use_obj.get_player_id(), instrument_config, view_yaw)
     use_obj.swing_hand()
     return True
 
@@ -122,6 +129,8 @@ def get_seated_instrument(seat_id):
     result = instrument_config.copy()
     result["pos"] = (x, y, z)
     result["dimension"] = dimension
+    result["mode"] = "seated"
+    result["view_yaw"] = factory.CreateModAttr(seat_id).GetAttr("music_plus:seat_view_yaw")
     result.update(build_block_playback(
         result["pos"],
         dimension,
@@ -130,10 +139,11 @@ def get_seated_instrument(seat_id):
     return result
 
 
-def _seat_player(player_id, seat_id, instrument_config, view_yaw):
-    factory.CreateRide(seat_id).SetRiderRideEntity(player_id, seat_id)
-    factory.CreateRot(player_id).SetRot((10, view_yaw))
-    _set_player_seated_context(player_id, instrument_config, view_yaw)
+def seat_performer(performer_id, seat_id, view_yaw):
+    factory.CreateRide(seat_id).SetRiderRideEntity(performer_id, seat_id)
+    performer_type = factory.CreateEngineType(performer_id).GetEngineTypeStr()
+    pitch = 10 if performer_type == "minecraft:player" else 0
+    factory.CreateRot(performer_id).SetRot((pitch, view_yaw))
 
 
 def _set_player_seated_context(player_id, instrument_config, view_yaw):
@@ -141,7 +151,62 @@ def _set_player_seated_context(player_id, instrument_config, view_yaw):
         "target_id": instrument_config["target_id"],
         "mode": "seated",
         "view_yaw": view_yaw,
+        "performer_id": player_id,
     })
+
+
+def prepare_instrument_seat(
+        args,
+        instrument_config,
+        block_pos=None,
+        block_aux=None,
+        instrument_block=None,
+):
+    from music_plus_scripts.server.action.seat import (
+        SEAT_ENTITY,
+        configure_seat,
+        get_block_seat_id,
+        is_seat,
+        set_block_seat_id,
+    )
+
+    use_obj = BlockUseObject(args)
+    block_pos = block_pos if block_pos is not None else use_obj.get_pos()
+    block_aux = block_aux if block_aux is not None else use_obj.aux
+    instrument_block = instrument_block if instrument_block is not None else args["blockName"]
+    face = aux_to_direction(block_aux)
+    view_yaw = direction_to_rot(face) - 180
+    dimension = use_obj.get_dimension()
+    seat_id = get_block_seat_id(dimension, block_pos)
+
+    if seat_id is not None and is_seat(seat_id):
+        if len(factory.CreateRide(seat_id).GetRiders()) > 0:
+            return False
+        return seat_id, view_yaw, False
+    if seat_id is not None:
+        set_block_seat_id(dimension, block_pos, None)
+
+    seat_pos = _get_seat_pos(block_pos, face, instrument_config["seat_offset"])
+    seat_id = use_obj.create_entity(
+        SEAT_ENTITY,
+        seat_pos,
+        (0, view_yaw),
+        True,
+        False,
+    )
+    if seat_id is None:
+        return None
+    configure_seat(
+        seat_id,
+        block_pos,
+        dimension,
+        instrument_block,
+        instrument_config["target_id"],
+        view_yaw,
+        face,
+    )
+    set_block_seat_id(dimension, block_pos, seat_id)
+    return seat_id, view_yaw, True
 
 
 def _get_seat_pos(block_pos, face, seat_offset):

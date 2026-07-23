@@ -9,7 +9,7 @@ INSTRUMENT_MODE_SEATED = "seated"
 # 贝斯等物品类乐器，主手拿着就能演奏使用
 INSTRUMENT_MODE_HANDHELD = "handheld"
 
-# 缓存变量，描述了当前玩家正在使用什么分类的乐器，是骑乘类还是手持类
+# 当前选曲界面控制的乐器和实际演奏实体。
 _CURRENT_CONTEXT = None
 
 factory = clientApi.GetEngineCompFactory()
@@ -23,18 +23,31 @@ def get_instrument_target_id():
     return _CURRENT_CONTEXT["target_id"]
 
 
-def set_instrument_context(target_id, mode=None, view_yaw=None):
+def get_instrument_performer_id():
+    if _CURRENT_CONTEXT is None:
+        return None
+    return _CURRENT_CONTEXT["performer_id"]
+
+
+def set_instrument_context(target_id, mode=None, view_yaw=None, performer_id=None):
     global _CURRENT_CONTEXT
+    resolved_performer_id = performer_id if performer_id is not None else playerId
     _CURRENT_CONTEXT = {
         "target_id": target_id,
         "mode": mode,
+        "performer_id": resolved_performer_id,
     } if target_id is not None else None
 
-    is_seated = target_id is not None and mode == INSTRUMENT_MODE_SEATED
-    if is_seated and view_yaw is not None:
+    is_local_performer = resolved_performer_id == playerId
+    is_local_seated = (
+            target_id is not None
+            and is_local_performer
+            and mode == INSTRUMENT_MODE_SEATED
+    )
+    if is_local_seated and view_yaw is not None:
         player_rot.SetRot((10, view_yaw))
 
-    set_instrument_hud_visible(target_id is not None, is_seated)
+    set_instrument_hud_visible(target_id is not None and is_local_performer, is_local_seated)
 
     from music_plus_scripts.client.ui.instrument_ui import InstrumentUI
     ui_node = InstrumentUI.getUiNode()

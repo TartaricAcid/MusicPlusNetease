@@ -104,7 +104,7 @@ def start_playback(
         percussion_sound_prefix: all 分类使用的鼓组音色
         enable_note_off: 是否允许音色响应 note_off / sustain_pedal 中断（默认 True）。
             最终仍由 InstrumentDef.enable_note_off 决定具体音色是否响应。
-        performer_id: 演奏此乐器的玩家
+        performer_id: 演奏此乐器的实体
         animation_profile: 演奏动画
         particle_range: 可选的局部坐标范围 ((x1,x2),(y1,y2),(z1,z2))，默认在方块中心固定生成。
         start_time: 可选的统一播放起点，用于让同批播放对齐。

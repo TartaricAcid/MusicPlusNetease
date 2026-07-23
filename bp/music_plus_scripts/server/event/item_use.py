@@ -5,7 +5,10 @@ import time
 from music_plus_scripts.QuModLibs.Server import *
 from music_plus_scripts.server.action.block_instrument import is_paper_tape, handle_paper_tape_insert
 from music_plus_scripts.server.action.multiblock import place_multiblock_instrument
+from music_plus_scripts.server.action.multiblock import resolve_multiblock
+from music_plus_scripts.server.action.musician import MUSICIAN_ITEM, handle_item_use
 from music_plus_scripts.server.store.instrument_registry import get_paper_tape_instrument_config
+from music_plus_scripts.server.store.instrument_registry import get_seated_instrument_config
 from music_plus_scripts.utils.multiblock import get_multiblock_by_item
 
 factory = serverApi.GetEngineCompFactory()
@@ -22,6 +25,37 @@ def on_item_use_on_block(args):
     item = args["itemDict"]
     block_name = args["blockName"]
     item_name = item["newItemName"]
+
+    if item_name == MUSICIAN_ITEM and can_use(args):
+        multiblock = resolve_multiblock(
+            block_name,
+            (args["x"], args["y"], args["z"]),
+            args["dimensionId"],
+            args["blockAuxValue"],
+        )
+        if multiblock:
+            instrument_config = get_seated_instrument_config(multiblock["core_block"])
+            if instrument_config:
+                handle_item_use(
+                    args,
+                    instrument_config,
+                    multiblock["core_pos"],
+                    multiblock["core_aux"],
+                    multiblock["core_block"],
+                )
+                from music_plus_scripts.server.event.block_use import record_cooldown as record_block_use_cooldown
+                record_block_use_cooldown(args["entityId"])
+                return
+
+        instrument_config = get_seated_instrument_config(block_name)
+        if instrument_config:
+            handle_item_use(args, instrument_config)
+            from music_plus_scripts.server.event.block_use import record_cooldown as record_block_use_cooldown
+            record_block_use_cooldown(args["entityId"])
+            return
+
+        handle_item_use(args)
+        return
 
     multiblock_config = get_multiblock_by_item(item_name)
     if multiblock_config:

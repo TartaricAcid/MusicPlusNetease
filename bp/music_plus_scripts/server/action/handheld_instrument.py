@@ -7,6 +7,7 @@ from music_plus_scripts.server.action.instrument_playback import (
     stop_instrument_playback,
 )
 from music_plus_scripts.server.action.seated_instrument import get_seated_instrument
+from music_plus_scripts.server.object.entity_object import EntityObject
 from music_plus_scripts.server.store.instrument_registry import get_handheld_instrument_config
 
 factory = serverApi.GetEngineCompFactory()
@@ -20,33 +21,42 @@ def _get_item_name(item_dict):
     return item_dict["newItemName"]
 
 
-def _get_handheld_instrument(player_id, item_dict=None):
+def _get_handheld_instrument(entity_id, item_dict=None):
     if item_dict is None:
-        item_dict = factory.CreateItem(player_id).GetPlayerItem(CARRIED, 0)
+        entity_type = factory.CreateEngineType(entity_id).GetEngineTypeStr()
+        if entity_type == "minecraft:player":
+            item_dict = factory.CreateItem(entity_id).GetPlayerItem(CARRIED, 0)
+        else:
+            item_dict = EntityObject(entity_id).get_mainhand_item()
 
     config = get_handheld_instrument_config(_get_item_name(item_dict))
     if config is None:
         return None
 
     result = config.copy()
-    pos = factory.CreatePos(player_id).GetPos()
-    dimension = factory.CreateDimension(player_id).GetEntityDimensionId()
-    result.update(build_entity_playback(player_id, pos, dimension))
+    pos = factory.CreatePos(entity_id).GetPos()
+    dimension = factory.CreateDimension(entity_id).GetEntityDimensionId()
+    result["mode"] = "handheld"
+    result.update(build_entity_playback(entity_id, pos, dimension))
     return result
 
 
-def _get_seated_player_instrument(player_id):
-    ride_comp = factory.CreateRide(player_id)
+def _get_seated_entity_instrument(entity_id):
+    ride_comp = factory.CreateRide(entity_id)
     if not ride_comp.IsEntityRiding():
         return None
     return get_seated_instrument(ride_comp.GetEntityRider())
 
 
-def get_player_instrument(player_id):
-    seated = _get_seated_player_instrument(player_id)
+def get_entity_instrument(entity_id):
+    seated = _get_seated_entity_instrument(entity_id)
     if seated is not None:
         return seated
-    return _get_handheld_instrument(player_id)
+    return _get_handheld_instrument(entity_id)
+
+
+def get_player_instrument(player_id):
+    return get_entity_instrument(player_id)
 
 
 def handle_carried_item_changed(args):
@@ -55,13 +65,14 @@ def handle_carried_item_changed(args):
     if old_instrument is not None:
         stop_instrument_playback(old_instrument["playback_key"])
 
-    if _get_seated_player_instrument(player_id) is not None:
+    if _get_seated_entity_instrument(player_id) is not None:
         return
 
     new_instrument = _get_handheld_instrument(player_id, args["newItemDict"])
     Call(player_id, "set_instrument_context", {
         "target_id": new_instrument.get("target_id") if new_instrument else None,
         "mode": "handheld" if new_instrument else None,
+        "performer_id": player_id,
     })
 
 

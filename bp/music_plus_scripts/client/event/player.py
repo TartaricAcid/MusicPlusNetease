@@ -71,6 +71,7 @@ def on_start_riding(args):
             get_seat_instrument_target(victim_id),
             INSTRUMENT_MODE_SEATED,
             get_seat_view_yaw(victim_id),
+            playerId,
         )
     else:
         set_instrument_context(None)
@@ -111,12 +112,13 @@ def on_scripts_loaded(args):
             get_seat_instrument_target(seat_id),
             INSTRUMENT_MODE_SEATED,
             get_seat_view_yaw(seat_id),
+            playerId,
         )
         return
 
     item_dict = item_comp.GetCarriedItem()
     item_name = item_dict["newItemName"] if item_dict else None
     if item_name == "music_plus:bass":
-        set_instrument_context("bass", INSTRUMENT_MODE_HANDHELD)
+        set_instrument_context("bass", INSTRUMENT_MODE_HANDHELD, performer_id=playerId)
     else:
         set_instrument_context(None)

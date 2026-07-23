@@ -8,7 +8,8 @@ _PENDING_PLAY_REQUESTS = {}
 _NEXT_PLAY_REQUEST_ID = 0
 
 
-def open_instrument_ui():
+@AllowCall
+def open_instrument_ui(args=None):
     from music_plus_scripts.client.action.instrument_context import get_instrument_target_id
     from music_plus_scripts.client.ui.instrument_ui import InstrumentUI
     if get_instrument_target_id() is None:
@@ -18,6 +19,7 @@ def open_instrument_ui():
 
 
 def request_instrument_play(midi_payload):
+    from music_plus_scripts.client.action.instrument_context import get_instrument_performer_id
     global _NEXT_PLAY_REQUEST_ID
     _NEXT_PLAY_REQUEST_ID += 1
     request_id = str(_NEXT_PLAY_REQUEST_ID)
@@ -29,11 +31,15 @@ def request_instrument_play(midi_payload):
     Call("play_instrument_midi", {
         "request_id": request_id,
         "midi_md5": midi_md5,
+        "performer_id": get_instrument_performer_id(),
     })
 
 
 def request_instrument_stop():
-    Call("stop_instrument_midi", {})
+    from music_plus_scripts.client.action.instrument_context import get_instrument_performer_id
+    Call("stop_instrument_midi", {
+        "performer_id": get_instrument_performer_id(),
+    })
 
 
 @AllowCall
@@ -46,6 +52,7 @@ def request_instrument_midi_payload(args):
         "request_id": request_id,
         "midi_md5": args["midi_md5"],
         "midi": midi_payload,
+        "performer_id": args["performer_id"],
     })
 
 
@@ -70,4 +77,9 @@ def set_instrument_ui_notice(args):
 @AllowCall
 def set_instrument_context(args):
     from music_plus_scripts.client.action.instrument_context import set_instrument_context as set_context
-    set_context(args["target_id"], args["mode"], args.get("view_yaw"))
+    set_context(
+        args["target_id"],
+        args["mode"],
+        args.get("view_yaw"),
+        args["performer_id"],
+    )

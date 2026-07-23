@@ -1,0 +1,15 @@
+{
+  "format_version": "1.10",
+  "minecraft:item": {
+    "description": {
+      "category": "music_plus_main",
+      "identifier": "music_plus:musician"
+    },
+    "components": {
+      "minecraft:max_stack_size": 16,
+      "netease:customtips": {
+        "value": "§o§8右击方块放置音乐家，右击坐式乐器可让音乐家演奏"
+      }
+    }
+  }
+}

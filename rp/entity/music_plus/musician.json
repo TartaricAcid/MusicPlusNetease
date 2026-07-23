@@ -14,14 +14,14 @@
         "default": "textures/music_plus/entity/musician"
       },
       "animations": {
-        "riding.legs": "animation.player.riding.legs",
+        "riding_legs": "animation.music_plus.musician.riding_legs",
         "bob": "animation.player.bob"
       },
       "scripts": {
         "scale": "0.9375",
         "animate": [
           {
-            "riding.legs": "query.is_riding"
+            "riding_legs": "query.is_riding"
           },
           {
             "bob": "!query.is_riding && !query.is_item_equipped('main_hand')"

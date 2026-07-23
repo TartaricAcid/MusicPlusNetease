@@ -1,0 +1,28 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.music_plus.musician.riding_legs": {
+			"loop": true,
+			"bones": {
+				"leftleg": {
+					"rotation": ["-81.0 - this", "-18.0 - this", "-this"]
+				},
+				"rightleg": {
+					"rotation": ["-81.0 - this", "18.0 - this", "-this"]
+				},
+				"root": {
+					"position": [0, -7, 0]
+				},
+				"rightarm": {
+					"rotation": [-60, 0, 0]
+				},
+				"leftarm": {
+					"rotation": [-60, 0, 0]
+				},
+				"head": {
+					"rotation": [10, 0, 0]
+				}
+			}
+		}
+	}
+}
