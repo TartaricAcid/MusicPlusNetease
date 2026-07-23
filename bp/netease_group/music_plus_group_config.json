@@ -1,27 +1,19 @@
 {
-    "groups": [
-        {
-            "group_name": "item_category.music_plus:main.name",
-            "icon": "music_plus:music_plus_music_box",
-            "list": [
-                "music_plus:music_plus_computer",
-                "music_plus:music_plus_music_box",
-                "music_plus:steinway",
-                "music_plus:harpsichord",
-                "music_plus:music_plus_ce_guitar",
-                "music_plus:music_plus_nylon_guitar",
-                "music_plus:guzheng",
-                "music_plus:music_plus_violin_solo",
-                "music_plus:music_plus_trumpet",
-                "music_plus:music_plus_flute",
-                "music_plus:music_plus_bass",
-                "music_plus:music_plus_real_kit",
-                "music_plus:music_plus_linn_kit",
-                "music_plus:honkytonk",
-                "music_plus:music_plus_rhodes",
-                "music_plus:vibra",
-                "music_plus:paper_tape"
-            ]
-        }
-    ]
+  "groups": [
+    {
+      "group_name": "item_category.music_plus:main.name",
+      "icon": "none",
+      "list": [
+        "music_plus:music_plus_computer",
+        "music_plus:paper_tape",
+        "music_plus:music_plus_music_box",
+        "music_plus:steinway",
+        "music_plus:harpsichord",
+        "music_plus:guzheng",
+        "music_plus:honkytonk",
+        "music_plus:vibra",
+        "music_plus:music_plus_bass"
+      ]
+    }
+  ]
 }

@@ -17,35 +17,11 @@
     "music_plus:harpsichord": {
       "textures": "textures/music_plus/item/harpsichord"
     },
-    "music_plus:ce_guitar": {
-      "textures": "textures/music_plus/block/music_box"
-    },
-    "music_plus:nylon_guitar": {
-      "textures": "textures/music_plus/block/music_box"
-    },
     "music_plus:guzheng": {
       "textures": "textures/music_plus/item/guzheng"
     },
-    "music_plus:violin_solo": {
-      "textures": "textures/music_plus/block/music_box"
-    },
-    "music_plus:trumpet": {
-      "textures": "textures/music_plus/block/music_box"
-    },
-    "music_plus:flute": {
-      "textures": "textures/music_plus/block/music_box"
-    },
-    "music_plus:real_kit": {
-      "textures": "textures/music_plus/block/music_box"
-    },
-    "music_plus:linn_kit": {
-      "textures": "textures/music_plus/block/music_box"
-    },
     "music_plus:honkytonk": {
       "textures": "textures/music_plus/item/honkytonk"
-    },
-    "music_plus:rhodes": {
-      "textures": "textures/music_plus/block/music_box"
     },
     "music_plus:vibra": {
       "textures": "textures/music_plus/item/vibra"

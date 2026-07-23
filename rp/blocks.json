@@ -22,12 +22,6 @@
     },
     "sound": "wood"
   },
-  "music_plus:music_plus_ce_guitar": {
-    "sound": "wood"
-  },
-  "music_plus:music_plus_nylon_guitar": {
-    "sound": "wood"
-  },
   "music_plus:music_plus_guzheng": {
     "client_entity": {
       "identifier": "music_plus:guzheng",
@@ -36,30 +30,12 @@
     },
     "sound": "wood"
   },
-  "music_plus:music_plus_violin_solo": {
-    "sound": "wood"
-  },
-  "music_plus:music_plus_trumpet": {
-    "sound": "wood"
-  },
-  "music_plus:music_plus_flute": {
-    "sound": "wood"
-  },
-  "music_plus:music_plus_real_kit": {
-    "sound": "wood"
-  },
-  "music_plus:music_plus_linn_kit": {
-    "sound": "wood"
-  },
   "music_plus:music_plus_honkytonk": {
     "client_entity": {
       "identifier": "music_plus:honkytonk",
       "hand_model_use_client_entity": true,
       "block_icon": "music_plus:honkytonk"
     },
-    "sound": "wood"
-  },
-  "music_plus:music_plus_rhodes": {
     "sound": "wood"
   },
   "music_plus:music_plus_vibra": {
