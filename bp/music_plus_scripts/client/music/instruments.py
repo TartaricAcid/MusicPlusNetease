@@ -165,7 +165,7 @@ CELESTE = InstrumentDef(
     sound_prefix="music_plus.celeste",
     lowest_note=24,
     highest_note=119,
-    note_map=octave_up(c_octave_a_sample(range(3, 9), 24, 119)),
+    note_map=octave_up(c_octave_a_sample(range(3, 9), 24, 119), offset=12),
 )
 
 CHOIR = InstrumentDef(
