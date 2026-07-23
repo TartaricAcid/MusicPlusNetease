@@ -7,6 +7,7 @@ HARPSICHORD_BLOCK = "music_plus:music_plus_harpsichord"
 HONKYTONK_BLOCK = "music_plus:music_plus_honkytonk"
 VIBRA_BLOCK = "music_plus:music_plus_vibra"
 GUZHENG_BLOCK = "music_plus:music_plus_guzheng"
+ELECTRONIC_KEYBOARD_BLOCK = "music_plus:music_plus_electronic_keyboard"
 
 # ─── 乐器注册表 ──────────────────────────────────────────────────────────────
 # 全局映射：ID → 乐器播放配置
@@ -62,11 +63,6 @@ BLOCK_INSTRUMENT_REGISTRY = {
         "particle_range": ((-1, 1), (0.0, 0.5), (0.625, 0.875)),
         "seat_offset": (0.0, 0.125, 1.5),
     },
-    "music_plus:music_plus_rhodes": {
-        "sound_prefix": "music_plus.rhodes",
-        "instrument_group": "piano",
-        "enable_note_off": True,
-    },
     VIBRA_BLOCK: {
         "target_id": "vibra",
         "sound_prefix": "music_plus.vibra",
@@ -75,16 +71,6 @@ BLOCK_INSTRUMENT_REGISTRY = {
         "animation_profile": "piano",
         "particle_range": ((-1, 1), (0.25, 0.75), (0, 0)),
         "seat_offset": (0.0, 0.25, 0.875),
-    },
-    "music_plus:music_plus_ce_guitar": {
-        "sound_prefix": "music_plus.ce_guitar",
-        "instrument_group": "guitar",
-        "enable_note_off": True,
-    },
-    "music_plus:music_plus_nylon_guitar": {
-        "sound_prefix": "music_plus.nylon_guitar",
-        "instrument_group": "guitar",
-        "enable_note_off": True,
     },
     GUZHENG_BLOCK: {
         "target_id": "guzheng",
@@ -95,31 +81,16 @@ BLOCK_INSTRUMENT_REGISTRY = {
         "particle_range": ((-1.25, 1.25), (0.25, 0.75), (0, 0)),
         "seat_offset": (0.0, 0.25, 0.875),
     },
-    "music_plus:music_plus_violin_solo": {
-        "sound_prefix": "music_plus.violin_solo",
-        "instrument_group": "violin",
+    ELECTRONIC_KEYBOARD_BLOCK: {
+        "target_id": "electronic_keyboard",
+        "sound_prefix": "music_plus.piano",
+        "instrument_group": "all",
+        "percussion_sound_prefix": "music_plus.linn_kit",
         "enable_note_off": True,
-    },
-    "music_plus:music_plus_trumpet": {
-        "sound_prefix": "music_plus.trumpet",
-        "instrument_group": "brass",
-        "enable_note_off": True,
-    },
-    "music_plus:music_plus_flute": {
-        "sound_prefix": "music_plus.flute",
-        "instrument_group": "pipe",
-        "enable_note_off": True,
-    },
-    "music_plus:music_plus_real_kit": {
-        "sound_prefix": "music_plus.real_kit",
-        "instrument_group": "drum_kit",
-        "enable_note_off": False,
-    },
-    "music_plus:music_plus_linn_kit": {
-        "sound_prefix": "music_plus.linn_kit",
-        "instrument_group": "drum_kit",
-        "enable_note_off": False,
-    },
+        "animation_profile": "piano",
+        "particle_range": ((-1.25, 1.25), (0.25, 0.75), (0, 0)),
+        "seat_offset": (0.0, 0.125, 0.9375),
+    }
 }
 
 ITEM_INSTRUMENT_REGISTRY = {
@@ -139,6 +110,7 @@ SEATED_INSTRUMENT_BLOCKS = frozenset((
     HONKYTONK_BLOCK,
     VIBRA_BLOCK,
     GUZHENG_BLOCK,
+    ELECTRONIC_KEYBOARD_BLOCK,
 ))
 
 

@@ -1,0 +1,58 @@
+{
+  "format_version": "1.10.0",
+  "minecraft:block": {
+    "description": {
+      "identifier": "music_plus:music_plus_electronic_keyboard",
+      "category": "none",
+      "register_to_creative_menu": false
+    },
+    "components": {
+      "minecraft:block_light_absorption": {
+        "value": 0
+      },
+      "minecraft:block_light_emission": {
+        "emission": 0
+      },
+      "minecraft:destructible_by_mining": {
+        "seconds_to_destroy": 1.5
+      },
+      "minecraft:destructible_by_explosion": false,
+      "minecraft:loot": {
+        "table": "loot_tables/music_plus/empty.json"
+      },
+      "netease:face_directional": {
+        "type": "direction"
+      },
+      "netease:render_layer": {
+        "value": "alpha"
+      },
+      "netease:solid": {
+        "value": false
+      },
+      "netease:tier": {
+        "digger": "hatchet"
+      },
+      "netease:listen_block_remove": {
+        "value": true
+      },
+      "netease:block_entity": {
+        "tick": false,
+        "client_tick": false,
+        "movable": false
+      },
+      "netease:aabb": {
+        "clip": {
+          "min": [-1, 0, -0.625],
+          "max": [2, 1.25, 1]
+        },
+        "collision": {
+          "min": [0, 0, 0],
+          "max": [1, 1.25, 1]
+        }
+      },
+      "netease:connection": {
+        "blocks": []
+      }
+    }
+  }
+}

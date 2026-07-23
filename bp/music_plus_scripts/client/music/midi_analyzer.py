@@ -7,11 +7,12 @@ from music_plus_scripts.client.music.instruments import get_instrument
 from music_plus_scripts.mido.midi_decoder import NOTE_ON, decode_midi_payload
 
 GM_PERCUSSION_CHANNEL = 9
-ANALYSIS_VERSION = 2
+ANALYSIS_VERSION = 3
 
 # (标识, 显示名, 分类标识, 分类显示名, 默认声音前缀, Program 乐器组)
 INSTRUMENT_TARGETS = (
     ("synthesizer_player", "合成播放器", "all", "全乐器", "music_plus.piano", "all", "music_plus.real_kit"),
+    ("electronic_keyboard", "电子琴", "all", "全乐器", "music_plus.piano", "all", "music_plus.linn_kit"),
     ("music_box", "八音盒", "music_box", "八音盒类", "music_plus.music_box", "music_box"),
     ("vibra", "颤音琴", "music_box", "八音盒类", "music_plus.vibra", "music_box"),
     ("piano", "钢琴", "piano", "钢琴类", "music_plus.piano", "piano"),

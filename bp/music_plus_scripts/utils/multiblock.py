@@ -80,6 +80,11 @@ MULTIBLOCK_REGISTRY = {
         "members": MEMBERS_3X1,
         "version": 1,
     },
+    "music_plus:electronic_keyboard": {
+        "core_block": "music_plus:music_plus_electronic_keyboard",
+        "members": MEMBERS_3X1,
+        "version": 1,
+    },
 }
 
 MULTIBLOCK_BY_CORE = dict(

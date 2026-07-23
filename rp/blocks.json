@@ -33,6 +33,14 @@
     },
     "sound": "wood"
   },
+  "music_plus:music_plus_electronic_keyboard": {
+    "client_entity": {
+      "identifier": "music_plus:electronic_keyboard",
+      "hand_model_use_client_entity": true,
+      "block_icon": "music_plus:electronic_keyboard"
+    },
+    "sound": "wood"
+  },
   "music_plus:music_plus_honkytonk": {
     "client_entity": {
       "identifier": "music_plus:honkytonk",

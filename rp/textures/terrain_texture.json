@@ -20,6 +20,9 @@
     "music_plus:guzheng": {
       "textures": "textures/music_plus/item/guzheng"
     },
+    "music_plus:electronic_keyboard": {
+      "textures": "textures/music_plus/item/electronic_keyboard"
+    },
     "music_plus:honkytonk": {
       "textures": "textures/music_plus/item/honkytonk"
     },
