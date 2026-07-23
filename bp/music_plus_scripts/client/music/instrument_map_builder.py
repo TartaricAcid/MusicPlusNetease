@@ -3,9 +3,9 @@
 """乐器音符映射构建工具。"""
 
 
-def octave_up(note_map):
+def octave_up(note_map, offset=12):
     """因为 FL 导出的音频似乎都高一个 8 度，故需要手动提升一下"""
-    return dict((note, (sound, pitch_offset + 12)) for note, (sound, pitch_offset) in note_map.items())
+    return dict((note, (sound, pitch_offset + offset)) for note, (sound, pitch_offset) in note_map.items())
 
 
 def c_octave_a_sample(sample_octaves, lowest_note=None, highest_note=None):
