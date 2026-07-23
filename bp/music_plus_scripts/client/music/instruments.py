@@ -117,7 +117,7 @@ BASS = InstrumentDef(
     sound_prefix="music_plus.bass",
     lowest_note=24,
     highest_note=119,
-    note_map=octave_up(c_octave_a_sample(range(3, 6), 48, 83)),
+    note_map=octave_up(c_octave_a_sample(range(3, 6), 48, 83), offset=24),
 )
 
 ACOUSTIC_BASS = InstrumentDef(
@@ -149,7 +149,7 @@ BRASS_ENSEMBLE = InstrumentDef(
     sound_prefix="music_plus.brs_ens",
     lowest_note=24,
     highest_note=119,
-    note_map=octave_up(c_octave_a_sample(range(3, 8), 24, 119)),
+    note_map=octave_up(c_octave_a_sample(range(3, 8), 24, 119), offset=24),
 )
 
 CHURCH_ORGAN = InstrumentDef(
@@ -277,7 +277,7 @@ STRING_ENSEMBLE = InstrumentDef(
     sound_prefix="music_plus.str_ens",
     lowest_note=24,
     highest_note=119,
-    note_map=octave_up(c_octave_a_sample(range(3, 9), 24, 119)),
+    note_map=octave_up(c_octave_a_sample(range(3, 9), 24, 119), offset=12),
 )
 
 TIMPANI = InstrumentDef(
