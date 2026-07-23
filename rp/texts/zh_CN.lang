@@ -18,4 +18,5 @@ item.music_plus:electronic_keyboard.name=电子琴
 item.music_plus:paper_tape.name=纸带
 action.hint.exit.music_plus:seat=按下 SHIFT 来脱离
 entity.music_plus:seat.name=座位
+entity.music_plus:musician.name=音乐家
 craftingScreen.tab.music_plus_main=音乐之家
