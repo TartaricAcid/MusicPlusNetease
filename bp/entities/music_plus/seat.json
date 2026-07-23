@@ -5,7 +5,7 @@
       "identifier": "music_plus:seat",
       "is_experimental": false,
       "is_spawnable": false,
-      "is_summonable": true
+      "is_summonable": false
     },
     "components": {
       "minecraft:type_family": {
@@ -21,6 +21,7 @@
       "minecraft:breathable": {
         "breathes_water": true
       },
+      "minecraft:persistent": {},
       "minecraft:collision_box": {
         "width": 0,
         "height": 0

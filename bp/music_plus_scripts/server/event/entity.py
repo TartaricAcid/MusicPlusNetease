@@ -10,7 +10,12 @@ from music_plus_scripts.server.action.musician import (
     handle_attack,
     handle_interact,
 )
-from music_plus_scripts.server.action.seat import SEAT_ENTITY, handle_seat_tick, handle_seat_stop_riding
+from music_plus_scripts.server.action.seat import (
+    SEAT_ENTITY,
+    handle_seat_stop_riding,
+    handle_seat_tick,
+    restore_performer_seat,
+)
 
 _STOP_RIDING_COOLDOWN = {}
 factory = serverApi.GetEngineCompFactory()
@@ -20,6 +25,12 @@ factory = serverApi.GetEngineCompFactory()
 def on_entity_tick(args):
     if args["identifier"] == SEAT_ENTITY:
         handle_seat_tick(args)
+
+
+@Listen(Events.AddEntityServerEvent)
+def on_entity_added(args):
+    if args["engineTypeStr"] == MUSICIAN_ENTITY:
+        restore_performer_seat(args["id"])
 
 
 @Listen("PlayerDoInteractServerEvent")

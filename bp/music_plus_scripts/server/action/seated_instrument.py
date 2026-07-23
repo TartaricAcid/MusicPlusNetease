@@ -42,7 +42,7 @@ def handle_seated_instrument_use(
         riders = ride_comp.GetRiders()
         if len(riders) > 0:
             from music_plus_scripts.server.action.instrument_controller import open_performer_instrument_ui
-            if open_performer_instrument_ui(use_obj.get_player_id(), riders[0]):
+            if open_performer_instrument_ui(use_obj.get_player_id(), riders[0]["entityId"]):
                 use_obj.swing_hand()
                 return True
             return False
@@ -60,7 +60,7 @@ def handle_seated_instrument_use(
     if seat_id is not None:
         set_block_seat_id(dimension, block_pos, None)
 
-    seat_pos = _get_seat_pos(block_pos, face, instrument_config["seat_offset"])
+    seat_pos = get_instrument_seat_pos(block_pos, face, instrument_config["seat_offset"])
     seat_id = use_obj.create_entity(
         SEAT_ENTITY,
         seat_pos,
@@ -140,10 +140,13 @@ def get_seated_instrument(seat_id):
 
 
 def seat_performer(performer_id, seat_id, view_yaw):
-    factory.CreateRide(seat_id).SetRiderRideEntity(performer_id, seat_id)
+    ride_result = factory.CreateRide(seat_id).SetRiderRideEntity(performer_id, seat_id)
     performer_type = factory.CreateEngineType(performer_id).GetEngineTypeStr()
     pitch = 10 if performer_type == "minecraft:player" else 0
     factory.CreateRot(performer_id).SetRot((pitch, view_yaw))
+    if ride_result and performer_type != "minecraft:player":
+        from music_plus_scripts.server.action.seat import save_performer_seat_block
+        save_performer_seat_block(performer_id, seat_id)
 
 
 def _set_player_seated_context(player_id, instrument_config, view_yaw):
@@ -186,7 +189,7 @@ def prepare_instrument_seat(
     if seat_id is not None:
         set_block_seat_id(dimension, block_pos, None)
 
-    seat_pos = _get_seat_pos(block_pos, face, instrument_config["seat_offset"])
+    seat_pos = get_instrument_seat_pos(block_pos, face, instrument_config["seat_offset"])
     seat_id = use_obj.create_entity(
         SEAT_ENTITY,
         seat_pos,
@@ -209,7 +212,7 @@ def prepare_instrument_seat(
     return seat_id, view_yaw, True
 
 
-def _get_seat_pos(block_pos, face, seat_offset):
+def get_instrument_seat_pos(block_pos, face, seat_offset):
     x, y, z = block_pos
     lateral, vertical, forward = seat_offset
     center_x = x + 0.5

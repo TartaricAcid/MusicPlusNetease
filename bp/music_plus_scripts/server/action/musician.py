@@ -98,7 +98,7 @@ def handle_item_use(args, instrument_config=None, block_pos=None, block_aux=None
             MUSICIAN_ENTITY,
             seat_pos,
             (0, view_yaw),
-            True,
+            False,
             False,
         )
         if musician_id is None:
