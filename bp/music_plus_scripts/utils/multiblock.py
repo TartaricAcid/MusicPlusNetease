@@ -55,8 +55,8 @@ MEMBERS_3X1 = (
 )
 
 MULTIBLOCK_REGISTRY = {
-    "music_plus:steinway": {
-        "core_block": "music_plus:music_plus_steinway",
+    "music_plus:piano": {
+        "core_block": "music_plus:music_plus_piano",
         "members": MEMBERS_TRIANGLE,
         "version": 1,
     },

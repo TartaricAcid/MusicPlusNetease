@@ -8,7 +8,7 @@
     "music_plus:bass": {
       "textures": "textures/music_plus/item/bass"
     },
-    "music_plus:steinway": {
+    "music_plus:piano": {
       "textures": "textures/music_plus/item/piano"
     },
     "music_plus:harpsichord": {

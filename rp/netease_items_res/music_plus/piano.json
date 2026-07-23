@@ -2,10 +2,10 @@
   "format_version": "1.10",
   "minecraft:item": {
     "components": {
-      "minecraft:icon": "music_plus:steinway"
+      "minecraft:icon": "music_plus:piano"
     },
     "description": {
-      "identifier": "music_plus:steinway"
+      "identifier": "music_plus:piano"
     }
   }
 }

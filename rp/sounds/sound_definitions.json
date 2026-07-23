@@ -85,14 +85,14 @@
     "sounds/music_plus/rhodes/a5",
     "sounds/music_plus/rhodes/a6",
     "sounds/music_plus/rhodes/a7",
-    "sounds/music_plus/steinway/a1",
-    "sounds/music_plus/steinway/a2",
-    "sounds/music_plus/steinway/a3",
-    "sounds/music_plus/steinway/a4",
-    "sounds/music_plus/steinway/a5",
-    "sounds/music_plus/steinway/a6",
-    "sounds/music_plus/steinway/a7",
-    "sounds/music_plus/steinway/a8",
+    "sounds/music_plus/piano/a1",
+    "sounds/music_plus/piano/a2",
+    "sounds/music_plus/piano/a3",
+    "sounds/music_plus/piano/a4",
+    "sounds/music_plus/piano/a5",
+    "sounds/music_plus/piano/a6",
+    "sounds/music_plus/piano/a7",
+    "sounds/music_plus/piano/a8",
     "sounds/music_plus/trumpet/a4",
     "sounds/music_plus/trumpet/a5",
     "sounds/music_plus/trumpet/a6",
@@ -1030,90 +1030,90 @@
         }
       ]
     },
-    "music_plus.steinway.a1": {
+    "music_plus.piano.a1": {
       "category": "record",
       "min_distance": 16.0,
       "max_distance": 72.0,
       "sounds": [
         {
-          "name": "sounds/music_plus/steinway/a1",
+          "name": "sounds/music_plus/piano/a1",
           "volume": 1.0
         }
       ]
     },
-    "music_plus.steinway.a2": {
+    "music_plus.piano.a2": {
       "category": "record",
       "min_distance": 16.0,
       "max_distance": 72.0,
       "sounds": [
         {
-          "name": "sounds/music_plus/steinway/a2",
+          "name": "sounds/music_plus/piano/a2",
           "volume": 1.0
         }
       ]
     },
-    "music_plus.steinway.a3": {
+    "music_plus.piano.a3": {
       "category": "record",
       "min_distance": 16.0,
       "max_distance": 72.0,
       "sounds": [
         {
-          "name": "sounds/music_plus/steinway/a3",
+          "name": "sounds/music_plus/piano/a3",
           "volume": 1.0
         }
       ]
     },
-    "music_plus.steinway.a4": {
+    "music_plus.piano.a4": {
       "category": "record",
       "min_distance": 16.0,
       "max_distance": 72.0,
       "sounds": [
         {
-          "name": "sounds/music_plus/steinway/a4",
+          "name": "sounds/music_plus/piano/a4",
           "volume": 1.0
         }
       ]
     },
-    "music_plus.steinway.a5": {
+    "music_plus.piano.a5": {
       "category": "record",
       "min_distance": 16.0,
       "max_distance": 72.0,
       "sounds": [
         {
-          "name": "sounds/music_plus/steinway/a5",
+          "name": "sounds/music_plus/piano/a5",
           "volume": 1.0
         }
       ]
     },
-    "music_plus.steinway.a6": {
+    "music_plus.piano.a6": {
       "category": "record",
       "min_distance": 16.0,
       "max_distance": 72.0,
       "sounds": [
         {
-          "name": "sounds/music_plus/steinway/a6",
+          "name": "sounds/music_plus/piano/a6",
           "volume": 1.0
         }
       ]
     },
-    "music_plus.steinway.a7": {
+    "music_plus.piano.a7": {
       "category": "record",
       "min_distance": 16.0,
       "max_distance": 72.0,
       "sounds": [
         {
-          "name": "sounds/music_plus/steinway/a7",
+          "name": "sounds/music_plus/piano/a7",
           "volume": 1.0
         }
       ]
     },
-    "music_plus.steinway.a8": {
+    "music_plus.piano.a8": {
       "category": "record",
       "min_distance": 16.0,
       "max_distance": 72.0,
       "sounds": [
         {
-          "name": "sounds/music_plus/steinway/a8",
+          "name": "sounds/music_plus/piano/a8",
           "volume": 1.0
         }
       ]

@@ -13,7 +13,7 @@ ANALYSIS_VERSION = 1
 INSTRUMENT_TARGETS = (
     ("music_box", "八音盒", "music_box", "八音盒类", "music_plus.music_box", "music_box"),
     ("vibra", "颤音琴", "music_box", "八音盒类", "music_plus.vibra", "music_box"),
-    ("steinway", "钢琴", "piano", "钢琴类", "music_plus.steinway", "piano"),
+    ("piano", "钢琴", "piano", "钢琴类", "music_plus.piano", "piano"),
     ("harpsichord", "羽管键琴", "piano", "钢琴类", "music_plus.harpsichord", "piano"),
     ("honkytonk", "酒吧钢琴", "piano", "钢琴类", "music_plus.honkytonk", "piano"),
     ("rhodes", "电钢琴", "piano", "钢琴类", "music_plus.rhodes", "piano"),

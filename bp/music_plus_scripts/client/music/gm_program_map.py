@@ -6,8 +6,8 @@
 # 0 表示使用方块默认音色，不在此处显式映射。
 PROGRAM_TO_INSTRUMENT = {
     # 钢琴
-    1: "music_plus.steinway",
-    2: "music_plus.steinway",
+    1: "music_plus.piano",
+    2: "music_plus.piano",
     3: "music_plus.honkytonk",
     4: "music_plus.rhodes",
     5: "music_plus.rhodes",
@@ -105,7 +105,7 @@ INSTRUMENT_GROUPS = {
         "music_plus.vibra",
     },
     "piano": {
-        "music_plus.steinway",
+        "music_plus.piano",
         "music_plus.harpsichord",
         "music_plus.honkytonk",
         "music_plus.rhodes",

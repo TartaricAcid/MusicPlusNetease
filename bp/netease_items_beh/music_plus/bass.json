@@ -3,7 +3,7 @@
   "minecraft:item": {
     "description": {
       "category": "music_plus_main",
-      "identifier": "music_plus:music_plus_bass"
+      "identifier": "music_plus:bass"
     },
     "components": {
       "minecraft:hand_equipped": true,

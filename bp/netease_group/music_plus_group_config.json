@@ -7,12 +7,12 @@
         "music_plus:music_plus_computer",
         "music_plus:paper_tape",
         "music_plus:music_plus_music_box",
-        "music_plus:steinway",
+        "music_plus:piano",
         "music_plus:harpsichord",
         "music_plus:guzheng",
         "music_plus:honkytonk",
         "music_plus:vibra",
-        "music_plus:music_plus_bass"
+        "music_plus:bass"
       ]
     }
   ]

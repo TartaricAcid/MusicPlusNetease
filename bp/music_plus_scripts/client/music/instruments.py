@@ -23,9 +23,9 @@ MUSIC_BOX = InstrumentDef(
     )),
 )
 
-STEINWAY = InstrumentDef(
-    name="steinway",
-    sound_prefix="music_plus.steinway",
+PIANO = InstrumentDef(
+    name="piano",
+    sound_prefix="music_plus.piano",
     lowest_note=24,
     highest_note=119,
     note_map=octave_up(c_octave_a_sample(range(1, 9), 24, 119)),
@@ -137,7 +137,7 @@ LINN_KIT = InstrumentDef(
 
 _REGISTRY = {
     MUSIC_BOX.sound_prefix: MUSIC_BOX,
-    STEINWAY.sound_prefix: STEINWAY,
+    PIANO.sound_prefix: PIANO,
     HARPSICHORD.sound_prefix: HARPSICHORD,
     HONKYTONK.sound_prefix: HONKYTONK,
     RHODES.sound_prefix: RHODES,

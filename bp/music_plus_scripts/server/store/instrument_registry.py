@@ -2,7 +2,7 @@
 
 """服务端乐器播放配置注册表。"""
 
-PIANO_BLOCK = "music_plus:music_plus_steinway"
+PIANO_BLOCK = "music_plus:music_plus_piano"
 HARPSICHORD_BLOCK = "music_plus:music_plus_harpsichord"
 HONKYTONK_BLOCK = "music_plus:music_plus_honkytonk"
 VIBRA_BLOCK = "music_plus:music_plus_vibra"
@@ -28,8 +28,8 @@ BLOCK_INSTRUMENT_REGISTRY = {
         "enable_note_off": False,
     },
     PIANO_BLOCK: {
-        "target_id": "steinway",
-        "sound_prefix": "music_plus.steinway",
+        "target_id": "piano",
+        "sound_prefix": "music_plus.piano",
         "instrument_group": "piano",
         "enable_note_off": True,
         "animation_profile": "piano",
@@ -115,7 +115,7 @@ BLOCK_INSTRUMENT_REGISTRY = {
 }
 
 ITEM_INSTRUMENT_REGISTRY = {
-    "music_plus:music_plus_bass": {
+    "music_plus:bass": {
         "target_id": "bass",
         "sound_prefix": "music_plus.bass",
         "instrument_group": "bass",

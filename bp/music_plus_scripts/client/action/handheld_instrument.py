@@ -4,7 +4,7 @@ from music_plus_scripts.client.action.instrument_context import INSTRUMENT_MODE_
 from music_plus_scripts.client.network.instrument import open_instrument_ui
 
 HANDHELD_INSTRUMENT_TARGETS = {
-    "music_plus:music_plus_bass": "bass",
+    "music_plus:bass": "bass",
 }
 
 

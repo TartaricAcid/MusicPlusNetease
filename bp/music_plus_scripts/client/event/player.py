@@ -116,7 +116,7 @@ def on_scripts_loaded(args):
 
     item_dict = item_comp.GetCarriedItem()
     item_name = item_dict["newItemName"] if item_dict else None
-    if item_name == "music_plus:music_plus_bass":
+    if item_name == "music_plus:bass":
         set_instrument_context("bass", INSTRUMENT_MODE_HANDHELD)
     else:
         set_instrument_context(None)

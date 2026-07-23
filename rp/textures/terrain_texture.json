@@ -8,9 +8,6 @@
     "music_plus:music_box": {
       "textures": "textures/music_plus/block/music_box"
     },
-    "music_plus:steinway": {
-      "textures": "textures/music_plus/block/music_box"
-    },
     "music_plus:piano": {
       "textures": "textures/music_plus/item/piano"
     },

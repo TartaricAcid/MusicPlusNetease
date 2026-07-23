@@ -2,7 +2,7 @@
   "format_version": "1.10.0",
   "minecraft:block": {
     "description": {
-      "identifier": "music_plus:music_plus_steinway",
+      "identifier": "music_plus:music_plus_piano",
       "category": "none",
       "register_to_creative_menu": false
     },

@@ -6,7 +6,7 @@
   "music_plus:music_plus_music_box": {
     "sound": "wood"
   },
-  "music_plus:music_plus_steinway": {
+  "music_plus:music_plus_piano": {
     "client_entity": {
       "identifier": "music_plus:piano",
       "hand_model_use_client_entity": true,
