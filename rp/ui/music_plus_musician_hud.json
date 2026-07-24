@@ -1,0 +1,219 @@
+{
+  "namespace": "music_plus_musician_hud",
+  "main@hud.hud_screen": {
+    "$screen_content": "music_plus_musician_hud.base",
+    "button_mappings": []
+  },
+  "base": {
+    "type": "panel",
+    "layer": 200,
+    "bindings": [
+      {
+        "binding_name": "#hud_visible",
+        "binding_name_override": "#visible",
+        "binding_type": "global"
+      },
+      {
+        "binding_name": "#hud_alpha",
+        "binding_name_override": "#alpha",
+        "binding_type": "global"
+      },
+      {
+        "binding_name": "#hud_propagate_alpha",
+        "binding_name_override": "#propagateAlpha",
+        "binding_type": "global"
+      }
+    ],
+    "controls": [
+      {
+        "button_grid": {
+          "type": "stack_panel",
+          "orientation": "vertical",
+          "anchor_from": "bottom_middle",
+          "anchor_to": "bottom_middle",
+          "offset": [0, -65],
+          "size": [130, 42],
+          "visible": false,
+          "controls": [
+            {
+              "top_row": {
+                "type": "stack_panel",
+                "orientation": "horizontal",
+                "size": ["100%c", 20],
+                "controls": [
+                  {
+                    "equip_btn@common.button": {
+                      "size": [64, 20],
+                      "button_mappings": [],
+                      "controls": [
+                        {
+                          "default": {
+                            "texture": "textures/ui/button_borderless_light",
+                            "type": "image"
+                          }
+                        },
+                        {
+                          "hover": {
+                            "texture": "textures/ui/button_borderless_light",
+                            "type": "image"
+                          }
+                        },
+                        {
+                          "pressed": {
+                            "texture": "textures/ui/button_borderless_lightpressed",
+                            "type": "image"
+                          }
+                        },
+                        {
+                          "button_label": {
+                            "type": "label",
+                            "font_type": "default",
+                            "text": "装备物品",
+                            "color": [0.3, 0.3, 0.3],
+                            "layer": 1
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "gap": {
+                      "type": "panel",
+                      "size": [2, 0]
+                    }
+                  },
+                  {
+                    "unequip_btn@common.button": {
+                      "size": [64, 20],
+                      "button_mappings": [],
+                      "controls": [
+                        {
+                          "default": {
+                            "texture": "textures/ui/button_borderless_light",
+                            "type": "image"
+                          }
+                        },
+                        {
+                          "hover": {
+                            "texture": "textures/ui/button_borderless_light",
+                            "type": "image"
+                          }
+                        },
+                        {
+                          "pressed": {
+                            "texture": "textures/ui/button_borderless_lightpressed",
+                            "type": "image"
+                          }
+                        },
+                        {
+                          "button_label": {
+                            "type": "label",
+                            "font_type": "default",
+                            "text": "取下物品",
+                            "color": [0.3, 0.3, 0.3],
+                            "layer": 1
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "row_gap": {
+                "type": "panel",
+                "size": [0, 2]
+              }
+            },
+            {
+              "bottom_row": {
+                "type": "stack_panel",
+                "orientation": "horizontal",
+                "size": ["100%c", 20],
+                "controls": [
+                  {
+                    "select_btn@common.button": {
+                      "size": [64, 20],
+                      "button_mappings": [],
+                      "controls": [
+                        {
+                          "default": {
+                            "texture": "textures/ui/button_borderless_light",
+                            "type": "image"
+                          }
+                        },
+                        {
+                          "hover": {
+                            "texture": "textures/ui/button_borderless_light",
+                            "type": "image"
+                          }
+                        },
+                        {
+                          "pressed": {
+                            "texture": "textures/ui/button_borderless_lightpressed",
+                            "type": "image"
+                          }
+                        },
+                        {
+                          "button_label": {
+                            "type": "label",
+                            "font_type": "default",
+                            "text": "打开曲库",
+                            "color": [0.3, 0.3, 0.3],
+                            "layer": 1
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "gap": {
+                      "type": "panel",
+                      "size": [2, 0]
+                    }
+                  },
+                  {
+                    "recall_btn@common.button": {
+                      "size": [64, 20],
+                      "button_mappings": [],
+                      "controls": [
+                        {
+                          "default": {
+                            "texture": "textures/ui/button_borderless_light",
+                            "type": "image"
+                          }
+                        },
+                        {
+                          "hover": {
+                            "texture": "textures/ui/button_borderless_light",
+                            "type": "image"
+                          }
+                        },
+                        {
+                          "pressed": {
+                            "texture": "textures/ui/button_borderless_lightpressed",
+                            "type": "image"
+                          }
+                        },
+                        {
+                          "button_label": {
+                            "type": "label",
+                            "font_type": "default",
+                            "text": "收回音乐家",
+                            "color": [0.3, 0.3, 0.3],
+                            "layer": 1
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

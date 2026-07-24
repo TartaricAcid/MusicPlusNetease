@@ -114,6 +114,10 @@ ITEM_INSTRUMENT_REGISTRY = {
     },
 }
 
+# 鼓槌注册表：鼓槌物品可装备到音乐家的主手或副手
+DRUMSTICK_REGISTRY = {
+}
+
 SEATED_INSTRUMENT_BLOCKS = frozenset((
     PIANO_BLOCK,
     HARPSICHORD_BLOCK,
@@ -130,6 +134,20 @@ def get_instrument_config(block_name):
 
 def get_handheld_instrument_config(item_name):
     return ITEM_INSTRUMENT_REGISTRY.get(item_name)
+
+
+def get_drumstick_config(item_name):
+    return DRUMSTICK_REGISTRY.get(item_name)
+
+
+def can_equip_musician_mainhand(item_name):
+    """主手可装备手持乐器或鼓槌。"""
+    return item_name in ITEM_INSTRUMENT_REGISTRY or item_name in DRUMSTICK_REGISTRY
+
+
+def can_equip_musician_offhand(item_name):
+    """副手仅可装备鼓槌。"""
+    return item_name in DRUMSTICK_REGISTRY
 
 
 def get_paper_tape_instrument_config(block_name):

@@ -16,6 +16,7 @@ MUSIC_PLUS_MOD.Server("server.event.player")
 MUSIC_PLUS_MOD.Server("server.network.paper_tape")
 MUSIC_PLUS_MOD.Server("server.network.instrument")
 MUSIC_PLUS_MOD.Server("server.network.podium")
+MUSIC_PLUS_MOD.Server("server.network.musician")
 
 # 客户端注册
 MUSIC_PLUS_MOD.Client("client.client")
@@ -35,3 +36,4 @@ MUSIC_PLUS_MOD.Client("client.event.player")
 MUSIC_PLUS_MOD.Client("client.ui.computer_ui")
 MUSIC_PLUS_MOD.Client("client.ui.instrument_ui")
 MUSIC_PLUS_MOD.Client("client.ui.instrument_hud")
+MUSIC_PLUS_MOD.Client("client.ui.musician_hud")

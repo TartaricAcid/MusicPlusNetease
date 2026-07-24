@@ -2,6 +2,7 @@
     "ui_defs": [
         "ui/music_plus_midi_library.json",
         "ui/music_plus_instrument_hud.json",
-        "ui/music_plus_instrument_library.json"
+        "ui/music_plus_instrument_library.json",
+        "ui/music_plus_musician_hud.json"
     ]
 }

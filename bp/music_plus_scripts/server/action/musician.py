@@ -11,7 +11,11 @@ from music_plus_scripts.server.action.seated_instrument import (
 from music_plus_scripts.server.object.entity_object import EntityObject
 from music_plus_scripts.server.object.item_use_block_object import ItemUseBlockObject
 from music_plus_scripts.server.object.player_object import PlayerObject
-from music_plus_scripts.server.store.instrument_registry import get_handheld_instrument_config
+from music_plus_scripts.server.store.instrument_registry import (
+    can_equip_musician_mainhand,
+    can_equip_musician_offhand,
+    get_handheld_instrument_config,
+)
 from music_plus_scripts.server.utils.item_utils import (
     copy_with_count,
     get_mainhand_item_dict,
@@ -33,30 +37,96 @@ def _get_item_name(item_dict):
 def handle_interact(args):
     player_id = args["playerId"]
     musician_id = args["interactEntityId"]
+
     player = PlayerObject(player_id)
     musician = EntityObject(musician_id)
-    carried_item = get_mainhand_item_dict(player_id, True)
 
-    if item_dict_is_empty(carried_item):
+    carried_item = get_mainhand_item_dict(player_id, True)
+    is_empty = item_dict_is_empty(carried_item)
+    is_sneaking = player.is_sneaking()
+
+    # 潜行 + 空手 → 卸下装备（先副手后主手）
+    if is_sneaking and is_empty:
+        unequip_from_musician(player, musician, musician_id)
+        return
+
+    # 空手 → 打开演奏 UI
+    if is_empty:
         open_performer_instrument_ui(player_id, musician_id)
         return
-    if get_handheld_instrument_config(_get_item_name(carried_item)) is None:
+
+    # 手持物品 → 尝试装备到音乐家
+    equip_to_musician(player, musician, musician_id, carried_item)
+
+
+def equip_to_musician(player, musician, musician_id, carried_item):
+    """将玩家手持物品装备到音乐家（先主手后副手）。"""
+    item_name = _get_item_name(carried_item)
+    can_main = can_equip_musician_mainhand(item_name)
+    can_off = can_equip_musician_offhand(item_name)
+    if not can_main and not can_off:
         return
 
-    old_item = musician.get_mainhand_item()
-    if not musician.set_mainhand_item(copy_with_count(carried_item, 1)):
+    mainhand = musician.get_mainhand_item()
+    offhand = musician.get_offhand_item()
+    mainhand_empty = item_dict_is_empty(mainhand)
+    offhand_empty = item_dict_is_empty(offhand)
+
+    # 先主手后副手的安装/替换顺序
+    if can_main and mainhand_empty:
+        slot, old_item = "mainhand", mainhand
+    elif can_off and offhand_empty:
+        slot, old_item = "offhand", offhand
+    elif can_main:
+        slot, old_item = "mainhand", mainhand
+    elif can_off:
+        slot, old_item = "offhand", offhand
+    else:
         return
-    old_instrument = get_handheld_instrument_config(_get_item_name(old_item))
-    if old_instrument is not None:
-        stop_instrument_playback("entity:{}".format(musician_id))
+
+    new_item = copy_with_count(carried_item, 1)
+    if slot == "mainhand":
+        if not musician.set_mainhand_item(new_item):
+            return
+    else:
+        if not musician.set_offhand_item(new_item):
+            return
+
+    # 替换主手乐器时停止旧的播放
+    if slot == "mainhand":
+        old_instrument = get_handheld_instrument_config(_get_item_name(old_item))
+        if old_instrument is not None:
+            stop_instrument_playback("entity:{}".format(musician_id))
+
     player.reduce_carried_item(1)
     if not item_dict_is_empty(old_item):
         player.give_item(old_item)
+
+    player_id = player.entity_id
     Call(player_id, "set_instrument_context", {
         "target_id": None,
         "mode": None,
         "performer_id": player_id,
     })
+
+
+def unequip_from_musician(player, musician, musician_id):
+    """潜行空手卸下音乐家装备（先副手后主手）。"""
+    offhand = musician.get_offhand_item()
+    mainhand = musician.get_mainhand_item()
+
+    if not item_dict_is_empty(offhand):
+        musician.set_offhand_item({"newItemName": "minecraft:air", "count": 0})
+        player.give_item(offhand)
+        return
+
+    if not item_dict_is_empty(mainhand):
+        old_instrument = get_handheld_instrument_config(_get_item_name(mainhand))
+        if old_instrument is not None:
+            stop_instrument_playback("entity:{}".format(musician_id))
+        musician.set_mainhand_item({"newItemName": "minecraft:air", "count": 0})
+        player.give_item(mainhand)
+        return
 
 
 def handle_attack(args):
@@ -70,6 +140,9 @@ def handle_attack(args):
     equipped_item = musician.get_mainhand_item()
     if not item_dict_is_empty(equipped_item):
         musician.drop_item(equipped_item)
+    offhand_item = musician.get_offhand_item()
+    if not item_dict_is_empty(offhand_item):
+        musician.drop_item(offhand_item)
     musician.drop_item(MUSICIAN_ITEM)
     musician.destroy()
 
