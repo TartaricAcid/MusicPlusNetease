@@ -118,6 +118,12 @@ def start_playback(
     if pos is None:
         return
 
+    entity_id = anchor.get("entity_id") if anchor.get("type") == "entity" else None
+    is_musician = (
+            entity_id is not None
+            and _factory.CreateEngineType(entity_id).GetEngineTypeStr() == "music_plus:musician"
+    )
+
     # 距离检查：超过 64 格不播放
     player_pos = _factory.CreatePos(playerId).GetPos()
     if _distance_sq(player_pos, pos) > MAX_START_DISTANCE * MAX_START_DISTANCE:
@@ -133,6 +139,7 @@ def start_playback(
         "start_time": start_time if start_time is not None else time.time(),
         "playback_key": playback_key,
         "anchor": anchor,
+        "is_musician": is_musician,
         "sound_prefix": sound_prefix,
         "instrument_group": instrument_group,
         "percussion_sound_prefix": percussion_sound_prefix,
@@ -287,6 +294,7 @@ def on_music_tick():
             continue
 
         entity_id = session["anchor"].get("entity_id") if session["anchor"].get("type") == "entity" else None
+        is_musician = session["is_musician"]
         entity_offset = session["anchor"].get("offset", (0, 0, 0))
         prefix = session["sound_prefix"]
         instrument_group = session["instrument_group"]
@@ -338,6 +346,7 @@ def on_music_tick():
                     midi_note, vel, pos, entity_id, entity_offset,
                     resolved_prefix, particle_range,
                     session["anchor"].get("direction"),
+                    is_musician,
                 )
 
                 if play_result:
@@ -398,7 +407,8 @@ def on_music_tick():
 
 def _play_note(
         midi_note, velocity, pos, entity_id, entity_offset,
-        resolved_prefix, particle_range, block_direction
+        resolved_prefix, particle_range, block_direction,
+        is_musician
 ):
     sound = _midi_to_sound(midi_note, resolved_prefix)
     if sound is None:
@@ -419,6 +429,7 @@ def _play_note(
         particle_range,
         entity_id is not None,
         block_direction,
+        is_musician,
     )
     particle_id = _particle_sys.Create(NOTE_PARTICLE, particle_pos)
     if _particle_sys.EmitManually(particle_id):
@@ -428,11 +439,14 @@ def _play_note(
     return music_id, instrument.enable_note_off
 
 
-def _get_particle_pos(pos, particle_range, is_entity=False, block_direction=None):
+def _get_particle_pos(
+        pos, particle_range, is_entity=False,
+        block_direction=None, is_musician=False
+):
     x, y, z = pos
 
     particle_x = x if is_entity else x + 0.5
-    particle_y = y + 0.5 if is_entity else y + 1.0
+    particle_y = y + (2.0 if is_musician else 0.5) if is_entity else y + 1.0
     particle_z = z if is_entity else z + 0.5
 
     if particle_range:
