@@ -15,10 +15,14 @@ AXIS_QUERIES = dict(
 ANIMATION_KEY = "music_plus_instrument_play"
 ANIMATION_NAME = "animation.music_plus.player.instrument_play"
 
+ANIMATION_TICK_INTERVAL = 3
+ANIMATION_SNAP_EPSILON = 0.01
+
 _REGISTRY = {}
 _REGISTERED_PLAYERS = set()
 _REGISTERED_ACTORS = set()
 _PERFORMER_STATES = {}
+_ANIMATION_TICK = 0
 
 factory = clientApi.GetEngineCompFactory()
 
@@ -77,8 +81,11 @@ def start_performance_animation(performer_id, profile_id):
             "animation_def": animation_def,
             "current": animation_def.default_pose.copy(),
             "target": animation_def.default_pose.copy(),
+            "active_axes": set(),
             "transient": set(),
             "profile_state": {},
+            "query_comp": factory.CreateQueryVariable(performer_id),
+            "query_values": {},
         }
         _PERFORMER_STATES[performer_id] = state
 
@@ -86,13 +93,14 @@ def start_performance_animation(performer_id, profile_id):
         state["animation_def"] = animation_def
         state["current"] = animation_def.default_pose.copy()
         state["target"] = animation_def.default_pose.copy()
+        state["active_axes"].clear()
         state["transient"].clear()
         state["profile_state"].clear()
 
     state["session_count"] += 1
-    _set_query(performer_id, PLAYING_QUERY, 1.0)
+    _set_query(state, PLAYING_QUERY, 1.0)
     for axis in PERFORMANCE_AXES:
-        _set_query(performer_id, AXIS_QUERIES[axis], state["current"][axis])
+        _set_query(state, AXIS_QUERIES[axis], state["current"][axis])
 
 
 def stop_performance_animation(performer_id):
@@ -103,9 +111,9 @@ def stop_performance_animation(performer_id):
     if state["session_count"] > 0:
         return
 
-    _set_query(performer_id, PLAYING_QUERY, 0.0)
+    _set_query(state, PLAYING_QUERY, 0.0)
     for query_name in AXIS_QUERIES.values():
-        _set_query(performer_id, query_name, 0.0)
+        _set_query(state, query_name, 0.0)
     _PERFORMER_STATES.pop(performer_id, None)
 
 
@@ -116,26 +124,42 @@ def update_performance_notes(performer_id, profile_id, notes):
 
     updates, transient = state["animation_def"].resolve_pose(notes, state["profile_state"])
     state["target"].update(updates)
+    state["active_axes"].update(updates)
     state["transient"].update(transient)
 
 
 def on_performance_animation_tick():
+    global _ANIMATION_TICK
+    _ANIMATION_TICK += 1
+
     for performer_id, state in _PERFORMER_STATES.items():
+        if (_ANIMATION_TICK + hash(performer_id)) % ANIMATION_TICK_INTERVAL != 0:
+            continue
+
         animation_def = state["animation_def"]
-        for axis in PERFORMANCE_AXES:
+        smoothing = 1.0 - (1.0 - animation_def.smoothing) ** ANIMATION_TICK_INTERVAL
+        for axis in tuple(state["active_axes"]):
             current = state["current"][axis]
             target = state["target"][axis]
-            current += (target - current) * animation_def.smoothing
+            if abs(target - current) <= ANIMATION_SNAP_EPSILON:
+                current = target
+                state["active_axes"].discard(axis)
+            else:
+                current += (target - current) * smoothing
             state["current"][axis] = current
-            _set_query(performer_id, AXIS_QUERIES[axis], current)
+            _set_query(state, AXIS_QUERIES[axis], current)
 
         for axis in state["transient"]:
             state["target"][axis] = animation_def.default_pose[axis]
+            state["active_axes"].add(axis)
         state["transient"].clear()
 
 
-def _set_query(performer_id, query_name, value):
-    factory.CreateQueryVariable(performer_id).Set(query_name, value)
+def _set_query(state, query_name, value):
+    if state["query_values"].get(query_name) == value:
+        return
+    state["query_comp"].Set(query_name, value)
+    state["query_values"][query_name] = value
 
 
 def handle_remove_player_aoi(args):

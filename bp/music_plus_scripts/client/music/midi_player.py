@@ -246,8 +246,10 @@ def _stop_session_sounds(session):
 
 
 def on_music_tick():
+    tick_time = time.time()
+
     # 先检查是否有排队的播放请求需要合批处理
-    _drain_pending_playbacks()
+    _drain_pending_playbacks(tick_time)
     on_performance_animation_tick()
 
     # 没有音频时，直接返回
@@ -276,15 +278,16 @@ def on_music_tick():
 
     # 正常更新剩下音频
     finished = []
+    current_dimension = _game.GetCurrentDimension()
     for session in _active_sessions:
         # 维度不同，中断音频
-        if session["anchor"].get("dimension") != _game.GetCurrentDimension():
+        if session["anchor"].get("dimension") != current_dimension:
             _stop_session_sounds(session)
             finished.append(session)
             continue
 
         # 所处位置不在（如果是实体那么则是实体丢失），中断
-        now = (time.time() - session["start_time"]) * PLAYBACK_SPEED
+        now = (tick_time - session["start_time"]) * PLAYBACK_SPEED
         notes = session["notes"]
         ptr = session["ptr"]
         pos = _resolve_anchor_pos(session["anchor"])
@@ -464,7 +467,7 @@ def _get_particle_pos(
     return particle_x, particle_y, particle_z
 
 
-def _drain_pending_playbacks():
+def _drain_pending_playbacks(now):
     """将已到合批时间的排队请求转成真正的播放会话。
 
     同一个 batch 里的所有请求共用一个 start_time，避免多个 MIDI 因解码完成顺序不同而错开起播。
@@ -472,12 +475,10 @@ def _drain_pending_playbacks():
     if not _pending_batches:
         return
 
-    now = time.time()
     ready_keys = [batch_key for batch_key, batch in _pending_batches.items() if batch["flush_time"] <= now]
     pending_batches = [_pending_batches.pop(batch_key) for batch_key in ready_keys]
 
     for batch in pending_batches:
-        start_time = time.time()
         for item in batch["items"]:
             start_playback(
                 item["notes"],
@@ -490,7 +491,7 @@ def _drain_pending_playbacks():
                 item["performer_id"],
                 item["animation_profile"],
                 item["particle_range"],
-                start_time,
+                now,
             )
 
 
