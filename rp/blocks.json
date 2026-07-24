@@ -3,6 +3,9 @@
   "music_plus:music_plus_computer": {
     "sound": "wood"
   },
+  "music_plus:music_plus_podium": {
+    "sound": "wood"
+  },
   "music_plus:music_plus_music_box": {
     "sound": "wood"
   },

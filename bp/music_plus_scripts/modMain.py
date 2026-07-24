@@ -15,6 +15,7 @@ MUSIC_PLUS_MOD.Server("server.event.player")
 # 服务端网络
 MUSIC_PLUS_MOD.Server("server.network.paper_tape")
 MUSIC_PLUS_MOD.Server("server.network.instrument")
+MUSIC_PLUS_MOD.Server("server.network.podium")
 
 # 客户端注册
 MUSIC_PLUS_MOD.Client("client.client")
@@ -23,6 +24,7 @@ MUSIC_PLUS_MOD.Client("client.network.sound")
 MUSIC_PLUS_MOD.Client("client.network.player")
 MUSIC_PLUS_MOD.Client("client.network.computer")
 MUSIC_PLUS_MOD.Client("client.network.instrument")
+MUSIC_PLUS_MOD.Client("client.network.podium")
 # 事件注册
 MUSIC_PLUS_MOD.Client("client.event.tick")
 MUSIC_PLUS_MOD.Client("client.event.item_use")

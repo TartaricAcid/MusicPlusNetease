@@ -36,13 +36,17 @@ def stop_instrument_playback(playback_key):
     Call("*", "stop_midi_music", {"playback_key": playback_key})
 
 
+def stop_instrument_playbacks(playback_keys):
+    if playback_keys:
+        Call("*", "stop_midi_music_batch", {"playback_keys": playback_keys})
+
+
 def stop_entity_instrument_playback(entity_id):
     stop_instrument_playback("entity:{}".format(entity_id))
 
 
-def play_instrument_playback(midi_payload, midi_md5, instrument, performer_id=None):
-    stop_instrument_playback(instrument["playback_key"])
-    args = {
+def _build_playback_args(midi_md5, instrument, performer_id=None):
+    return {
         "midi_md5": midi_md5,
         "playback_key": instrument["playback_key"],
         "anchor": instrument["anchor"],
@@ -54,6 +58,24 @@ def play_instrument_playback(midi_payload, midi_md5, instrument, performer_id=No
         "enable_note_off": instrument["enable_note_off"],
         "particle_range": instrument.get("particle_range"),
     }
+
+
+def play_instrument_playback(midi_payload, midi_md5, instrument, performer_id=None):
+    stop_instrument_playback(instrument["playback_key"])
+    args = _build_playback_args(midi_md5, instrument, performer_id)
     if not is_default_midi(midi_md5):
         args["midi"] = midi_payload
     Call("*", "play_midi_music", args)
+
+
+def play_ensemble_playback(midi_payload, midi_md5, performers):
+    args = {
+        "midi_md5": midi_md5,
+        "performers": [
+            _build_playback_args(midi_md5, instrument, performer_id)
+            for instrument, performer_id in performers
+        ],
+    }
+    if not is_default_midi(midi_md5):
+        args["midi"] = midi_payload
+    Call("*", "play_midi_ensemble", args)

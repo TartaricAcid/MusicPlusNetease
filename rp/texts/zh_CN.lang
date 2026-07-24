@@ -1,5 +1,6 @@
 item_category.music_plus:main.name=音乐之家
 tile.music_plus:music_plus_computer.name=电脑
+tile.music_plus:music_plus_podium.name=指挥台
 tile.music_plus:music_plus_music_box.name=音乐盒
 tile.music_plus:music_plus_synthesizer_player.name=合成播放器
 tile.music_plus:music_plus_piano.name=钢琴

@@ -23,7 +23,13 @@ def play_midi_music(args):
         enable_note_off: 是否允许音色响应 note_off / sustain_pedal 中断（默认 True）
         particle_range: 可选的粒子局部三轴偏移范围，方块锚点会随朝向旋转
     """
-    midi_payload = args.get("midi")
+    _play_midi_music(args)
+
+
+def _play_midi_music(args, shared_midi_payload=None):
+    midi_payload = shared_midi_payload
+    if midi_payload is None:
+        midi_payload = args.get("midi")
     if midi_payload is None:
         midi_payload = get_default_midi(args.get("midi_md5"))
     if midi_payload is None:
@@ -44,8 +50,26 @@ def play_midi_music(args):
 
 
 @AllowCall
+def play_midi_ensemble(args):
+    midi_payload = args.get("midi")
+    if midi_payload is None:
+        midi_payload = get_default_midi(args.get("midi_md5"))
+    if midi_payload is None:
+        return
+    for performer in args["performers"]:
+        stop_playback(performer["playback_key"])
+        _play_midi_music(performer, midi_payload)
+
+
+@AllowCall
 def stop_midi_music(args):
     stop_playback(args["playback_key"])
+
+
+@AllowCall
+def stop_midi_music_batch(args):
+    for playback_key in args["playback_keys"]:
+        stop_playback(playback_key)
 
 
 @AllowCall

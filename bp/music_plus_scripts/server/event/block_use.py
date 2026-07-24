@@ -12,6 +12,7 @@ from music_plus_scripts.server.store.instrument_registry import (
 )
 
 COMPUTER_BLOCK = "music_plus:music_plus_computer"
+PODIUM_BLOCK = "music_plus:music_plus_podium"
 
 factory = serverApi.GetEngineCompFactory()
 
@@ -47,6 +48,15 @@ def on_block_use(args):
     # 右击电脑方块 -> 通知客户端打开 MIDI 音乐库 GUI
     if block_name == COMPUTER_BLOCK and can_use(args):
         Call(player_id, "open_computer_ui", {})
+        args["cancel"] = True
+        return
+
+    # 右击指挥台 -> 打开合奏选曲界面
+    if block_name == PODIUM_BLOCK and can_use(args):
+        Call(player_id, "open_podium_ui", {
+            "pos": (args["x"], args["y"], args["z"]),
+            "dimension": args["dimensionId"],
+        })
         args["cancel"] = True
         return
 

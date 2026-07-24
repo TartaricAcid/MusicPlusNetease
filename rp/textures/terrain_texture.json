@@ -5,6 +5,9 @@
     "music_plus:computer": {
       "textures": "textures/music_plus/block/computer"
     },
+    "music_plus:podium": {
+      "textures": "textures/music_plus/block/podium"
+    },
     "music_plus:music_box": {
       "textures": "textures/music_plus/block/music_box"
     },

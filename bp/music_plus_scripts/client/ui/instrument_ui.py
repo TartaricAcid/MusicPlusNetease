@@ -5,14 +5,17 @@ from music_plus_scripts.QuModLibs.UI import ScreenNodeWrapper
 from music_plus_scripts.client.music.midi_analyzer import (
     ANALYSIS_VERSION,
     analyze_midi_payload,
+    format_analysis_summary,
     format_instrument_summary,
 )
 from music_plus_scripts.client.network.instrument import request_instrument_play, request_instrument_stop
 from music_plus_scripts.client.store import midi_store
 
 BASE_SCREEN_PATH = "/variables_button_mappings_and_controls/safezone_screen_matrix/inner_matrix/safezone_screen_panel/root_screen_panel"
+TITLE_BAR_LABEL_PATH = BASE_SCREEN_PATH + "/title_bar/title_label"
 BODY_PATH = BASE_SCREEN_PATH + "/body"
 LEFT_INNER_PATH = BODY_PATH + "/left/left_inner"
+HINT_LABEL_PATH = LEFT_INNER_PATH + "/hint"
 SELECTION_PATH = LEFT_INNER_PATH + "/selection"
 TITLE_LABEL_PATH = SELECTION_PATH + "/selection_inner/title"
 DURATION_LABEL_PATH = SELECTION_PATH + "/selection_inner/duration"
@@ -36,11 +39,15 @@ def _format_duration(seconds):
 class InstrumentUI(ScreenNodeWrapper):
     def __init__(self, namespace, name, param):
         super(InstrumentUI, self).__init__(namespace, name, param)
+        self._podium_context = param.get("podium_context") if param else None
         self._selected_md5 = None
         self._song_keys = midi_store.list_midi_keys()
 
     def Create(self):
         ScreenNodeWrapper.Create(self)
+        if self._podium_context is not None:
+            self._set_label(TITLE_BAR_LABEL_PATH, "§l指挥台曲库")
+            self._set_label(HINT_LABEL_PATH, "§7选择歌曲，指挥 12 格内的演奏者")
         self._refresh_list()
 
     def _set_label(self, path, text):
@@ -77,8 +84,11 @@ class InstrumentUI(ScreenNodeWrapper):
                 except Exception:
                     analysis = None
 
-        from music_plus_scripts.client.action.instrument_context import get_instrument_target_id
-        instrument_summary = format_instrument_summary(analysis, get_instrument_target_id())
+        if self._podium_context is not None:
+            instrument_summary = format_analysis_summary(analysis, separator="\n")
+        else:
+            from music_plus_scripts.client.action.instrument_context import get_instrument_target_id
+            instrument_summary = format_instrument_summary(analysis, get_instrument_target_id())
         self._set_label(ANALYSIS_LABEL_PATH, instrument_summary)
 
         selection = self.GetBaseUIControl(SELECTION_PATH)
@@ -135,8 +145,16 @@ class InstrumentUI(ScreenNodeWrapper):
             self._set_notice("歌曲数据不存在")
             return
         self._set_notice("正在请求播放")
-        request_instrument_play(midi_payload)
+        if self._podium_context is not None:
+            from music_plus_scripts.client.network.podium import request_podium_play
+            request_podium_play(midi_payload, self._podium_context)
+        else:
+            request_instrument_play(midi_payload)
 
     @view_binder.binding(view_binder.BF_ButtonClickUp, "#music_plus_instrument_stop")
     def stop(self, args):
-        request_instrument_stop()
+        if self._podium_context is not None:
+            from music_plus_scripts.client.network.podium import request_podium_stop
+            request_podium_stop(self._podium_context)
+        else:
+            request_instrument_stop()
