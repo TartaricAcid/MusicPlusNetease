@@ -62,6 +62,7 @@ VIBRA = InstrumentDef(
     lowest_note=24,
     highest_note=119,
     note_map=octave_up(c_octave_a_sample(range(4, 7), 60, 95)),
+    enable_note_off=False,
 )
 
 CE_GUITAR = InstrumentDef(
@@ -86,6 +87,7 @@ GUZHENG = InstrumentDef(
     lowest_note=24,
     highest_note=119,
     note_map=octave_up(c_octave_a_sample(range(3, 7), 48, 95)),
+    enable_note_off=False,
 )
 
 VIOLIN_SOLO = InstrumentDef(
@@ -142,6 +144,7 @@ BELL = InstrumentDef(
     lowest_note=24,
     highest_note=119,
     note_map=named_notes(60, ("bell",)),
+    enable_note_off=False,
 )
 
 BRASS_ENSEMBLE = InstrumentDef(
@@ -166,6 +169,7 @@ CELESTE = InstrumentDef(
     lowest_note=24,
     highest_note=119,
     note_map=octave_up(c_octave_a_sample(range(3, 9), 24, 119), offset=12),
+    enable_note_off=False,
 )
 
 CHOIR = InstrumentDef(
@@ -198,6 +202,7 @@ GLOCKENSPIEL = InstrumentDef(
     lowest_note=24,
     highest_note=119,
     note_map=octave_up(c_octave_a_sample(range(4, 8), 24, 119)),
+    enable_note_off=False,
 )
 
 HARP = InstrumentDef(
@@ -214,6 +219,7 @@ MARIMBA = InstrumentDef(
     lowest_note=24,
     highest_note=119,
     note_map=octave_up(c_octave_a_sample(range(2, 8), 24, 119)),
+    enable_note_off=False,
 )
 
 OBOE = InstrumentDef(
@@ -230,6 +236,7 @@ ORCHESTRA_HIT = InstrumentDef(
     lowest_note=24,
     highest_note=119,
     note_map=octave_up(c_octave_a_sample(range(4, 6), 24, 119)),
+    enable_note_off=False,
 )
 
 PAD = InstrumentDef(
@@ -262,6 +269,7 @@ SITAR = InstrumentDef(
     lowest_note=24,
     highest_note=119,
     note_map=octave_up(c_octave_a_sample(range(2, 8), 24, 119)),
+    enable_note_off=False,
 )
 
 SQUARE = InstrumentDef(
