@@ -21,6 +21,14 @@ def open_podium_ui(args):
     })
 
 
+@AllowCall
+def toggle_podium_range(args):
+    from music_plus_scripts.client.action.podium_range import toggle_podium_range_preview
+    toggle_podium_range_preview(
+        tuple(args["pos"]), args["dimension"], args["performers"]
+    )
+
+
 def request_podium_play(midi_payload, podium_context):
     global _NEXT_PLAY_REQUEST_ID
     _NEXT_PLAY_REQUEST_ID += 1

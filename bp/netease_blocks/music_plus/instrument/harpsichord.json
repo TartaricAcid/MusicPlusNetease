@@ -43,7 +43,7 @@
       "netease:aabb": {
         "clip": {
           "min": [-1, 0, -2],
-          "max": [2, 1.25, 3]
+          "max": [2, 3, 3]
         },
         "collision": {
           "min": [0, 0, 0],

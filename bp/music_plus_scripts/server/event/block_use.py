@@ -5,6 +5,7 @@ import time
 from music_plus_scripts.QuModLibs.Server import *
 from music_plus_scripts.server.action.block_instrument import handle_paper_tape_takeout
 from music_plus_scripts.server.action.multiblock import resolve_multiblock
+from music_plus_scripts.server.action.podium import get_ensemble_performers
 from music_plus_scripts.server.action.seated_instrument import handle_seated_instrument_use
 from music_plus_scripts.server.store.instrument_registry import (
     get_paper_tape_instrument_config,
@@ -51,12 +52,28 @@ def on_block_use(args):
         args["cancel"] = True
         return
 
-    # 右击指挥台 -> 打开合奏选曲界面
+    # 右击指挥台打开选曲界面，潜行右击切换范围预览
     if block_name == PODIUM_BLOCK and can_use(args):
-        Call(player_id, "open_podium_ui", {
-            "pos": (args["x"], args["y"], args["z"]),
-            "dimension": args["dimensionId"],
-        })
+        pos = (args["x"], args["y"], args["z"])
+        # 潜行？开关范围显示
+        if factory.CreatePlayer(player_id).isSneaking():
+            performers = get_ensemble_performers(pos, args["dimensionId"])
+            Call(player_id, "toggle_podium_range", {
+                "pos": pos,
+                "dimension": args["dimensionId"],
+                "performers": [
+                    {
+                        "entity_id": performer_id,
+                        "instrument_name": instrument["display_name"],
+                    }
+                    for instrument, performer_id in performers
+                ]
+            })
+        else:
+            Call(player_id, "open_podium_ui", {
+                "pos": pos,
+                "dimension": args["dimensionId"],
+            })
         args["cancel"] = True
         return
 

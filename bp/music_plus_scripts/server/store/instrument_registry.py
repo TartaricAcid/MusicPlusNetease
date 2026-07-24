@@ -14,6 +14,7 @@ ELECTRONIC_KEYBOARD_BLOCK = "music_plus:music_plus_electronic_keyboard"
 # 新增乐器时只需在此字典中添加一条记录。
 #
 # 每条记录的字段:
+#   display_name   - 玩家界面和世界标记使用的中文名称
 #   target_id      - MIDI 分析和乐器 UI 使用的目标标识
 #   sound_prefix   - 声音 ID 前缀，对应 sound_definitions.json 中的条目
 #   instrument_group - Program Change 可使用的乐器组
@@ -25,6 +26,7 @@ ELECTRONIC_KEYBOARD_BLOCK = "music_plus:music_plus_electronic_keyboard"
 # ─────────────────────────────────────────────────────────────────────────────────
 BLOCK_INSTRUMENT_REGISTRY = {
     "music_plus:music_plus_synthesizer_player": {
+        "display_name": "合成播放器",
         "target_id": "synthesizer_player",
         "sound_prefix": "music_plus.piano",
         "instrument_group": "all",
@@ -32,11 +34,13 @@ BLOCK_INSTRUMENT_REGISTRY = {
         "enable_note_off": True,
     },
     "music_plus:music_plus_music_box": {
+        "display_name": "八音盒",
         "sound_prefix": "music_plus.music_box",
         "instrument_group": "music_box",
         "enable_note_off": False,
     },
     PIANO_BLOCK: {
+        "display_name": "钢琴",
         "target_id": "piano",
         "sound_prefix": "music_plus.piano",
         "instrument_group": "piano",
@@ -46,6 +50,7 @@ BLOCK_INSTRUMENT_REGISTRY = {
         "seat_offset": (0.0, 0.0, 2.375),
     },
     HARPSICHORD_BLOCK: {
+        "display_name": "羽管键琴",
         "target_id": "harpsichord",
         "sound_prefix": "music_plus.harpsichord",
         "instrument_group": "piano",
@@ -55,6 +60,7 @@ BLOCK_INSTRUMENT_REGISTRY = {
         "seat_offset": (0.0, 0.0, 2.375),
     },
     HONKYTONK_BLOCK: {
+        "display_name": "酒吧钢琴",
         "target_id": "honkytonk",
         "sound_prefix": "music_plus.honkytonk",
         "instrument_group": "piano",
@@ -64,6 +70,7 @@ BLOCK_INSTRUMENT_REGISTRY = {
         "seat_offset": (0.0, 0.125, 1.5),
     },
     VIBRA_BLOCK: {
+        "display_name": "颤音琴",
         "target_id": "vibra",
         "sound_prefix": "music_plus.vibra",
         "instrument_group": "music_box",
@@ -73,6 +80,7 @@ BLOCK_INSTRUMENT_REGISTRY = {
         "seat_offset": (0.0, 0.25, 0.875),
     },
     GUZHENG_BLOCK: {
+        "display_name": "古筝",
         "target_id": "guzheng",
         "sound_prefix": "music_plus.guzheng",
         "instrument_group": "guzheng",
@@ -82,6 +90,7 @@ BLOCK_INSTRUMENT_REGISTRY = {
         "seat_offset": (0.0, 0.2, 0.5625),
     },
     ELECTRONIC_KEYBOARD_BLOCK: {
+        "display_name": "电子琴",
         "target_id": "electronic_keyboard",
         "sound_prefix": "music_plus.piano",
         "instrument_group": "all",
@@ -95,6 +104,7 @@ BLOCK_INSTRUMENT_REGISTRY = {
 
 ITEM_INSTRUMENT_REGISTRY = {
     "music_plus:bass": {
+        "display_name": "贝斯",
         "target_id": "bass",
         "sound_prefix": "music_plus.bass",
         "instrument_group": "bass",

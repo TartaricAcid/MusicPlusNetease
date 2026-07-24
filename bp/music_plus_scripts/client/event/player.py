@@ -8,6 +8,7 @@ from music_plus_scripts.client.action.instrument_context import (
     INSTRUMENT_MODE_SEATED,
     set_instrument_context,
 )
+from music_plus_scripts.client.action.podium_range import clear_podium_range
 from music_plus_scripts.client.network.instrument import open_instrument_ui
 
 SEAT_ENTITY = "music_plus:seat"
@@ -122,3 +123,8 @@ def on_scripts_loaded(args):
         set_instrument_context("bass", INSTRUMENT_MODE_HANDHELD, performer_id=playerId)
     else:
         set_instrument_context(None)
+
+
+@Listen(Events.DimensionChangeClientEvent)
+def on_dimension_change(_args):
+    clear_podium_range()
